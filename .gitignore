@@ -1,0 +1,12 @@
+# Ignore the following files:
+
+
+# Unix temporary files
+*~
+
+# Monte Carlo files
+*.lhco.gz
+*.lhe.gz
+
+# Dependency folder
+/deps

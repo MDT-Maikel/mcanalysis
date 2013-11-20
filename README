@@ -1,0 +1,24 @@
+#############################
+### Monte Carlo Analysis ####
+#############################
+
+A set of C++ files which form a small library to perform analyses on different types of files produced
+by Monte Carlo generators. The file types are all based on a common <particle> class and inherit from it.
+
+Based on the <particle> class there will be an <event> class containing a list of particles. Event 
+samples can be constructed by making a vector of <event> objects. 
+
+On these event samples one can perform basic analyses like cut and count. For this we produced the <cut>
+class in which one can implement an analysis.
+
+
+
+
+
+
+######################
+### Particle Class ###
+######################
+The <particle> class serves as a base class for different object formats like .lhco and .lhe. These formats
+are then derived classes from the <particle> class called <lhco> and <lhe>.
+
