@@ -1,7 +1,6 @@
 #############################
 ### Monte Carlo Analysis ####
 #############################
-
 A set of C++ files which form a small library to perform analyses on different types of files produced
 by Monte Carlo generators. The file types are all based on a common <particle> class and inherit from it.
 
@@ -12,8 +11,11 @@ On these event samples one can perform basic analyses like cut and count. For th
 class in which one can implement an analysis.
 
 
-
-
+####################
+### Dependencies ###
+####################
+Folder /deps ignored by git and used to put in external libraries. Put here gzstream library
+from http://www.cs.unc.edu/Research/compgeom/gzstream/ and compile it.
 
 
 ######################
@@ -21,4 +23,22 @@ class in which one can implement an analysis.
 ######################
 The <particle> class serves as a base class for different object formats like .lhco and .lhe. These formats
 are then derived classes from the <particle> class called <lhco> and <lhe>.
+
+
+###################
+### Event Class ###
+###################
+
+
+
+#########################
+### Utility functions ###
+#########################
+
+
+
+########################
+### TODO: Validation ###
+########################
+
 

@@ -4,6 +4,9 @@
 # Unix temporary files
 *~
 
+# C++ build files
+*.o
+
 # Monte Carlo files
 *.lhco.gz
 *.lhe.gz
