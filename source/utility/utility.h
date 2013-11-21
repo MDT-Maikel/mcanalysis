@@ -1,0 +1,38 @@
+/* Utility functions
+ *
+ * Provides useful functions for file handling
+*/
+
+#ifndef INC_UTILITY
+#define INC_UTILITY
+
+#include <iostream>
+#include <fstream>
+#include <regex>
+#include <string>
+#include <vector>
+
+#include "boost/filesystem.hpp"
+#include "../../deps/gzstream/gzstream.h"
+
+#include "../event/event.h"
+
+
+/* NAMESPACE */
+namespace analysis
+{
+
+	// returns a vector of paths pointing to all files in a directory matching the pattern
+	std::vector<boost::filesystem::path> get_files(std::string dir, std::string type_pattern, bool recursive = false);
+
+	// reads lhco events into a vector of events
+	void read_lhco(std::vector<event*> & events, boost::filesystem::path file);
+
+	// write lhco events into a file
+	void write_lhco(const std::vector<event*> & events, boost::filesystem::path file);
+
+
+/* NAMESPACE */
+}
+
+#endif
