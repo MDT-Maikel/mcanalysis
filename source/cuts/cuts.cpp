@@ -20,6 +20,10 @@ namespace analysis
 		pass = 0;
 	}
 
+	cut::~cut()
+	{
+	}
+
 	bool cut::passed(const event *ev)
 	{
 		std::cout << "WARNING: called virtual cut base class." << std::endl; 

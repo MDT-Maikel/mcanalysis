@@ -23,8 +23,8 @@ namespace analysis
 	public:
 
 		/* con & destructor */
-		particle() = default;
-		virtual ~particle() = default;
+		particle();
+		virtual ~particle();
 
 		/* copy & assignment */
 		particle(const particle&) = default;

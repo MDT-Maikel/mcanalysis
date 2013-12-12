@@ -26,7 +26,7 @@ namespace analysis
 		
 	public:
 		cut();
-		virtual ~cut() = default;
+		virtual ~cut();
 
 		virtual bool passed(const event *ev);
 
