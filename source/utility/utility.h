@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -31,8 +32,18 @@ namespace analysis
 	// write lhco events into a file
 	void write_lhco(const std::vector<event*> & events, boost::filesystem::path file);
 
+	// read a single setting from a file
+	template <typename Type>
+	Type read_settings(std::string settings_file, std::string identifier);
+
+	// read a list of settings from a file
+	template <typename Type>
+	std::vector<Type> read_settings_list(std::string settings_file, std::string identifier);
 
 /* NAMESPACE */
 }
+
+/* TEMPLATE IMPLEMENTATIONS */
+#include "utility.tpp"
 
 #endif
