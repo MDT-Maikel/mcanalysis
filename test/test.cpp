@@ -15,24 +15,27 @@ using namespace analysis;
 int main(int argc, const char* argv[]) 
 {
 
-  histogram test;
+	histogram test;
 
-  //=== Set options ===//
-  test.set_ps_title("hello world.ps");
-  test.set_hist_bins(30);
-  test.set_hist_range(-20,50);
-  test.set_x_label("x label");
-  test.set_y_label("y label");
-  test.set_leg_title("Legend");
+	//=== Set options ===//
+	test.set_ps_title("hello world.ps");
+	test.set_hist_bins(10);
+	test.set_hist_range(0,10);
+	test.set_x_label("x label");
+	test.set_y_label("y label");
+	test.set_leg_title("Legend");
 
-  //=== Add samples ===//
-  test.add_sample("sample1");
-  test.add_sample("sample2");
-  test.add_sample("sample3");
-  test.add_sample("sample4");
+	vector<double> a = {1,2,3,4,5,1,2,3,4,5,5};
+	vector<double> b = {1,2,3,3,3,2,2,3,4,5,5};			
 
-  //=== Draw histograms ===//
-  test.draw();
+	//=== Add samples ===//
+	test.add_sample(a);
+	test.add_sample(b);
+	//test.add_sample("sample3");
+	//test.add_sample("sample4");
 
-  return 0;
+	//=== Draw histograms ===//
+	test.draw();
+
+	return 0;
 }

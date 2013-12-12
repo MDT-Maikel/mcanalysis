@@ -8,15 +8,18 @@ COMPILER = $(CC) $(COPTS)
 ### Libraries ###
 LBOOST = -lboost_filesystem -lboost_system
 LGZSTREAM = -L../deps/gzstream/ -lz -lgzstream
-LINKS = $(LGZSTREAM) $(LBOOST) 
+LROOT = -L$(ROOTSYS)/lib -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -pthread -lm -ldl
+LINKS = $(LGZSTREAM) $(LBOOST) $(LROOT)
 
 ### Dependencies ###
-DEPS = ../deps/gzstream/gzstream.h ../deps/gzstream/gzstream.C
+DEPSLOCAL = ../deps/gzstream/gzstream.h ../deps/gzstream/gzstream.C 
+DEPSGLOBAL = -I$(ROOTSYS)/include
+DEPS = $(DEPSLOCAL) $(DEPSGLOBAL)
 
 ### Object Files ###
 OBJ = \
 	../source/particle/lhco.o ../source/particle/particle.o  ../source/particle/lhe.o ../source/event/event.o \
-	../source/utility/utility.o ../source/utility/settings.o \
+	../source/utility/utility.o ../source/histogram/histogram.o \
 	../source/cuts/cuts.o ../source/cuts/cuts_standard.o ../source/cuts/cuts_advanced.o
 
 ### Make EXES ###
@@ -36,10 +39,10 @@ clean:
 ### Make Targets ###
 
 mergemc.o: mergemc.cpp 
-	$(COMPILER) $(CFLAGS) -c -o $@ $<
+	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
 cutmc.o: cutmc.cpp 
-	$(COMPILER) $(CFLAGS) -c -o $@ $<
+	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
 ../source/particle/particle.o: ../source/particle/particle.cpp ../source/particle/particle.h 
 	$(COMPILER) $(CFLAGS) -c -o $@ $<
@@ -56,8 +59,8 @@ cutmc.o: cutmc.cpp
 ../source/utility/utility.o: ../source/utility/utility.cpp ../source/utility/utility.h 
 	$(COMPILER) $(CFLAGS) -c -o $@ $<
 
-../source/utility/settings.o: ../source/utility/settings.cpp ../source/utility/settings.h 
-	$(COMPILER) $(CFLAGS) -c -o $@ $<
+../source/histogram/histogram.o: ../source/histogram/histogram.cpp ../source/histogram/histogram.h
+	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
 ../source/cuts/cuts.o: ../source/cuts/cuts.cpp ../source/cuts/cuts.h 
 	$(COMPILER) $(CFLAGS) -c -o $@ $<

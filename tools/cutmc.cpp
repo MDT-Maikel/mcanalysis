@@ -12,6 +12,7 @@
 #include "../source/cuts/cuts.h"
 #include "../source/cuts/cuts_standard.h"
 #include "../source/cuts/cuts_advanced.h"
+#include "../source/histogram/histogram.h"
 
 
 using namespace std;
@@ -61,6 +62,30 @@ int main(int argc, char* argv[])
 
 	// delete cuts
 	delete pt; delete met; delete ht;
+
+
+	// plot met
+	vector<double> metlist;
+	for (unsigned int i = 0; i < events.size(); i++)
+		metlist.push_back(events[i]->met());
+
+	vector<double> htlist;
+	for (unsigned int i = 0; i < events.size(); i++)
+		htlist.push_back(events[i]->ht(particle::type_jet, 40, 2.5));
+
+	histogram tast;
+
+	tast.set_ps_title("met.ps");
+	tast.set_hist_bins(100);
+	tast.set_hist_range(0,1000);
+	tast.set_x_label("met");
+	tast.set_y_label("# events");
+	tast.set_leg_title("Legend");		
+	tast.add_sample(metlist);
+	tast.add_sample(htlist);
+	tast.normalise();
+	tast.draw();
+
 
 	// delete events
 	for (unsigned int i = 0; i < events.size(); i++)

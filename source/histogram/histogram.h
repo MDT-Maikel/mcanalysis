@@ -1,7 +1,11 @@
-#ifndef __ANALYSIS_histogram_H__
-#define __ANALYSIS_histogram_H__ 1
+/* Histogram class
+ *
+ * 
+*/
 
-//  std includes
+#ifndef INC_HISTOGRAM
+#define INC_HISTOGRAM
+
 #include <iostream> // std input-output stream
 #include <vector> // vector type
 #include <string> // string type
@@ -9,7 +13,6 @@
 #include <fstream> // ifstream type
 #include <cmath> // math library
 
-//  root includes
 #include <TCanvas.h> //basic canvas class
 #include <TStyle.h> // style class
 #include <TLegend.h> // draw legend class
@@ -29,43 +32,46 @@
 // #include <TPaveText.h> // a PaveText is a Pave (see TPave) with text, lines or/and boxes inside.
 // #include <Rtypes.h> // basic types used by ROOT
 
-using namespace std;
 
 namespace analysis {
 
-  class histogram
-  {
-  private:
-    TCanvas* c1;
-    vector<string> samples;
-    double nbins;
-    double hmin; 
-    double hmax;
-    string ps_title;
-    string leg_title;
-    string x_label;
-    string y_label;
+	class histogram
+	{
+	private:
+		TCanvas* c1;
+		std::vector< std::vector<double> > samples;
+		double nbins;
+		double hmin; 
+		double hmax;
+		std::string ps_title;
+		std::string leg_title;
+		std::string x_label;
+		std::string y_label;
+		bool is_normalised;
 
-  public:
-    //=== Class constructor ===//
-    histogram();
+	public:
+		//=== Class constructor ===//
+		histogram();
 
-    //=== Class destructor ===//
-    // ~histogram() = default;
+		//=== Class destructor ===//
+		~histogram();
 
-    //=== Set histogram Options ===//
-    void set_ps_title(string ps);
-    void set_hist_bins(double nb);
-    void set_hist_range(double min, double max);
-    void set_x_label(string x);
-    void set_y_label(string y);
-    void set_leg_title(string title);
-    void add_sample(string file_name);
-    
-    //=== Draw histogram ===//
-    void draw();
-  };
+		//=== Set histogram Options ===//
+		void set_ps_title(std::string ps);
+		void set_hist_bins(double nb);
+		void set_hist_range(double min, double max);
+		void set_x_label(std::string x);
+		void set_y_label(std::string y);
+		void set_leg_title(std::string title);
+		void add_sample(std::vector<double> sample);
+		void normalise();
 
+		//=== Draw histogram ===//
+		void draw();
+	};
+
+
+/* NAMESPACE */
 }
 
 #endif

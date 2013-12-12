@@ -1,3 +1,8 @@
+/* Histogram class
+ *
+ * 
+*/
+
 #include "histogram.h"
 
 namespace analysis {
@@ -17,12 +22,18 @@ namespace analysis {
     	leg_title = "";
     	x_label = ""; 
     	y_label = "";
+		is_normalised = false;
+	}
+
+	histogram::~histogram()
+	{
+		delete c1;
 	}
 
 	// ========================================== // 
 	//	        Set Histogram Options 		   	  //
 	// ========================================== //
-	void histogram::set_ps_title(string ps)
+	void histogram::set_ps_title(std::string ps)
 	{
 		ps_title = ps;
 	}
@@ -38,24 +49,29 @@ namespace analysis {
 		hmax = max;
 	}
 
-	void histogram::set_x_label(string x)
+	void histogram::set_x_label(std::string x)
 	{
 		x_label = x;
 	}
 
-	void histogram::set_y_label(string y)
+	void histogram::set_y_label(std::string y)
 	{
 		y_label = y;
 	}
 
-	void histogram::set_leg_title(string title)
+	void histogram::set_leg_title(std::string title)
 	{
 		leg_title = title;
 	}
 
-	void histogram::add_sample(string file_name)
+	void histogram::add_sample(std::vector<double> sample)
 	{
-		samples.push_back(file_name);
+		samples.push_back(sample);
+	}
+
+	void histogram::normalise()
+	{
+		is_normalised = true;
 	}
 
 	// ========================================== // 
@@ -93,7 +109,7 @@ namespace analysis {
 	    int line_shape[4] = {1, 7, 3, 4};
 
 		//=== Set axes' labels ===//
-		stringstream labels;
+		std::stringstream labels;
 	    labels << ";" << x_label << ";" << y_label;
 
 	    //=== Variables to set the y-axis scale ===//
@@ -110,16 +126,19 @@ namespace analysis {
 	    	hist[iprc] = new TH1F("",labels.str().c_str(),nbins,hmin,hmax);
 
 	    	//=== File reading and fill histogram ===//
-	    	string infile = samples[iprc];
-    		ifstream ifs;
-    		ifs.open(infile.c_str(), ios::in);
-    		double value;
+			std::vector<double> list = samples[iprc];
+			for (unsigned int i = 0; i < list.size(); i++)
+			{
+				//=== Fill histogram ===//				
+				hist[iprc]->Fill(list[i]);
+			}
 
-	    	while( ifs ){
-	    		ifs >> value;
-	    		//=== Fill histogram ===//
-          		hist[iprc]->Fill(value);
-	    	}
+			if (is_normalised)
+			{
+				Double_t norm = 1;
+				Double_t scale = norm / hist[iprc]->Integral();
+				hist[iprc]->Scale(scale);
+			}
 
 	    	// for(int i=0; i<nbins; i++) hist[iprc]->SetBinContent(i, 1./(i+1));
 
@@ -148,7 +167,7 @@ namespace analysis {
 		TLegend *leg = new TLegend(x1,y1,x2,y2,leg_title.c_str());
 
 		for(int iprc = 0; iprc < nsamples; iprc++){
-    		stringstream lprc;
+    		std::stringstream lprc;
     		lprc << "Sample " << iprc+1;
     		leg->AddEntry(hist[iprc],lprc.str().c_str());
   		}
@@ -183,4 +202,6 @@ namespace analysis {
   		//=== Export .ps ===//
 		c1->Print(ps_title.c_str());
 	}
+
+/* NAMESPACE */
 }
