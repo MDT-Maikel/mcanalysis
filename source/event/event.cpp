@@ -5,6 +5,7 @@
 
 #include "event.h" 
 
+
 /* NAMESPACE */
 namespace analysis
 {
@@ -13,8 +14,11 @@ namespace analysis
 
 	event::~event() 
 	{
-		for (unsigned int i = 0; i < particles.size(); i++) 
+		for (unsigned int i = 0; i < particles.size(); i++)
+		{
 			delete particles[i];
+			particles[i] = nullptr;
+		}
 		particles.clear();
 	}
 
@@ -30,12 +34,12 @@ namespace analysis
 		return particles[n]; 
 	}
 
-	unsigned int event::size() 
+	unsigned int event::size() const
 	{ 
 		return particles.size(); 
 	}
 
-	void event::resize(unsigned int n) 
+	void event::resize(unsigned int n)  
 	{ 
 		particles.resize(n); 
 	}
@@ -45,16 +49,93 @@ namespace analysis
 		particles.push_back(p); 
 	}
 
+	void event::erase(int n)
+	{
+		particles.erase(particles.begin() + n);
+	}
+
 	void event::clear() 
 	{ 
 		particles.clear(); 
+	}
+
+	/* member access */
+
+	particle* event::get(int type, unsigned int number) const
+	{
+		unsigned int count = 0;		
+		for (unsigned int index = 0; index < size(); index++)
+		{
+			if ((particles[index])->type() == type)
+			{
+				count++;
+				if (count == number)
+					return particles[index];
+			}
+		}
+		return nullptr;
+	}
+
+	particle* event::get(int type, unsigned int number, double max_eta) const
+	{
+		unsigned int count = 0;		
+		for (unsigned int index = 0; index < size(); index++)
+		{
+			if (particles[index]->type() == type && std::abs(particles[index]->eta()) < max_eta)
+			{
+				count++;
+				if (count == number)
+					return particles[index];
+			}
+		}
+		return nullptr;
+	}
+
+	/* kinematics */
+
+	double event::met() const
+	{
+		double met = 0;
+		for (unsigned int index = 0; index < size(); index++)
+		{
+			particle *p = particles[index];
+			if (p->type() == particle::type_met)
+				met += p->pt();
+		}
+		return met;
+	}
+
+	double event::ht(int type, double min_pt, double max_eta) const
+	{
+		double ht = 0;
+		for (unsigned int index = 0; index < size(); index++)
+		{
+			particle *p = particles[index];
+			if (p->type() == type && p->pt() > min_pt && std::abs(p->eta()) < max_eta)
+				ht += p->pt();
+		}
+		return ht;
+	}
+
+	double event::mass() const
+	{
+		double pe = 0.0; double px = 0.0; double py = 0.0; double pz = 0.0;		
+		for (unsigned int index = 0; index < size(); index++)
+		{
+			particle *p = particles[index];
+			pe += p->pe();
+			px += p->px();
+			py += p->py();
+			pz += p->pz();
+		}
+		double inv_mass = std::pow(pe, 2.0) - std::pow(px, 2.0) - std::pow (py, 2.0) - std::pow(pz, 2.0);
+		return std::sqrt(std::max(inv_mass, 0.0));
 	}
 
 	/* input & output */
 
 	void event::write(std::ostream& os) const
 	{
-		os << "test" << std::endl;
 		for (unsigned int i = 0; i < particles.size(); i++)
 			particles[i]->write(os);
 	}
@@ -67,7 +148,6 @@ namespace analysis
 
 	void event::write(std::ofstream& ofs) const
 	{
-		ofs << "test" << std::endl;
 		for (unsigned int i = 0; i < particles.size(); i++)
 			particles[i]->write(ofs);
 	}

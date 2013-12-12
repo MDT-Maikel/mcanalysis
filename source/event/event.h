@@ -35,10 +35,20 @@ namespace analysis
 		/* member operations */
 		particle* operator[] (int n);
 		const particle* operator[] (int n) const;
-		unsigned int size();
+		unsigned int size() const;
 		void resize(unsigned int n);
 		void push_back(particle *p);
+		void erase(int n);
 		void clear();
+
+		/* member access */
+		particle* get(int type, unsigned int number) const;
+		particle* get(int type, unsigned int number, double max_eta) const;
+
+		/* kinematics */
+		double met() const;
+		double ht(int type, double min_pt, double max_eta) const;
+		double mass() const;
 
 		/* input & output */
 		void write(std::ostream& os) const;
