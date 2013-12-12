@@ -1,0 +1,28 @@
+command: git clone https://github.com/MDT-Maikel/mcanalysis.git <folder>
+purpose: clones the repository into the newly created directory <folder>
+
+command: git log
+command: git log --pretty=oneline
+command: git log --pretty=format:"%h - %an, %ar : %s"
+command: git log --pretty=format:"%h %s" --graph
+purpose: shows a log of the repository history in various formats
+
+command: git status
+purpose: overview of the current changes and files
+
+command: git add <file>
+purpose: add a file to the stage, these files/changes will be committed
+
+command: git commit -m "message"
+purpose: commit the files/changes to the local repository
+
+command: git pull origin master --rebase
+purpose: get existing commits from the server repository
+
+command: git push origin master
+purpose: add commits to the server repository
+
+command: git stash
+command: git stash pop
+purpose: 
+

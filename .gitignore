@@ -13,3 +13,6 @@
 
 # Dependency folder
 /deps
+
+# Files folder
+/files
