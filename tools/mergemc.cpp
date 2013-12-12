@@ -5,9 +5,10 @@
 
 #include <iostream>
 
+#include "boost/filesystem.hpp"
+
 #include "../source/utility/utility.h"
 #include "../source/event/event.h"
-#include "boost/filesystem.hpp"
 
 
 using namespace std;
@@ -28,6 +29,11 @@ int main(int argc, char* argv[])
 		read_lhco(events, files[i]);
 
 	write_lhco(events, "./merged.lhco.gz");
+
+	// delete events
+	for (unsigned int i = 0; i < events.size(); i++)
+		delete events[i];
+	events.clear();
 
 	return 0;
 }
