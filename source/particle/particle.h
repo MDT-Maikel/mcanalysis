@@ -27,6 +27,8 @@ namespace analysis
 		virtual ~particle() = default;
 
 		/* copy & assignment */
+		particle(const particle&) = default;
+    	particle& operator = (const particle&) = default;
 
 	public:
 
@@ -34,7 +36,7 @@ namespace analysis
 		// particle ids: from the pdg codes
 		enum particle_id 
 		{
-			nuebar = -12, positron,	topbar=-6, bottombar, charmbar, strangebar, upbar, downbar, gluon, up, down, strange, charm, bottom, top, electron = 11, nue
+			nuebar = -12, positron,	topbar = -6, bottombar, charmbar, strangebar, upbar, downbar, gluon, up, down, strange, charm, bottom, top, electron = 11, nue
 		};
 		enum particle_type
 		{
