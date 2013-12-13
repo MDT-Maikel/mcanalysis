@@ -42,3 +42,31 @@ are then derived classes from the <particle> class called <lhco> and <lhe>.
 ########################
 
 
+
+#########################
+### Used ROOT Classes ###
+#########################
+
+Used:
+<TCanvas.h>           basic canvas class
+<TStyle.h>            style class
+<TLegend.h>           draw legend class
+<TH1.h>               1D histogram class
+
+Not used:
+<TF1.h>               draw 1D functions class
+<TH2.h>               2D histogram class
+<TGraph.h>            graphics class
+<TNtuple.h>           N-tuple class
+<TVector3.h>          three-vector class
+<TLorentzVector.h>    Lorentz vector class
+<TRandom.h>           random number generation class
+<TRandom3.h>          extended random number generation class
+<TROOT.h>             entry point to the ROOT system
+<TChain.h>            access to collection of files containg TTree objects
+<TFile.h>             a ROOT file is a suite of consecutive data records (TKey's)
+<TTree.h>             a TTree object consists of a list of independent branches (TBranch)
+<TPaveText.h>         a PaveText is a Pave (see TPave) with text, lines or/and boxes inside.
+<Rtypes.h>            basic types used by ROOT
+
+

@@ -7,16 +7,15 @@
 
 namespace analysis {
 
-	// ========================================== // 
-	//	       	 	Class constructor	   		  //
-	// ========================================== //
+	/* con & destructor */
+
 	histogram::histogram() 
 	{
-		c1 = new TCanvas("","");
-		samples = {};
+		c1 = new TCanvas("", "");
 		nbins = 100;
 		hmin = 0;
 		hmax = 100;
+		auto_range = true;
 
 		ps_title = "new histogram";
     	leg_title = "";
@@ -30,23 +29,23 @@ namespace analysis {
 		delete c1;
 	}
 
-	// ========================================== // 
-	//	        Set Histogram Options 		   	  //
-	// ========================================== //
-	void histogram::set_ps_title(std::string ps)
+	/* histogram options */
+	
+	void histogram::set_title(std::string ps)
 	{
 		ps_title = ps;
 	}
 
-	void histogram::set_hist_bins(double nb)
+	void histogram::set_bins(double nb)
 	{
 		nbins = nb;
 	}
 
-	void histogram::set_hist_range(double min, double max)
+	void histogram::set_range(double min, double max)
 	{
 		hmin = min;
 		hmax = max;
+		auto_range = false;
 	}
 
 	void histogram::set_x_label(std::string x)
@@ -64,19 +63,20 @@ namespace analysis {
 		leg_title = title;
 	}
 
-	void histogram::add_sample(std::vector<double> sample)
+	void histogram::add_sample(const std::vector<double> & sample, const std::string & name, const std::string & line_color)
 	{
-		samples.push_back(sample);
+		sample_list.push_back(sample);
+		sample_colors.push_back(line_color);
+		sample_names.push_back(name);
 	}
 
-	void histogram::normalise()
+	void histogram::normalize()
 	{
 		is_normalised = true;
 	}
 
-	// ========================================== // 
-	//	        	Draw Histogram   			  //
-	// ========================================== // 
+	/* draw histogram */
+
 	void histogram::draw()
 	{	
 		// ========================================== // 
@@ -104,32 +104,42 @@ namespace analysis {
 		c1->SetLeftMargin(0.2);
 		c1->SetLogy(0);
 
-		//=== Set colors and line shapes ===//
+		/* set colors and line shapes */
 	    Color_t col[4] = {kBlack, kRed, kBlue, kGreen};
 	    int line_shape[4] = {1, 7, 3, 4};
 
-		//=== Set axes' labels ===//
+		/* set axes' labels */
 		std::stringstream labels;
 	    labels << ";" << x_label << ";" << y_label;
 
-	    //=== Variables to set the y-axis scale ===//
+	    /* variables for setting the axes scales */
   		double max = -100;
   		double ymax;
-
-  		//=== Construction of histogram collection ===//
-  		const int nsamples = samples.size();
+	
+  		/* construction of histogram collection */
+  		const int nsamples = sample_list.size();
 	    TH1F* hist[nsamples];
 
 	    for (int iprc = 0; iprc < nsamples; ++iprc)
 	    {
-	    	//=== Histogram construction ===//
-	    	hist[iprc] = new TH1F("",labels.str().c_str(),nbins,hmin,hmax);
+			std::vector<double> list = sample_list[iprc];
 
-	    	//=== File reading and fill histogram ===//
-			std::vector<double> list = samples[iprc];
+	    	// find max and min entry for auto range option.
+			if (auto_range)
+			{
+				auto result = std::minmax_element(list.begin(), list.end());
+				double min = *result.first;
+				double max = *result.second;
+				if (min < hmin) hmin = min;
+				if (max > hmax) hmax = max;
+			}
+
+			// construct one histogram per sample
+			hist[iprc] = new TH1F("", labels.str().c_str(), nbins, hmin, hmax);
+
+			// read the sample and fill the histogram
 			for (unsigned int i = 0; i < list.size(); i++)
 			{
-				//=== Fill histogram ===//				
 				hist[iprc]->Fill(list[i]);
 			}
 
@@ -153,24 +163,17 @@ namespace analysis {
   		hist[0]->SetMaximum(1.1 * max);
 
 
-		// ========================================== // 
-		//		   	     Define Legend 				  //
-		// ========================================== // 
+		/* make a legend */
 
-		//=== Set Legend position ===//
+		// make legend at position
 		double x1 = 0.65;
 		double x2 = 0.89;
 		double y1 = 0.87;
 		double y2 = 0.64;
-			
-		//=== Add entries ===//
-		TLegend *leg = new TLegend(x1,y1,x2,y2,leg_title.c_str());
+		TLegend *leg = new TLegend(x1, y1, x2, y2, leg_title.c_str());
 
-		for(int iprc = 0; iprc < nsamples; iprc++){
-    		std::stringstream lprc;
-    		lprc << "Sample " << iprc+1;
-    		leg->AddEntry(hist[iprc],lprc.str().c_str());
-  		}
+		for (int iprc = 0; iprc < nsamples; iprc++)
+    		leg->AddEntry(hist[iprc], sample_names[iprc].c_str());
 
   		//=== Set Legend cosmetic ===//
 		leg->SetBorderSize(0);

@@ -57,7 +57,7 @@ namespace analysis
 				}
 			}
 		}
-
+		// TODO: fix method for list of strings
 		std::vector<Type> result;
 		char c; int index = 0; std::stringstream num[30]; 
 		while (stream.get(c))

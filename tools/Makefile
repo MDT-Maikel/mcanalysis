@@ -18,13 +18,16 @@ DEPS = $(DEPSLOCAL) $(DEPSGLOBAL)
 
 ### Object Files ###
 OBJ = \
-	../source/particle/lhco.o ../source/particle/particle.o  ../source/particle/lhe.o ../source/event/event.o \
-	../source/utility/utility.o ../source/histogram/histogram.o \
+	../source/particle/lhco.o ../source/particle/particle.o ../source/particle/lhe.o \
+	../source/event/event.o \
+	../source/utility/utility.o \
+	../source/histogram/histogram.o \
+	../source/plot/plot.o \
 	../source/cuts/cuts.o ../source/cuts/cuts_standard.o ../source/cuts/cuts_advanced.o
 
 ### Make EXES ###
 
-all: mergemc cutmc
+all: mergemc cutmc plotmc
 
 mergemc: mergemc.o $(OBJ)
 	$(COMPILER) $(LDFLAGS) $(DEPS) -o $@ $+ $(LINKS) 
@@ -32,9 +35,12 @@ mergemc: mergemc.o $(OBJ)
 cutmc: cutmc.o $(OBJ)
 	$(COMPILER) $(LDFLAGS) $(DEPS) -o $@ $+ $(LINKS) 
 
+plotmc: plotmc.o $(OBJ)
+	$(COMPILER) $(LDFLAGS) $(DEPS) -o $@ $+ $(LINKS) 
+
 ### Make Clean ###
 clean:
-	rm -f mergemc mergemc.o cutmc cutmc.o $(OBJ)
+	rm -f mergemc mergemc.o cutmc cutmc.o plotmc plotmc.o $(OBJ)
 
 ### Make Targets ###
 
@@ -42,6 +48,9 @@ mergemc.o: mergemc.cpp
 	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
 cutmc.o: cutmc.cpp 
+	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
+
+plotmc.o: plotmc.cpp 
 	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
 ../source/particle/particle.o: ../source/particle/particle.cpp ../source/particle/particle.h 
@@ -60,6 +69,9 @@ cutmc.o: cutmc.cpp
 	$(COMPILER) $(CFLAGS) -c -o $@ $<
 
 ../source/histogram/histogram.o: ../source/histogram/histogram.cpp ../source/histogram/histogram.h
+	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
+
+../source/plot/plot.o: ../source/plot/plot.cpp ../source/plot/plot.h
 	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
 ../source/cuts/cuts.o: ../source/cuts/cuts.cpp ../source/cuts/cuts.h 

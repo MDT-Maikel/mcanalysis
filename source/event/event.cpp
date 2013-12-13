@@ -63,6 +63,7 @@ namespace analysis
 
 	particle* event::get(int type, unsigned int number) const
 	{
+		// TODO: safety checks for number		
 		unsigned int count = 0;		
 		for (unsigned int index = 0; index < size(); index++)
 		{
@@ -78,6 +79,7 @@ namespace analysis
 
 	particle* event::get(int type, unsigned int number, double max_eta) const
 	{
+		// TODO: safety checks for number	
 		unsigned int count = 0;		
 		for (unsigned int index = 0; index < size(); index++)
 		{

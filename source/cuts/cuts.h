@@ -31,7 +31,7 @@ namespace analysis
 		virtual bool passed(const event *ev);
 
 		double efficiency() const;
-		virtual std::string name() const; 
+		virtual std::string name() const;
 
 		// methods to track the efficiency
 		void increase_total();

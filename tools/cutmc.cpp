@@ -75,15 +75,15 @@ int main(int argc, char* argv[])
 
 	histogram tast;
 
-	tast.set_ps_title("met.ps");
-	tast.set_hist_bins(100);
-	tast.set_hist_range(0,1000);
+	tast.set_title("met.ps");
+	tast.set_bins(100);
+	tast.set_range(0,1000);
 	tast.set_x_label("met");
 	tast.set_y_label("# events");
 	tast.set_leg_title("Legend");		
 	tast.add_sample(metlist);
 	tast.add_sample(htlist);
-	tast.normalise();
+	tast.normalize();
 	tast.draw();
 
 
