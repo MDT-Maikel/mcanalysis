@@ -7,8 +7,8 @@
 
 #include "boost/filesystem.hpp"
 
-#include "../source/utility/utility.h"
-#include "../source/event/event.h"
+#include "../../source/utility/utility.h"
+#include "../../source/event/event.h"
 
 
 using namespace std;

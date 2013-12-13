@@ -11,8 +11,22 @@
 *.lhco.gz
 *.lhe.gz
 
+# Image/plot files
+*.ps
+*.png
+*.pdf
+
 # Dependency folder
 /deps
 
 # Files folder
 /files
+
+# Test folder
+/test
+
+# Tool programs
+/tools/mergemc
+/tools/cutmc
+/tools/plotmc
+

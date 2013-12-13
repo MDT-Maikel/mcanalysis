@@ -17,40 +17,40 @@ DEPSGLOBAL = -I$(ROOTSYS)/include
 DEPS = $(DEPSLOCAL) $(DEPSGLOBAL)
 
 ### Object Files ###
-OBJ = \
-	../source/particle/lhco.o ../source/particle/particle.o ../source/particle/lhe.o \
-	../source/event/event.o \
-	../source/utility/utility.o \
-	../source/histogram/histogram.o \
-	../source/plot/plot.o \
-	../source/cuts/cuts.o ../source/cuts/cuts_standard.o ../source/cuts/cuts_advanced.o
+OBJPART = ../source/particle/lhco.o ../source/particle/particle.o ../source/particle/lhe.o
+OBJEVNT = ../source/event/event.o 
+OBJUTIL = ../source/utility/utility.o
+OBJHIST = ../source/histogram/histogram.o
+OBJPLOT = ../source/plot/plot.o
+OBJCUTS = ../source/cuts/cuts.o ../source/cuts/cuts_standard.o ../source/cuts/cuts_advanced.o
+OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS)
 
 ### Make EXES ###
 
 all: mergemc cutmc plotmc
 
-mergemc: mergemc.o $(OBJ)
+mergemc: merge/mergemc.o $(OBJ)
 	$(COMPILER) $(LDFLAGS) $(DEPS) -o $@ $+ $(LINKS) 
 
-cutmc: cutmc.o $(OBJ)
+cutmc: cut/cutmc.o $(OBJ)
 	$(COMPILER) $(LDFLAGS) $(DEPS) -o $@ $+ $(LINKS) 
 
-plotmc: plotmc.o $(OBJ)
+plotmc: plot/plotmc.o $(OBJ)
 	$(COMPILER) $(LDFLAGS) $(DEPS) -o $@ $+ $(LINKS) 
 
 ### Make Clean ###
 clean:
-	rm -f mergemc mergemc.o cutmc cutmc.o plotmc plotmc.o $(OBJ)
+	rm -f mergemc merge/mergemc.o cutmc cut/cutmc.o plotmc plot/plotmc.o $(OBJ)
 
 ### Make Targets ###
 
-mergemc.o: mergemc.cpp 
+merge/mergemc.o: merge/mergemc.cpp 
 	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
-cutmc.o: cutmc.cpp 
+cut/cutmc.o: cut/cutmc.cpp 
 	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
-plotmc.o: plotmc.cpp 
+plot/plotmc.o: plot/plotmc.cpp 
 	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
 ../source/particle/particle.o: ../source/particle/particle.cpp ../source/particle/particle.h 
