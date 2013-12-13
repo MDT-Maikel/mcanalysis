@@ -11,7 +11,8 @@ namespace analysis {
 
 	histogram::histogram() 
 	{
-		c1 = new TCanvas("", "");
+		std::random_device rd;		
+		c1 = new TCanvas(boost::lexical_cast<std::string>(rd()).c_str(), "");
 		nbins = 100;
 		hmin = 0;
 		hmax = 100;
@@ -22,6 +23,7 @@ namespace analysis {
     	x_label = ""; 
     	y_label = "";
 		is_normalised = false;
+		has_logy = false;
 	}
 
 	histogram::~histogram()
@@ -61,6 +63,11 @@ namespace analysis {
 	void histogram::set_leg_title(std::string title)
 	{
 		leg_title = title;
+	}
+
+	void histogram::set_logy(bool on)
+	{
+		has_logy = on;
 	}
 
 	void histogram::add_sample(const std::vector<double> & sample, const std::string & name, const std::string & line_color)
@@ -103,6 +110,8 @@ namespace analysis {
 		c1->SetBottomMargin(0.2);
 		c1->SetLeftMargin(0.2);
 		c1->SetLogy(0);
+		if (has_logy)
+			c1->SetLogy(1);
 
 		/* set colors and line shapes */
 	    Color_t col[4] = {kBlack, kRed, kBlue, kGreen};
@@ -160,7 +169,11 @@ namespace analysis {
 	    }
 
 	    //=== Set the y-axis scale ===//
-  		hist[0]->SetMaximum(1.1 * max);
+		if (has_logy)
+			max *= 3;
+		else 
+			max *= 1.1;
+  		hist[0]->SetMaximum(max);
 
 
 		/* make a legend */
@@ -204,6 +217,12 @@ namespace analysis {
 
   		//=== Export .ps ===//
 		c1->Print(ps_title.c_str());
+
+		for (int iprc = 0; iprc < nsamples; ++iprc)
+  		{
+			delete hist[iprc];
+  		}
+		delete leg;
 	}
 
 /* NAMESPACE */

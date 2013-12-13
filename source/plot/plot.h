@@ -26,8 +26,10 @@ namespace analysis
 	public:
 		plot();
 		~plot();
+
+		virtual void add_sample(const std::vector<event*> &events, const std::string &name);
 		
-		virtual void run(std::vector<event*> &events); 
+		void run(); 
 		
 		/* plot properties */
 		virtual std::string name() const;
@@ -36,24 +38,6 @@ namespace analysis
 		histogram hist;
 
 	private:
-
-	};
-
-	/* plot pt class */
-	class plot_pt : public plot
-	{
-		
-	public:
-		plot_pt(int t, unsigned int n);
-
-		void run(std::vector<event*> &events); 
-
-		/* plot properties */
-		std::string name() const; 
-
-	private:
-		int type;
-		unsigned int number;
 
 	};
 

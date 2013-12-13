@@ -6,18 +6,21 @@
 #ifndef INC_HISTOGRAM
 #define INC_HISTOGRAM
 
-#include <algorithm> 
-#include <iostream>
-#include <vector> 
-#include <string> 
-#include <sstream> 
+#include <algorithm>
+#include <cmath>
 #include <fstream>
-#include <cmath> 
+#include <iostream>
+#include <random>
+#include <sstream>
+#include <string> 
+#include <vector> 
 
 #include <TCanvas.h> 
 #include <TStyle.h> 
 #include <TLegend.h>
 #include <TH1.h> 
+
+#include "boost/lexical_cast.hpp"
 
 
 namespace analysis {
@@ -38,8 +41,10 @@ namespace analysis {
 		void set_x_label(std::string x);
 		void set_y_label(std::string y);
 		void set_leg_title(std::string title);
-		void add_sample(const std::vector<double> & sample, const std::string & name = "", const std::string & line_color = "standard");
+		void set_logy(bool on);
 		void normalize();
+
+		void add_sample(const std::vector<double> & sample, const std::string & name = "", const std::string & line_color = "standard");
 
 		/* draw histogram */
 		void draw();
@@ -60,6 +65,7 @@ namespace analysis {
 		std::string x_label;
 		std::string y_label;
 		bool is_normalised;
+		bool has_logy;
 
 	};
 

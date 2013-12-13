@@ -8,8 +8,9 @@ COMPILER = $(CC) $(COPTS)
 ### Libraries ###
 LBOOST = -lboost_filesystem -lboost_system
 LGZSTREAM = -L../deps/gzstream/ -lz -lgzstream
-LROOT = -L$(ROOTSYS)/lib -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -pthread -lm -ldl
+LROOT = -L$(ROOTSYS)/lib -lCore -lCint -lRIO -lNet -lHist -lGpad -lGraf3d -lGraf -lPostscript -lMatrix -lPhysics -lMathCore -lThread -pthread -lm -ldl
 LINKS = $(LGZSTREAM) $(LBOOST) $(LROOT)
+# -lTree -lRint 
 
 ### Dependencies ###
 DEPSLOCAL = ../deps/gzstream/gzstream.h ../deps/gzstream/gzstream.C 
@@ -21,7 +22,7 @@ OBJPART = ../source/particle/lhco.o ../source/particle/particle.o ../source/part
 OBJEVNT = ../source/event/event.o 
 OBJUTIL = ../source/utility/utility.o
 OBJHIST = ../source/histogram/histogram.o
-OBJPLOT = ../source/plot/plot.o
+OBJPLOT = ../source/plot/plot.o ../source/plot/plot_standard.o
 OBJCUTS = ../source/cuts/cuts.o ../source/cuts/cuts_standard.o ../source/cuts/cuts_advanced.o
 OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS)
 
@@ -72,6 +73,9 @@ plot/plotmc.o: plot/plotmc.cpp
 	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
 ../source/plot/plot.o: ../source/plot/plot.cpp ../source/plot/plot.h
+	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
+
+../source/plot/plot_standard.o: ../source/plot/plot_standard.cpp ../source/plot/plot_standard.h
 	$(COMPILER) $(CFLAGS) $(DEPSGLOBAL) -c -o $@ $<
 
 ../source/cuts/cuts.o: ../source/cuts/cuts.cpp ../source/cuts/cuts.h 
