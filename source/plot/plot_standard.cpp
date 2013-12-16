@@ -116,10 +116,7 @@ namespace analysis
 	{
 		std::string n = "mass_" + boost::lexical_cast<std::string>(type) + "_";
 		for (unsigned int i = 0; i < comb.size(); ++i)
-		{
 			n = n + boost::lexical_cast<std::string>(comb[i]);
-			std::cout << comb[i] << std::endl;
-		}
 		return n;
 	}
 

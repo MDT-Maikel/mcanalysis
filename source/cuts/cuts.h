@@ -36,6 +36,7 @@ namespace analysis
 		// methods to track the efficiency
 		void increase_total();
 		void increase_passed();
+		void clear();
 
 		unsigned int get_total() const;
 		unsigned int get_passed() const;
@@ -55,8 +56,10 @@ namespace analysis
 	public:
 		cuts();
 		
-		void apply(std::vector<event*> &events);
 		void add_cut(cut *add);
+		void apply(std::vector<event*> &events);
+		void clear();
+	
 		void write(std::ostream& os) const;
 		void write(std::ofstream& ofs) const;	
 

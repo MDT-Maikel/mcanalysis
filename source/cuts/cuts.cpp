@@ -54,6 +54,12 @@ namespace analysis
 		pass++;
 	}
 
+	void cut::clear()
+	{
+		total = 0;
+		pass = 0;
+	}
+
 	unsigned int cut::get_total() const
 	{
 		return total;
@@ -70,6 +76,11 @@ namespace analysis
 	{
 		total = 0;
 		pass = 0;
+	}
+
+	void cuts::add_cut(cut *add)
+	{
+		cut_list.push_back(add);
 	}
 
 	void cuts::apply(std::vector<event*> &events)
@@ -103,9 +114,13 @@ namespace analysis
 		}
 	}
 
-	void cuts::add_cut(cut *add)
+	void cuts::clear()
 	{
-		cut_list.push_back(add);
+		total = 0;
+		pass = 0;
+		// also clear the different cuts in the list
+		for (unsigned int i = 0; i < cut_list.size(); i++)
+			cut_list[i]->clear();		
 	}
 
 	void cuts::write(std::ostream& os) const
