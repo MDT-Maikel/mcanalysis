@@ -70,6 +70,25 @@ namespace analysis
 
 	};
 
+	/* plot mass class */
+	class plot_mass : public plot
+	{
+		
+	public:
+		plot_mass();
+
+		void add_sample(const std::vector<event*> &events, const std::string &name); 
+
+		/* plot properties */
+		std::string name() const; 
+		void set_type(int t);
+		void set_comb(const std::vector<int> &p);
+
+	private:
+		int type;
+		std::vector<int> comb;
+	};
+
 /* NAMESPACE */
 }
 

@@ -19,7 +19,7 @@ namespace analysis
 		hist.set_x_label("pt");
 		hist.set_y_label("# events");
 		hist.set_leg_title("Legend");
-		hist.set_title("plot_" + name() + ".ps");
+		hist.set_title("plot_" + name());
 	}
 
 	void plot_pt::add_sample(const std::vector<event*> &events, const std::string &name)
@@ -47,7 +47,7 @@ namespace analysis
 		hist.set_x_label("met");
 		hist.set_y_label("# events");
 		hist.set_leg_title("Legend");
-		hist.set_title("plot_" + name() + ".ps");
+		hist.set_title("plot_" + name());
 	}
 
 	void plot_met::add_sample(const std::vector<event*> &events, const std::string &name)
@@ -73,7 +73,6 @@ namespace analysis
 		hist.set_x_label("ht");
 		hist.set_y_label("# events");
 		hist.set_leg_title("Legend");
-		hist.set_title("plot_" + name() + ".ps");
 	}
 
 	void plot_ht::add_sample(const std::vector<event*> &events, const std::string &name)
@@ -91,6 +90,49 @@ namespace analysis
 	{
 		return "ht";
 	}
+
+	/* plot mass class */
+
+	plot_mass::plot_mass() : plot()
+	{
+		hist.set_x_label("mass");
+		hist.set_y_label("# events");
+		hist.set_leg_title("Legend");
+		hist.set_title("plot_" + name());
+	}
+
+	void plot_mass::add_sample(const std::vector<event*> &events, const std::string &name)
+	{
+		std::vector<double> mass;
+		for (unsigned int j = 0; j < events.size(); j++)
+		{
+			event *ev = events[j];
+			mass.push_back(ev->mass(type, comb));
+		}
+		hist.add_sample(mass, name);
+	}	
+
+	std::string plot_mass::name() const
+	{
+		std::string n = "mass_" + boost::lexical_cast<std::string>(type) + "_";
+		for (unsigned int i = 0; i < comb.size(); ++i)
+		{
+			n = n + boost::lexical_cast<std::string>(comb[i]);
+			std::cout << comb[i] << std::endl;
+		}
+		return n;
+	}
+
+	void plot_mass::set_type(int t)
+	{
+		type = t;
+	}
+
+	void plot_mass::set_comb(const std::vector<int> &c)
+	{
+		comb = c;
+	}
+
 
 /* NAMESPACE */
 }

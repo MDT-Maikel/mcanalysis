@@ -119,6 +119,7 @@ namespace analysis
 		return ht;
 	}
 
+	// returns the invariant mass of all the particles in the event
 	double event::mass() const
 	{
 		double pe = 0.0; double px = 0.0; double py = 0.0; double pz = 0.0;		
@@ -129,6 +130,30 @@ namespace analysis
 			px += p->px();
 			py += p->py();
 			pz += p->pz();
+		}
+		double inv_mass = std::pow(pe, 2.0) - std::pow(px, 2.0) - std::pow (py, 2.0) - std::pow(pz, 2.0);
+		return std::sqrt(std::max(inv_mass, 0.0));
+	}
+
+	// returns the invariant mass of the combination of particle of the requested type
+	double event::mass(int type, const std::vector<int> &comb) const
+	{
+		double pe = 0.0; double px = 0.0; double py = 0.0; double pz = 0.0;
+		unsigned int count = 0;	
+		for (unsigned int index = 0; index < size(); index++)
+		{
+			particle *p = particles[index];
+			if (p->type() == type)
+			{
+				count++;
+				if (std::find(comb.begin(), comb.end(), count) != comb.end())
+				{
+					pe += p->pe();
+					px += p->px(); 
+					py += p->py();
+					pz += p->pz();
+				}
+			}
 		}
 		double inv_mass = std::pow(pe, 2.0) - std::pow(px, 2.0) - std::pow (py, 2.0) - std::pow(pz, 2.0);
 		return std::sqrt(std::max(inv_mass, 0.0));
