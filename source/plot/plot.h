@@ -24,17 +24,24 @@ namespace analysis
 	{
 
 	public:
+	
+		/* con & destructor */
 		plot();
 		~plot();
 
+		/* plot properties */
 		virtual void add_sample(const std::vector<event*> &events, const std::string &name);
-		
 		void run(); 
 		
 		/* plot properties */
 		virtual std::string name() const;
 
+		void set_logy(bool on);
+		void set_stacked(bool on);
+		void set_normalized(bool on);
+
 	public:
+
 		histogram hist;
 
 	private:

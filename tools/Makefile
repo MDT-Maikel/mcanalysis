@@ -27,7 +27,6 @@ OBJCUTS = ../source/cuts/cuts.o ../source/cuts/cuts_standard.o ../source/cuts/cu
 OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS)
 
 ### Make EXES ###
-
 all: mergemc cutmc plotmc
 
 mergemc: merge/mergemc.o $(OBJ)

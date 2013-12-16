@@ -11,14 +11,17 @@
 #include <fstream>
 #include <iostream>
 #include <random>
-#include <sstream>
 #include <string> 
 #include <vector> 
 
-#include <TCanvas.h> 
-#include <TStyle.h> 
-#include <TLegend.h>
+#include <TCanvas.h>
+#include <TColor.h>
+#include <THStack.h>
 #include <TH1.h> 
+#include <TLegend.h>
+#include <TROOT.h>
+#include <TStyle.h> 
+
 
 #include "boost/lexical_cast.hpp"
 
@@ -42,20 +45,22 @@ namespace analysis {
 		void set_y_label(std::string y);
 		void set_leg_title(std::string title);
 		void set_logy(bool on);
-		void normalize();
+		void set_normalized(bool on);
+		void set_stacked(bool on);
 
+		/* histogram data */
 		void add_sample(const std::vector<double> & sample, const std::string & name = "", const std::string & line_color = "standard");
 
-		/* draw histogram */
+		/* histogram drawing */
 		void draw();
 
 	private:
 
-		TCanvas* c1;
 		std::vector< std::vector<double> > sample_list;
 		std::vector<std::string> sample_colors;
 		std::vector<std::string> sample_names;
 
+		/* histogram options */
 		double nbins;
 		double hmin; 
 		double hmax;
@@ -66,6 +71,7 @@ namespace analysis {
 		std::string y_label;
 		bool is_normalised;
 		bool has_logy;
+		bool is_stacked;
 
 	};
 

@@ -39,24 +39,29 @@ int main(int argc, char* argv[])
 
 	// plotting
 	plot_pt pt1(particle::type_jet, 1);
+	pt1.set_stacked(true);
+	pt1.set_logy(false);
 	pt1.add_sample(qcd_2j, "qcd_2j");
 	pt1.add_sample(qcd_3j, "qcd_3j");
 	pt1.add_sample(qcd_4j, "qcd_4j");
 	pt1.run();
 
 	plot_pt pt2(particle::type_jet, 2);
+	pt2.set_stacked(true);
 	pt2.add_sample(qcd_2j, "qcd_2j");
 	pt2.add_sample(qcd_3j, "qcd_3j");
 	pt2.add_sample(qcd_4j, "qcd_4j");
 	pt2.run();
 
 	plot_met met;
+	met.set_stacked(true);
 	met.add_sample(qcd_2j, "qcd_2j");
 	met.add_sample(qcd_3j, "qcd_3j");
 	met.add_sample(qcd_4j, "qcd_4j");
 	met.run();
 
 	plot_ht ht;
+	ht.set_stacked(false);
 	ht.add_sample(qcd_2j, "qcd_2j");
 	ht.add_sample(qcd_3j, "qcd_3j");
 	ht.add_sample(qcd_4j, "qcd_4j");

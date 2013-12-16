@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 	tast.set_leg_title("Legend");		
 	tast.add_sample(metlist);
 	tast.add_sample(htlist);
-	tast.normalize();
+	tast.set_normalized(true);
 	tast.draw();
 
 

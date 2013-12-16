@@ -15,10 +15,10 @@ namespace analysis
 	plot::plot()
 	{
 		// standard histogram options		
-		hist.set_title(name() + ".ps");
+		hist.set_title(name() + ".png");
 		hist.set_leg_title("Legend");
 		hist.set_bins(100);
-		hist.set_logy(true);	
+		hist.set_logy(true);
 	}
 
 	plot::~plot()
@@ -32,14 +32,32 @@ namespace analysis
 
 	void plot::run()
 	{
-		// draw histogram
-		hist.normalize();
+		// set histogram title based on name
+		hist.set_title("plot_" + name());
+		// draw histograms
 		hist.draw();
-	}	
+	}
+
+	/* plot properties */
 
 	std::string plot::name() const
 	{
 		return "WARNING: using base plot class";
+	}
+
+	void plot::set_logy(bool on)
+	{
+		hist.set_logy(on);
+	}
+
+	void plot::set_stacked(bool on)
+	{
+		hist.set_stacked(on);
+	}
+
+	void plot::set_normalized(bool on)
+	{
+		hist.set_normalized(on);
 	}
 
 /* NAMESPACE */
