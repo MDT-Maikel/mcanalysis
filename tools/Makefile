@@ -65,7 +65,7 @@ plot/plotmc.o: plot/plotmc.cpp
 ../source/event/event.o: ../source/event/event.cpp ../source/event/event.h 
 	$(COMPILER) $(CFLAGS) -c -o $@ $<
 
-../source/utility/utility.o: ../source/utility/utility.cpp ../source/utility/utility.h 
+../source/utility/utility.o: ../source/utility/utility.cpp ../source/utility/utility.h ../source/utility/utility.tpp
 	$(COMPILER) $(CFLAGS) -c -o $@ $<
 
 ../source/histogram/histogram.o: ../source/histogram/histogram.cpp ../source/histogram/histogram.h

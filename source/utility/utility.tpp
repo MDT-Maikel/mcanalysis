@@ -57,24 +57,23 @@ namespace analysis
 				}
 			}
 		}
-		// TODO: fix method for list of strings
+
+		// extract vector of type from string stream
 		std::vector<Type> result;
-		char c; int index = 0; std::stringstream num[30]; 
+		char c; int index = 0; std::stringstream num; 
 		while (stream.get(c))
 		{		
 			if (c == '{')
 				continue;
 			if (c == ',' || c == '}') 
 			{
-				Type resonance; num[index] >> resonance;
+				Type resonance; num >> resonance;
 				result.push_back(resonance);
 				index++;
 			}
 			else
-				num[index] << c;
-		}
-
-		
+				num << c;
+		}		
 		return result;
 	}
 
