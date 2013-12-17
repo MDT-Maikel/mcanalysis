@@ -12,20 +12,22 @@ namespace analysis
 
 	/* plot base class */
 
-	plot::plot()
+	plot::plot(std::string new_name)
 	{
 		// standard histogram options		
 		hist.set_title(name() + ".png");
 		hist.set_leg_title("Legend");
 		hist.set_bins(100);
 		hist.set_logy(true);
+		// name defaults to empty string
+		plot_name = new_name;
 	}
 
 	plot::~plot()
 	{
 	}
 
-	void plot::add_sample(const std::vector<event*> &events, const std::string &name)
+	void plot::add_sample(const std::vector<event*> &events, const std::string &name, double weight)
 	{
 		// implementation: add data to histogram and set sample name
 	}
@@ -42,7 +44,14 @@ namespace analysis
 
 	std::string plot::name() const
 	{
+		if (plot_name != "")
+			return plot_name;		
 		return "WARNING: using base plot class";
+	}
+
+	void plot::set_name(std::string n)
+	{
+		plot_name = n;
 	}
 
 	void plot::set_logy(bool on)

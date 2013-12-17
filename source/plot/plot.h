@@ -26,15 +26,16 @@ namespace analysis
 	public:
 	
 		/* con & destructor */
-		plot();
+		plot(std::string new_name = "");
 		~plot();
 
 		/* plot properties */
-		virtual void add_sample(const std::vector<event*> &events, const std::string &name);
+		virtual void add_sample(const std::vector<event*> &events, const std::string &name, double weight = 1);
 		void run(); 
 		
 		/* plot properties */
 		virtual std::string name() const;
+		void set_name(std::string n);
 
 		void set_logy(bool on);
 		void set_stacked(bool on);
@@ -43,6 +44,7 @@ namespace analysis
 	public:
 
 		histogram hist;
+		std::string plot_name;
 
 	private:
 

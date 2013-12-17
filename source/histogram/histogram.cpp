@@ -80,11 +80,11 @@ namespace analysis {
 
 	/* histogram data */
 
-	void histogram::add_sample(const std::vector<double> & sample, const std::string & name, const std::string & line_color)
+	void histogram::add_sample(const std::vector<double> & sample, const std::string & name, double weight)
 	{
 		sample_list.push_back(sample);
-		sample_colors.push_back(line_color);
 		sample_names.push_back(name);
+		sample_weights.push_back(weight);
 	}
 
 	/* histogram drawing */
@@ -167,12 +167,12 @@ namespace analysis {
 			// read the sample and fill the histogram
 			for (unsigned int i = 0; i < list.size(); i++)
 			{
-				hist[iprc]->Fill(list[i]);
+				hist[iprc]->Fill(list[i], sample_weights[iprc]);
 			}
 
 			if (is_normalised)
 			{
-				Double_t norm = 1;
+				Double_t norm = sample_weights[iprc];
 				Double_t scale = norm / hist[iprc]->Integral();
 				hist[iprc]->Scale(scale);
 			}

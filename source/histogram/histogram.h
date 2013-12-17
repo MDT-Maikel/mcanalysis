@@ -49,7 +49,7 @@ namespace analysis {
 		void set_stacked(bool on);
 
 		/* histogram data */
-		void add_sample(const std::vector<double> & sample, const std::string & name = "", const std::string & line_color = "standard");
+		void add_sample(const std::vector<double> & sample, const std::string & name = "", double weight = 1);
 
 		/* histogram drawing */
 		void draw();
@@ -57,8 +57,8 @@ namespace analysis {
 	private:
 
 		std::vector< std::vector<double> > sample_list;
-		std::vector<std::string> sample_colors;
 		std::vector<std::string> sample_names;
+		std::vector<double> sample_weights;
 
 		/* histogram options */
 		double nbins;

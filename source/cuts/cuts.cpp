@@ -114,6 +114,13 @@ namespace analysis
 		}
 	}
 
+	double cuts::efficiency() const
+	{
+		if (total == 0)
+			return 0.0;
+		return static_cast<double>(pass) / total;
+	}
+
 	void cuts::clear()
 	{
 		total = 0;

@@ -22,7 +22,7 @@ namespace analysis
 		hist.set_title("plot_" + name());
 	}
 
-	void plot_pt::add_sample(const std::vector<event*> &events, const std::string &name)
+	void plot_pt::add_sample(const std::vector<event*> &events, const std::string &name, double weight)
 	{
 		std::vector<double> pt;
 		for (unsigned int j = 0; j < events.size(); j++)
@@ -32,11 +32,13 @@ namespace analysis
 			if (p)
 				pt.push_back(p->pt());
 		}
-		hist.add_sample(pt, name);
+		hist.add_sample(pt, name, weight);
 	}	
 
 	std::string plot_pt::name() const
 	{
+		if (plot_name != "")
+			return plot_name;		
 		return "pt particle " + boost::lexical_cast<std::string>(number) + "";
 	}
 
@@ -50,7 +52,7 @@ namespace analysis
 		hist.set_title("plot_" + name());
 	}
 
-	void plot_met::add_sample(const std::vector<event*> &events, const std::string &name)
+	void plot_met::add_sample(const std::vector<event*> &events, const std::string &name, double weight)
 	{
 		std::vector<double> met;
 		for (unsigned int j = 0; j < events.size(); j++)
@@ -58,11 +60,13 @@ namespace analysis
 			event *ev = events[j];				
 			met.push_back(ev->met());
 		}
-		hist.add_sample(met, name);
+		hist.add_sample(met, name, weight);
 	}	
 
 	std::string plot_met::name() const
 	{
+		if (plot_name != "")
+			return plot_name;		
 		return "met";
 	}
 
@@ -75,7 +79,7 @@ namespace analysis
 		hist.set_leg_title("Legend");
 	}
 
-	void plot_ht::add_sample(const std::vector<event*> &events, const std::string &name)
+	void plot_ht::add_sample(const std::vector<event*> &events, const std::string &name, double weight)
 	{
 		std::vector<double> ht;
 		for (unsigned int j = 0; j < events.size(); j++)
@@ -83,11 +87,13 @@ namespace analysis
 			event *ev = events[j];				
 			ht.push_back(ev->ht(particle::type_jet, 40, 2.8));
 		}
-		hist.add_sample(ht, name);
+		hist.add_sample(ht, name, weight);
 	}	
 
 	std::string plot_ht::name() const
 	{
+		if (plot_name != "")
+			return plot_name;
 		return "ht";
 	}
 
@@ -101,7 +107,7 @@ namespace analysis
 		hist.set_title("plot_" + name());
 	}
 
-	void plot_mass::add_sample(const std::vector<event*> &events, const std::string &name)
+	void plot_mass::add_sample(const std::vector<event*> &events, const std::string &name, double weight)
 	{
 		std::vector<double> mass;
 		for (unsigned int j = 0; j < events.size(); j++)
@@ -109,11 +115,13 @@ namespace analysis
 			event *ev = events[j];
 			mass.push_back(ev->mass(type, comb));
 		}
-		hist.add_sample(mass, name);
+		hist.add_sample(mass, name, weight);
 	}	
 
 	std::string plot_mass::name() const
 	{
+		if (plot_name != "")
+			return plot_name;		
 		std::string n = "mass_" + boost::lexical_cast<std::string>(type) + "_";
 		for (unsigned int i = 0; i < comb.size(); ++i)
 			n = n + boost::lexical_cast<std::string>(comb[i]);

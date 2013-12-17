@@ -27,7 +27,7 @@ namespace analysis
 	public:
 		plot_pt(int t, unsigned int n);
 
-		void add_sample(const std::vector<event*> &events, const std::string &name); 
+		void add_sample(const std::vector<event*> &events, const std::string &name, double weight = 1); 
 
 		/* plot properties */
 		std::string name() const; 
@@ -45,7 +45,7 @@ namespace analysis
 	public:
 		plot_met();
 
-		void add_sample(const std::vector<event*> &events, const std::string &name); 
+		void add_sample(const std::vector<event*> &events, const std::string &name, double weight = 1); 
 
 		/* plot properties */
 		std::string name() const; 
@@ -61,7 +61,7 @@ namespace analysis
 	public:
 		plot_ht();
 
-		void add_sample(const std::vector<event*> &events, const std::string &name); 
+		void add_sample(const std::vector<event*> &events, const std::string &name, double weight = 1); 
 
 		/* plot properties */
 		std::string name() const; 
@@ -77,7 +77,7 @@ namespace analysis
 	public:
 		plot_mass();
 
-		void add_sample(const std::vector<event*> &events, const std::string &name); 
+		void add_sample(const std::vector<event*> &events, const std::string &name, double weight = 1); 
 
 		/* plot properties */
 		std::string name() const; 

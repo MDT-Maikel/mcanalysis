@@ -58,6 +58,7 @@ namespace analysis
 		
 		void add_cut(cut *add);
 		void apply(std::vector<event*> &events);
+		double efficiency() const;
 		void clear();
 	
 		void write(std::ostream& os) const;

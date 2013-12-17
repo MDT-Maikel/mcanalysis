@@ -31,11 +31,11 @@ int main(int argc, char* argv[])
 	
 	// load events
 	vector<event*> qcd_2j;
-	read_lhco(qcd_2j, "../files/various/qcd_2j.lhco.gz");
+	read_lhco(qcd_2j, "../files/qcd_2j.lhco.gz");
 	vector<event*> qcd_3j;
-	read_lhco(qcd_3j, "../files/various/qcd_3j.lhco.gz");
+	read_lhco(qcd_3j, "../files/qcd_3j.lhco.gz");
 	vector<event*> qcd_4j;
-	read_lhco(qcd_4j, "../files/various/qcd_4j.lhco.gz");
+	read_lhco(qcd_4j, "../files/qcd_4j.lhco.gz");
 
 	// plotting
 	plot_pt pt1(particle::type_jet, 1);
