@@ -119,9 +119,10 @@ namespace analysis
 				else
 					file_igz_nohead >> num;
 			}
+			
+			// push back into the event vector
 			events.push_back(ev);
 		}
-
 	}
 
 	// write lhco events into a file
@@ -136,7 +137,10 @@ namespace analysis
 		for (unsigned int index = 0; index < events.size(); index++)
 		{
 			event *ev = events[index];
+			
+			// print the event header
 			file_ogz << 0 << "\t" << index + 1 << "\t" << 0 << std::endl;
+			
 			// loop over all particles
 			for (unsigned int i = 0; i < ev->size(); i++)
 			{
@@ -147,8 +151,73 @@ namespace analysis
 		}
 	}
 
+	// reads lhe events into a vector of events
+	void read_lhe(std::vector<event*> & events, boost::filesystem::path file)
+	{
+		// open the file with gzstream	
+		std::string file_name = file.string();
+		igzstream file_igz;
+		file_igz.open(file_name.c_str(), std::ios::in);
+		
+		// variable to dump useless stuff into
+		std::string dump;
+		
+		// loop over all events with a while loop 
+		// and search for the <event> tag
+		while (file_igz >> dump)
+		{
+			// found the start of an event
+			if (dump == "<event>")
+			{
+				// get the number of particles in the event
+				unsigned int nr_particles;
+				file_igz >> nr_particles;
+				
+				// dump the five remaining useless variables
+				file_igz >> dump >> dump >> dump >> dump >> dump;
+				
+				// make a new event and fill it
+				event *ev = new event;
+				for (unsigned int i = 0; i < nr_particles; i++)
+				{
+					lhe *p = new lhe;
+					p->read(file_igz);
+					ev->push_back(p);
+				}
 
+				// push back into the event vector
+				events.push_back(ev);						
+			}			
+		}
+	}
 
+	// write lhe events into a file
+	void write_lhe(const std::vector<event*> & events, boost::filesystem::path file)
+	{
+		// open the file with gzstream	
+		std::string file_name = file.string();
+		ogzstream file_ogz;
+		file_ogz.open(file_name.c_str());
+		
+		// loop over all events
+		for (unsigned int index = 0; index < events.size(); index++)
+		{
+			event *ev = events[index];
+			
+			// print the event header
+			file_ogz << "<event>" << std::endl;
+			file_ogz << ev->size() << "\t";
+			file_ogz << "0 \t 0 \t 0 \t 0 \t 0" << std::endl;
+			
+			// loop over all particles
+			for (unsigned int i = 0; i < ev->size(); i++)
+			{
+				particle *p = (*ev)[i];
+				p->write(file_ogz);
+			}
+			file_ogz << "</event>" << std::endl;
+		}
+	}
 
 /* NAMESPACE */
 }

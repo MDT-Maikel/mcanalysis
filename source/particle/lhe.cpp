@@ -24,6 +24,7 @@ namespace analysis
 
 	int lhe::id() const { return p_id; }
 	int lhe::type() const { return 0; } // TODO transform p_id into p_type if not set
+	bool lhe::is_final() const { return p_inout == 1; }
 
 	/* kinematics */
 
@@ -50,37 +51,63 @@ namespace analysis
 	void lhe::write(std::ostream& os) const
 	{
 		os << p_id << "\t" << p_inout << "\t" << p_mother1 << "\t" << p_mother2 << "\t" << p_color1 << "\t" << p_color2 << "\t" << std::fixed;
-		os << std::setprecision(7) << p_px << "\t" << p_py << "\t" << p_pz << "\t" << p_pe << "\t" << p_mass << "\t";
-		os << std::setprecision(1) << p_btag << "\t" << p_hel << std::endl;
+		os << std::scientific << std::setprecision(7) << p_px << "\t" << p_py << "\t" << p_pz << "\t" << p_pe << "\t" << p_mass << "\t";
+		os << std::fixed << std::setprecision(1) << p_btag << "\t" << p_hel << std::endl;
 	}
 
 	void lhe::read(std::istream& is)
 	{
-		is >> p_id >> p_inout >> p_mother1 >> p_mother2 >> p_color1 >> p_color2 >> p_px >> p_py >> p_pz >> p_pe >> p_mass >> p_btag >> p_hel;
+		std::string str_px, str_py, str_pz, str_pe, str_mass;
+		is >> p_id >> p_inout >> p_mother1 >> p_mother2 >> p_color1 >> p_color2 >> str_px >> str_py >> str_pz >> str_pe >> str_mass >> p_btag >> p_hel;
+		p_px = boost::lexical_cast<double>(str_px);
+		p_py = boost::lexical_cast<double>(str_py);
+		p_pz = boost::lexical_cast<double>(str_pz);
+		p_pe = boost::lexical_cast<double>(str_pe);
+		p_mass = boost::lexical_cast<double>(str_mass);	
 	}
 
 	void lhe::write(std::ofstream& ofs) const
 	{
 		ofs << p_id << "\t" << p_inout << "\t" << p_mother1 << "\t" << p_mother2 << "\t" << p_color1 << "\t" << p_color2 << "\t" << std::fixed;
-		ofs << std::setprecision(7) << p_px << "\t" << p_py << "\t" << p_pz << "\t" << p_pe << "\t" << p_mass << "\t";
-		ofs << std::setprecision(1) << p_btag << "\t" << p_hel << std::endl;
+		ofs << std::scientific << std::setprecision(7) << p_px << "\t" << p_py << "\t" << p_pz << "\t" << p_pe << "\t" << p_mass << "\t";
+		ofs << std::fixed << std::setprecision(1) << p_btag << "\t" << p_hel << std::endl;
 	}
 
 	void lhe::read(std::ifstream& ifs) 
 	{
-		ifs >> p_id >> p_inout >> p_mother1 >> p_mother2 >> p_color1 >> p_color2 >> p_px >> p_py >> p_pz >> p_pe >> p_mass >> p_btag >> p_hel;
+		std::string str_px, str_py, str_pz, str_pe, str_mass;
+		ifs >> p_id >> p_inout >> p_mother1 >> p_mother2 >> p_color1 >> p_color2 >> str_px >> str_py >> str_pz >> str_pe >> str_mass >> p_btag >> p_hel;
+		p_px = boost::lexical_cast<double>(str_px);
+		p_py = boost::lexical_cast<double>(str_py);
+		p_pz = boost::lexical_cast<double>(str_pz);
+		p_pe = boost::lexical_cast<double>(str_pe);
+		p_mass = boost::lexical_cast<double>(str_mass);	
 	}
 
 	void lhe::write(ogzstream& ogzs) const
 	{
 		ogzs << p_id << "\t" << p_inout << "\t" << p_mother1 << "\t" << p_mother2 << "\t" << p_color1 << "\t" << p_color2 << "\t" << std::fixed;
-		ogzs << std::setprecision(7) << p_px << "\t" << p_py << "\t" << p_pz << "\t" << p_pe << "\t" << p_mass << "\t";
-		ogzs << std::setprecision(1) << p_btag << "\t" << p_hel << std::endl;
+		ogzs << std::scientific << std::setprecision(7) << p_px << "\t" << p_py << "\t" << p_pz << "\t" << p_pe << "\t" << p_mass << "\t";
+		ogzs << std::fixed << std::setprecision(1) << p_btag << "\t" << p_hel << std::endl;
 	}
 
 	void lhe::read(igzstream& igzs)
 	{
-		igzs >> p_id >> p_inout >> p_mother1 >> p_mother2 >> p_color1 >> p_color2 >> p_px >> p_py >> p_pz >> p_pe >> p_mass >> p_btag >> p_hel;
+		std::string str_px, str_py, str_pz, str_pe, str_mass;
+		igzs >> p_id >> p_inout >> p_mother1 >> p_mother2 >> p_color1 >> p_color2 >> str_px >> str_py >> str_pz >> str_pe >> str_mass >> p_btag >> p_hel;
+		p_px = boost::lexical_cast<double>(str_px);
+		p_py = boost::lexical_cast<double>(str_py);
+		p_pz = boost::lexical_cast<double>(str_pz);
+		p_pe = boost::lexical_cast<double>(str_pe);
+		p_mass = boost::lexical_cast<double>(str_mass);		
+	}
+	
+	double lhe::convert(std::string sci) const
+	{
+		double result = 0;
+		
+		
+		return result;
 	}
 
 /* NAMESPACE */

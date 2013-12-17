@@ -33,6 +33,12 @@ namespace analysis
 	// write lhco events into a file
 	void write_lhco(const std::vector<event*> & events, boost::filesystem::path file);
 
+	// read lhe events into a file
+	void read_lhe(std::vector<event*> & events, boost::filesystem::path file);
+
+	// write lhe events into a file
+	void write_lhe(const std::vector<event*> & events, boost::filesystem::path file);
+
 	// read a single setting from a file
 	template <typename Type>
 	Type read_settings(std::string settings_file, std::string identifier);

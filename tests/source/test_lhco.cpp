@@ -44,23 +44,26 @@ int main(int argc, const char* argv[])
 	
 	// check approximate transverse momentum balance of each event
 	bool test_momentum_passed = true;
-	for (unsigned int i = 0; i < events.size(); i++)
+	if (test_reading_passed)
 	{
-		event *ev = events[i];
-		double px_sum = 0;
-		double py_sum = 0;
-		for (unsigned int j = 0; j < ev->size(); j++)
+		for (unsigned int i = 0; i < events.size(); i++)
 		{
-			px_sum += (*ev)[j]->px();
-			py_sum += (*ev)[j]->py();
-		}
-		// transverse momentum imbalance may at most be 200 GeV
-		if (sqrt(px_sum * px_sum + py_sum * py_sum) > 200)
-		{
-			cout << "momentum imbalance found (px, py): (" << px_sum << ", " << py_sum << ")" << endl;
-			test_momentum_passed = false;
-		}
-	}	
+			event *ev = events[i];
+			double px_sum = 0;
+			double py_sum = 0;
+			for (unsigned int j = 0; j < ev->size(); j++)
+			{
+				px_sum += (*ev)[j]->px();
+				py_sum += (*ev)[j]->py();
+			}
+			// transverse momentum imbalance may at most be 200 GeV
+			if (sqrt(px_sum * px_sum + py_sum * py_sum) > 200)
+			{
+				cout << "momentum imbalance found (px, py): (" << px_sum << ", " << py_sum << ")" << endl;
+				test_momentum_passed = false;
+			}
+		}	
+	}
 		
 	// if reading has succeeded write the events to file
 	bool test_writing_passed = false;
@@ -69,7 +72,6 @@ int main(int argc, const char* argv[])
 		write_lhco(events, "output/test_lhco_events.lhco.gz");
 		
 		// test whether the writing has succeeded
-		
 		if (is_regular_file("output/test_lhco_events.lhco.gz"))
 		{
 			// check file size of the newly created lhco file 

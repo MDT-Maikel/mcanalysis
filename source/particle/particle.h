@@ -48,6 +48,7 @@ namespace analysis
 		/* properties */
 		virtual int id() const;
 		virtual int type() const;
+		virtual bool is_final() const;
 
 		/* kinematics */
 		virtual double px() const;

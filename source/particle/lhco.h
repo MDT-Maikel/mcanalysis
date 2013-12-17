@@ -6,6 +6,11 @@
 #ifndef INC_LHCO
 #define INC_LHCO
 
+#include <cmath>
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+
 #include "../../deps/gzstream/gzstream.h"
 
 #include "particle.h"

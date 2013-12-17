@@ -18,6 +18,7 @@ namespace analysis
 
 	int particle::id() const { return 0; }
 	int particle::type() const { return 0; }
+	bool particle::is_final() const { return true; }
 
 	/* kinematics */
 

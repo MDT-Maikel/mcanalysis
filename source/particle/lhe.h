@@ -6,6 +6,14 @@
 #ifndef INC_LHE
 #define INC_LHE
 
+#include <cmath>
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+#include <boost/lexical_cast.hpp>
+
 #include "../../deps/gzstream/gzstream.h"
 
 #include "particle.h"
@@ -32,6 +40,7 @@ namespace analysis
 		/* properties */
 		int id() const;
 		int type() const;
+		bool is_final() const;
 
 		/* kinematics */
 		double px() const;
@@ -52,6 +61,7 @@ namespace analysis
 		void read(std::ifstream& ifs);
 		void write(ogzstream& ogzs) const;
 		void read(igzstream& igzs);
+		double convert(std::string sci) const;
 
 	private:
 
