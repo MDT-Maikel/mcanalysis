@@ -152,7 +152,7 @@ namespace analysis {
 			std::vector<double> list = sample_list[iprc];
 
 	    	// find max and min entry for auto range option.
-			if (auto_range)
+			if (auto_range && !list.empty())
 			{
 				auto result = std::minmax_element(list.begin(), list.end());
 				double min = *result.first;
