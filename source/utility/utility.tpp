@@ -60,19 +60,20 @@ namespace analysis
 
 		// extract vector of type from string stream
 		std::vector<Type> result;
-		char c; int index = 0; std::stringstream num; 
+		char c; int index = 0; std::stringstream temp; 
 		while (stream.get(c))
 		{		
 			if (c == '{')
 				continue;
 			if (c == ',' || c == '}') 
 			{
-				Type resonance; num >> resonance;
+				Type resonance; temp >> resonance;
+				temp.str(std::string()); temp.clear();
 				result.push_back(resonance);
-				index++;
+				index++;				
 			}
 			else
-				num << c;
+				temp << c;
 		}		
 		return result;
 	}
