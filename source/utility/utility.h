@@ -13,7 +13,8 @@
 #include <string>
 #include <vector>
 
-#include "boost/filesystem.hpp"
+#include <boost/filesystem.hpp>
+
 #include "../../deps/gzstream/gzstream.h"
 
 #include "../event/event.h"

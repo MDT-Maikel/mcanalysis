@@ -24,6 +24,12 @@ namespace analysis
 	{
 	}
 
+	void cut::init()
+	{
+		// this function is called just before the cut is applied to a list of events
+		// it can be used to initialize certain variables
+	}
+
 	bool cut::passed(const event *ev)
 	{
 		std::cout << "WARNING: called virtual cut base class." << std::endl; 
@@ -83,35 +89,31 @@ namespace analysis
 		cut_list.push_back(add);
 	}
 
-	void cuts::apply(std::vector<event*> &events)
+	void cuts::apply(std::vector<event*> &events) 
 	{
-		for (int index = events.size() - 1; index >= 0; index--)
-		{				
-			total++;			
+		// store the total number of events	
+		total = events.size();		
+	
+		// loop over all cuts and events
+		for (unsigned int i = 0; i < cut_list.size(); i++)
+		{
+			cut *apply_cut = cut_list[i];
+			apply_cut->init();
 
-			bool passed = true;
-			event *ev = events[index];
-
-			for (unsigned int i = 0; i < cut_list.size(); i++)
-			{
-				cut *apply_cut = cut_list[i];
-				if (!apply_cut->passed(ev))
+			for (int index = events.size() - 1; index >= 0; index--)
+			{	
+				event *ev = events[index];
+				if (ev != nullptr && !apply_cut->passed(ev))
 				{
-					passed = false;
-					break;
+					// delete also the pointer to the event.
+					delete ev;
+					events.erase(events.begin() + index);
 				}
 			}
-			if (!passed)
-			{
-				// delete also the pointer to the event.
-				delete events[index];
-				events.erase(events.begin() + index);
-			}
-			else
-			{
-				pass++;
-			}
 		}
+
+		// store the passed number of events
+		pass = events.size();
 	}
 
 	double cuts::efficiency() const

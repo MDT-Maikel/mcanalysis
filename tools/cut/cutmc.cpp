@@ -23,9 +23,10 @@ using namespace boost::filesystem;
 int main(int argc, char* argv[])
 {
 	
-	vector<path> files(get_files("../files/sized", ".lhco.gz", true));
-	for (unsigned int i = 0; i < files.size(); i++)
-		cout << files[i].string() << endl;
+	//vector<path> files(get_files("../files/sized", ".lhco.gz", true));
+	//for (unsigned int i = 0; i < files.size(); i++)
+	//	cout << files[i].string() << endl;
+	vector<path> files = {"thousand_events.lhco.gz"};
 	
 	vector<event*> events;
 	for (unsigned int i = 0; i < files.size(); i++)

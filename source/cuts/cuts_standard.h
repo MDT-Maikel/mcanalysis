@@ -11,7 +11,7 @@
 #include <iostream>
 #include <string>
 
-#include "boost/lexical_cast.hpp"
+#include <boost/lexical_cast.hpp>
 
 #include "../event/event.h"
 #include "cuts.h"

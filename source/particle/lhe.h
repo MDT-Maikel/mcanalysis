@@ -6,8 +6,9 @@
 #ifndef INC_LHE
 #define INC_LHE
 
-#include "particle.h"
 #include "../../deps/gzstream/gzstream.h"
+
+#include "particle.h"
 
 
 /* NAMESPACE */

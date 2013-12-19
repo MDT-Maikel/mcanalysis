@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "boost/lexical_cast.hpp"
+#include <boost/lexical_cast.hpp>
 
 #include "plot.h"
 #include "../event/event.h"

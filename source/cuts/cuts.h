@@ -28,6 +28,7 @@ namespace analysis
 		cut();
 		virtual ~cut();
 
+		void init();
 		virtual bool passed(const event *ev);
 
 		double efficiency() const;
