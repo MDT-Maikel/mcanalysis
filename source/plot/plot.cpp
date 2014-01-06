@@ -14,13 +14,15 @@ namespace analysis
 
 	plot::plot(std::string new_name)
 	{
-		// standard histogram options		
-		hist.set_title(name() + ".png");
-		hist.set_leg_title("Legend");
-		hist.set_bins(100);
-		hist.set_logy(true);
 		// name defaults to empty string
 		plot_name = new_name;
+		plot_folder = "";
+
+		// standard histogram options		
+		hist.set_title(plot_folder + "plot_" + name());
+		hist.set_leg_title("Legend");
+		hist.set_bins(100);
+		hist.set_logy(true);	
 	}
 
 	plot::~plot()
@@ -35,7 +37,7 @@ namespace analysis
 	void plot::run()
 	{
 		// set histogram title based on name
-		hist.set_title("plot_" + name());
+		hist.set_title(plot_folder + "plot_" + name());
 		// draw histograms
 		hist.draw();
 	}
@@ -52,6 +54,11 @@ namespace analysis
 	void plot::set_name(std::string n)
 	{
 		plot_name = n;
+	}
+
+	void plot::set_folder(std::string f)
+	{
+		plot_folder = f;
 	}
 
 	void plot::set_logy(bool on)

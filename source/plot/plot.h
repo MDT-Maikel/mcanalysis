@@ -36,6 +36,7 @@ namespace analysis
 		/* plot properties */
 		virtual std::string name() const;
 		void set_name(std::string n);
+		void set_folder(std::string f);
 
 		void set_logy(bool on);
 		void set_stacked(bool on);
@@ -45,6 +46,7 @@ namespace analysis
 
 		histogram hist;
 		std::string plot_name;
+		std::string plot_folder;
 
 	private:
 
