@@ -28,6 +28,7 @@ namespace analysis
 	{
 		// this function is called just before the cut is applied to a list of events
 		// it can be used to initialize certain variables
+		std::cout << "WARNING: called virtual cut base class." << std::endl;
 	}
 
 	bool cut::passed(const event *ev)
@@ -103,9 +104,9 @@ namespace analysis
 			for (int index = events.size() - 1; index >= 0; index--)
 			{	
 				event *ev = events[index];
-				if (ev != nullptr && !apply_cut->passed(ev))
+				if (!apply_cut->passed(ev))
 				{
-					// delete also the pointer to the event.
+					// delete also the pointer to the event
 					delete ev;
 					events.erase(events.begin() + index);
 				}

@@ -27,8 +27,8 @@ namespace analysis
 	public:
 		cut();
 		virtual ~cut();
-
-		void init();
+	
+		virtual void init();
 		virtual bool passed(const event *ev);
 
 		double efficiency() const;

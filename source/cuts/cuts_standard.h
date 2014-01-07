@@ -28,6 +28,7 @@ namespace analysis
 	public:
 		cut_pt(int t = 0, unsigned int n = 0, double pt = 0, double eta = 5);
 	
+		void init();
 		bool passed(const event *ev);
 		
 		std::string name() const;
@@ -52,6 +53,7 @@ namespace analysis
 	public:
 		cut_met(double met = 0);
 
+		void init();
 		bool passed(const event *ev);
 
 		std::string name() const;
@@ -70,6 +72,7 @@ namespace analysis
 	public:
 		cut_ht(int t = 0, double pt = 0, double eta = 0, double ht = 0);
 	
+		void init();
 		bool passed(const event *ev);
 
 		std::string name() const;
@@ -91,6 +94,7 @@ namespace analysis
 	public:
 		cut_veto(int t = 0, double pt = 0, double eta = 0);
 
+		void init();
 		bool passed(const event *ev);
 
 		std::string name() const;

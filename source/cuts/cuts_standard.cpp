@@ -21,6 +21,10 @@ namespace analysis
 		etamax = eta;
 	}
 
+	void cut_pt::init()
+	{
+	}
+
 	bool cut_pt::passed(const event *ev) 
 	{
 		// increase total number of events which went through this cut.	
@@ -68,6 +72,10 @@ namespace analysis
 		metcut = met;
 	}
 
+	void cut_met::init()
+	{
+	}
+
 	bool cut_met::passed(const event *ev)
 	{
 		// increase total number of events which went through this cut.	
@@ -99,6 +107,10 @@ namespace analysis
 		htcut = ht;
 	}
 
+	void cut_ht::init()
+	{
+	}
+
 	bool cut_ht::passed(const event *ev)
 	{
 		// increase total number of events which went through this cut.	
@@ -127,6 +139,10 @@ namespace analysis
 		type = t;
 		min_pt = pt;
 		max_eta = eta;
+	}
+
+	void cut_veto::init()
+	{
 	}
 
 	bool cut_veto::passed(const event *ev)
