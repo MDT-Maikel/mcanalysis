@@ -67,9 +67,10 @@ namespace analysis
 				continue;
 			if (c == ',' || c == '}') 
 			{
-				Type resonance; temp >> resonance;
+				// reached end of entry => read and store it				
+				Type entry; temp >> entry;
 				temp.str(std::string()); temp.clear();
-				result.push_back(resonance);
+				result.push_back(entry);
 				index++;				
 			}
 			else

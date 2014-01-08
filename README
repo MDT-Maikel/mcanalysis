@@ -14,8 +14,10 @@ class in which one can implement an analysis.
 ####################
 ### Dependencies ###
 ####################
-Folder /deps ignored by git and used to put in external libraries. Put here gzstream library
-from http://www.cs.unc.edu/Research/compgeom/gzstream/ and compile it.
+Folder /deps ignored by git and used to put in external libraries. This folder should contain the following
+libraries:
+ * gzstream: library from http://www.cs.unc.edu/Research/compgeom/gzstream/ and make it.
+ * fastjet: latest release from http://fastjet.fr/all-releases.html and make it.
 
 
 ######################
