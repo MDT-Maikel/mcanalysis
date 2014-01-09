@@ -14,6 +14,8 @@
 #include <string> 
 #include <vector> 
 
+#include <boost/lexical_cast.hpp>
+
 #include <TCanvas.h>
 #include <TColor.h>
 #include <THStack.h>
@@ -21,8 +23,6 @@
 #include <TLegend.h>
 #include <TROOT.h>
 #include <TStyle.h> 
-
-#include <boost/lexical_cast.hpp>
 
 
 namespace analysis {

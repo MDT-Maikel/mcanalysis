@@ -16,7 +16,7 @@ purpose: add a file to the stage, these files/changes will be committed
 command: git commit -m "message"
 purpose: commit the files/changes to the local repository
 
-command: git pull origin master --rebase
+command: git pull --rebase origin master 
 purpose: get existing commits from the server repository
 
 command: git push origin master

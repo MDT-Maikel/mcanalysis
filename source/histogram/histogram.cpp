@@ -166,9 +166,7 @@ namespace analysis {
 
 			// read the sample and fill the histogram
 			for (unsigned int i = 0; i < list.size(); i++)
-			{
 				hist[iprc]->Fill(list[i], sample_weights[iprc]);
-			}
 
 			if (is_normalised)
 			{
