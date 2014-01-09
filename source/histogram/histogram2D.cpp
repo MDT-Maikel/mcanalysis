@@ -117,7 +117,7 @@ namespace analysis {
 			Py_Initialize();
 
 	    	PyRun_SimpleString("import sys, string, random");
-	    	PyRun_SimpleString("sys.path.append('../source/histogram2D')");
+	    	PyRun_SimpleString("sys.path.append('../source/histogram')");
 	    	// PyRun_SimpleString("sys.path.append(\".\")");
 
 	    	py::list l_values;
