@@ -1,0 +1,25 @@
+##################
+### Unit Tests ###
+##################
+A suit of basic test programs which test the mc analysis source code in the
+folder "/source".
+
+Compile all unit tests by writing in a shell:
+
+	cd mcanalysis/tests
+	make
+
+Then run the tests by writing
+
+	./test_<name of test>
+
+At all times all tests should compile and return success on running.
+
+
+####################
+### Organization ###
+####################
+All unit tests should consist of a single .cpp file which tests a single 
+class or structure in "/source". Outputs like files or images should be 
+placed in the folder "/output". The executables reside in the main folder
+"/tests" itself. 
