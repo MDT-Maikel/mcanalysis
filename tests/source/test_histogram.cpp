@@ -3,6 +3,8 @@
 */
 
 #include <iostream> 
+#include <cmath>
+#include <ctime>
 #include <random>
 #include <vector> 
 
@@ -16,6 +18,14 @@ using namespace analysis;
 // main program
 int main(int argc, const char* argv[]) 
 {
+	// initiate timing procedure
+	clock_t clock_old;
+	clock_old = clock();
+	double duration;
+	
+	
+	/* 1D histogram */
+	
 	// test one dimensional histogram: counting x 
 	histogram hist_1d;
 	hist_1d.set_title("output/test_histogram_1D");
@@ -43,47 +53,103 @@ int main(int argc, const char* argv[])
 	hist_1d.add_sample(gauss, "gauss");
 	hist_1d.add_sample(gamma, "gamma");
 	hist_1d.draw();
+	
+	// log results
+	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
+	clock_old = clock();
+	cout << "=====================================================================" << endl;
+	cout << "Histogram test: 1D histogram completed in " << duration << " seconds." << endl;
+	cout << "Should have exp. falling background with gaussian and gamma peaks." << endl;
+	cout << "=====================================================================" << endl;
 
+
+	/* 2D histogram: XY pairs */
 
 	// test two dimensional histogram: counting x vs y
+	unsigned int nr_bins = 20;
 	histogram2D hist_2d_xy;
 	hist_2d_xy.set_title("output/test_histogram_2D_XY");
-	hist_2d_xy.set_x_bins(100);
-	hist_2d_xy.set_y_bins(100);
+	hist_2d_xy.set_x_bins(nr_bins);
+	hist_2d_xy.set_y_bins(nr_bins);
 	hist_2d_xy.set_x_range(0, 100);
 	hist_2d_xy.set_y_range(0, 100);
 	hist_2d_xy.set_x_label("x");
 	hist_2d_xy.set_y_label("y");
+	hist_2d_xy.set_palette();
 	
-	// create the xy sample using an exp for x and a gaussian for y
+	// create the xy sample using a gaussian for both x and y
+	normal_distribution<double> dist_gauss_xy(50.0, 25.0);
 	vector< vector<double> > sample_xy;
-	for (int i = 0; i < 500000; i++)
-		sample_xy.push_back({dist_exp(rd), dist_gauss(rd)});
-	
+	for (unsigned int i = 0; i < 500000; i++)
+		sample_xy.push_back({dist_gauss_xy(rd), dist_gauss_xy(rd)});
+		
+	// draw the histogram	
 	hist_2d_xy.add_sample_xy(sample_xy);
 	hist_2d_xy.draw();
+	
+	// log results
+	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
+	clock_old = clock();
+	cout << "=====================================================================" << endl;
+	cout << "Histogram test: 2D histogram XY completed in " << duration << " seconds." << endl;
+	cout << "Should have 2D gaussian peak around (50, 50)." << endl;
+	cout << "=====================================================================" << endl;
 		
+		
+	/* 2D histogram: XYZ pairs */
 	
 	// test two-dimensional histogram: plotting (x, y, z) pairs
 	histogram2D hist_2d_xyz;
-	hist_2d_xyz.set_x_bins(10);
-	hist_2d_xyz.set_y_bins(10);
-	hist_2d_xyz.set_x_range(1, 6);
-	hist_2d_xyz.set_y_range(1, 10);
+	hist_2d_xyz.set_x_bins(2 * nr_bins);
+	hist_2d_xyz.set_y_bins(2 * nr_bins);
+	hist_2d_xyz.set_x_range(0, 100);
+	hist_2d_xyz.set_y_range(0, 100);
 	hist_2d_xyz.set_title("output/test_histogram_2D_XYZ");
-	hist_2d_xyz.set_hist_title("histogram");
-	hist_2d_xyz.set_x_label("x label");
-	hist_2d_xyz.set_y_label("y label");
+	hist_2d_xyz.set_x_label("x");
+	hist_2d_xyz.set_y_label("y");
 	hist_2d_xyz.set_palette();
-
-	// sample to histogram and draw
-	vector< vector<double> > sample_xyz = {
-		{1, 1, 9}, {1, 2, 3}, {1, 3, 4}, {1, 4, 5}, {1, 5, 6}, {1, 6, 7}, {1, 7, 8}, {1, 9, 10},
-		{2, 1, 2}, {2, 2, 3}, {2, 3, 4}, {2, 4, 5}, {2, 5, 6}, {2, 6, 7}, {2, 7, 8}, {2, 9, 10}, 
-		{3, 1, 2}, {3, 2, 3}, {3, 3, 4}, {3, 4, 5}, {3, 5, 6}, {3, 6, 7}, {3, 7, 8}, {3, 9, 10}, 
-		{4, 1, 2}, {4, 2, 3}, {4, 3, 4}, {4, 4, 5}, {4, 5, 6}, {4, 6, 7}, {4, 7, 8}, {4, 9, 10}, 
-		{5, 1, 2}, {5, 2, 3}, {5, 3, 4}, {5, 4, 5}, {5, 5, 6}, {5, 6, 7}, {5, 7, 8}, {5, 9, 10}		
-	};
-	hist_2d_xyz.add_sample_xyz(sample_xyz);
+	
+	// create the xyz sample by using the same sample as for the xy case
+	vector< vector<double> > sample_xyz;
+	for (unsigned int i = 0; i < nr_bins; i++)
+	{
+		vector<double> zero_vec(nr_bins, 0.0);
+		sample_xyz.push_back(zero_vec);
+	}
+	for (unsigned int i = 0; i < sample_xy.size(); i++)
+	{
+		double x = sample_xy[i][0];
+		double y = sample_xy[i][1];
+		
+		unsigned int posx = static_cast<unsigned int>(std::round(nr_bins * x / 100));
+		unsigned int posy = static_cast<unsigned int>(std::round(nr_bins * y / 100));
+		
+		if (posx >= 0 && posx < nr_bins && posy >= 0 && posy < nr_bins)
+			sample_xyz[posx][posy]++;
+	}
+	
+	// convert binned data to list
+	vector< vector<double> > list_xyz;
+	for (unsigned int i = 0; i < sample_xyz.size(); i++)
+	{
+		vector<double> xyz = sample_xyz[i];
+		for (unsigned int j = 0; j < xyz.size(); j++)
+		{
+			double x = static_cast<double>(i) * 100.0 / nr_bins + 50.0 / nr_bins;
+			double y = static_cast<double>(j) * 100.0 / nr_bins + 50.0 / nr_bins;
+			list_xyz.push_back({x, y, sample_xyz[i][j]});
+		}
+	}
+	
+	// draw the histogram
+	hist_2d_xyz.add_sample_xyz(list_xyz);
 	hist_2d_xyz.draw();
+	
+	// log results
+	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
+	clock_old = clock();
+	cout << "=====================================================================" << endl;
+	cout << "Histogram test: 2D histogram XYZ completed in " << duration << " seconds." << endl;
+	cout << "Should have same 2D gaussian peak as XY with double resolution." << endl;
+	cout << "=====================================================================" << endl;
 }

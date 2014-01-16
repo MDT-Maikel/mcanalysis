@@ -41,10 +41,9 @@
 		void set_x_range(double x_min, double x_max);
 		void set_y_range(double y_min, double y_max);
 		void set_title(std::string ps);
-		void set_hist_title(std::string title);
 		void set_x_label(std::string x);
 		void set_y_label(std::string y);
-		void set_palette(std::string name = "", const Int_t NCont = 999);
+		void set_palette(std::string name = "", const Int_t ncont = 999);
 		
 		/* histogram data */
 		void add_sample_xyz(const std::vector< std::vector<double> > & list_xyz); 
@@ -70,7 +69,6 @@
 		double ymin; 
 		double ymax;
 		std::string ps_title;
-		std::string hist_title;
 		std::string x_label;
 		std::string y_label;
 		

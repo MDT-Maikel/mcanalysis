@@ -98,13 +98,11 @@ namespace analysis
 			}
 
 			// it is not a header: store lhco into vector of events.
-			event *ev;
-			ev = new event;
+			event *ev = new event;
 			while (true)
 			{
 				// read in lhco particle				
-				lhco *p;
-				p = new lhco;
+				lhco *p = new lhco;
 				if (found_header)
 					p->read(file_igz);
 				else

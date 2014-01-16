@@ -22,7 +22,6 @@ namespace analysis
 		ymax = 100;
 
 		ps_title = "new 2D histogram";
-    	hist_title = "";
     	x_label = ""; 
     	y_label = "";
 	}
@@ -60,11 +59,6 @@ namespace analysis
 		ps_title = ps;
 	}
 
-	void histogram2D::set_hist_title(std::string title)
-	{
-		hist_title = title;
-	}
-
 	void histogram2D::set_x_label(std::string x)
 	{
 		x_label = x;
@@ -75,7 +69,7 @@ namespace analysis
 		y_label = y;
 	}
 
-	void histogram2D::set_palette(std::string name, const Int_t NCont)
+	void histogram2D::set_palette(std::string name, const Int_t ncont)
 	{
     	const Int_t NRGBs = 5;
 
@@ -94,8 +88,8 @@ namespace analysis
     		stops[4] = 1.00; red[4] = 1.00; green[4] = 0.00; blue[4] = 0.00;
     	}
     	
-    	TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
-    	gStyle->SetNumberContours(NCont);
+    	TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, ncont);
+    	gStyle->SetNumberContours(ncont);
 	}
 	
 	/* histogram data */
@@ -119,8 +113,7 @@ namespace analysis
 
 	    	PyRun_SimpleString("import sys, string, random");
 	    	PyRun_SimpleString("sys.path.append('../source/histogram')");
-	    	// PyRun_SimpleString("sys.path.append(\".\")");
-
+	    	
 	    	boost::python::list l_values;
 	  		typename std::list< std::list<double> >::const_iterator it_outer;
 	  		typename std::list<double>::const_iterator it_inner;
