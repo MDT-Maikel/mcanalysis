@@ -75,6 +75,12 @@ namespace analysis
 	{
 		hist.set_normalized(on);
 	}
+	
+	void plot::set_bins(double nbins, double min, double max)
+	{
+		hist.set_bins(nbins);
+		hist.set_range(min, max);		
+	}
 
 /* NAMESPACE */
 }

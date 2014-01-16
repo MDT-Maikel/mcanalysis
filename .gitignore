@@ -7,6 +7,9 @@
 # C++ build files
 *.o
 
+# Python build files
+*.pyc
+
 # Monte Carlo files
 *.lhco.gz
 *.lhe.gz

@@ -25,7 +25,8 @@
 #include <TStyle.h> 
 
 
-namespace analysis {
+namespace analysis 
+{
 
 	class histogram
 	{
@@ -55,6 +56,7 @@ namespace analysis {
 
 	private:
 
+		/* histogram data */
 		std::vector< std::vector<double> > sample_list;
 		std::vector<std::string> sample_names;
 		std::vector<double> sample_weights;

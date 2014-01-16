@@ -41,6 +41,8 @@ namespace analysis
 		void set_logy(bool on);
 		void set_stacked(bool on);
 		void set_normalized(bool on);
+		
+		void set_bins(double nbins, double min, double max);
 
 	public:
 

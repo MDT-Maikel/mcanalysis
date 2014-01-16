@@ -5,7 +5,9 @@
 
 #include "histogram.h"
 
-namespace analysis {
+
+namespace analysis 
+{
 
 	/* con & destructor */
 
@@ -93,12 +95,10 @@ namespace analysis {
 	{	
 		// create a canvas with a random name		
 		std::random_device rd;
-		TCanvas* canvas;
-		canvas = new TCanvas(boost::lexical_cast<std::string>(rd()).c_str(), "");
+		TCanvas* canvas = new TCanvas(boost::lexical_cast<std::string>(rd()).c_str(), "");
 
 		// options 
-		Int_t font=42;
-		//gROOT->SetStyle("Plain");
+		Int_t font = 42;
 		gStyle->SetOptStat(0);
 		gStyle->SetTextFont(font);
 		gStyle->SetFrameLineWidth(3);
@@ -145,7 +145,7 @@ namespace analysis {
 	
   		// construction of histogram collection
   		const int nsamples = sample_list.size();
-	    TH1F* hist[nsamples];
+	    TH1D* hist[nsamples];
 
 	    for (int iprc = 0; iprc < nsamples; ++iprc)
 	    {
@@ -162,7 +162,7 @@ namespace analysis {
 			}
 
 			// construct one histogram per sample
-			hist[iprc] = new TH1F("", labels.c_str(), nbins, hmin, hmax);
+			hist[iprc] = new TH1D("", labels.c_str(), nbins, hmin, hmax);
 
 			// read the sample and fill the histogram
 			for (unsigned int i = 0; i < list.size(); i++)

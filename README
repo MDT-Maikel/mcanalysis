@@ -1,6 +1,6 @@
-#############################
-### Monte Carlo Analysis ####
-#############################
+############################
+### Monte Carlo Analysis ###
+############################
 A set of C++ files which form a small library to perform analyses on different types of files produced
 by Monte Carlo generators. The file types are all based on a common <particle> class and inherit from it.
 
