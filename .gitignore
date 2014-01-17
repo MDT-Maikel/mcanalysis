@@ -11,8 +11,13 @@
 *.pyc
 
 # Monte Carlo files
+*.lhco
 *.lhco.gz
+*.lhe
 *.lhe.gz
+*.hep
+*.hep.gz
+*.root
 
 # Image/plot files
 *.ps
@@ -25,8 +30,9 @@
 # Files folder
 /files
 
-# Test folder
-/test
+# Tests programs
+/tests/test_histogram
+/tests/test_bumphunter
 
 # Tool programs
 /tools/mergemc

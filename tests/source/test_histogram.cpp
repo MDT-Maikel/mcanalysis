@@ -59,7 +59,7 @@ int main(int argc, const char* argv[])
 	clock_old = clock();
 	cout << "=====================================================================" << endl;
 	cout << "Histogram test: 1D histogram completed in " << duration << " seconds." << endl;
-	cout << "Should have exp. falling background with gaussian and gamma peaks." << endl;
+	cout << "CHECK: exponential falling background with gaussian and gamma peaks." << endl;
 	cout << "=====================================================================" << endl;
 
 
@@ -92,7 +92,7 @@ int main(int argc, const char* argv[])
 	clock_old = clock();
 	cout << "=====================================================================" << endl;
 	cout << "Histogram test: 2D histogram XY completed in " << duration << " seconds." << endl;
-	cout << "Should have 2D gaussian peak around (50, 50)." << endl;
+	cout << "CHECK: 2D gaussian peak around (50, 50)." << endl;
 	cout << "=====================================================================" << endl;
 		
 		
@@ -150,6 +150,6 @@ int main(int argc, const char* argv[])
 	clock_old = clock();
 	cout << "=====================================================================" << endl;
 	cout << "Histogram test: 2D histogram XYZ completed in " << duration << " seconds." << endl;
-	cout << "Should have same 2D gaussian peak as XY with double resolution." << endl;
+	cout << "CHECK: same 2D gaussian peak as XY with double resolution." << endl;
 	cout << "=====================================================================" << endl;
 }

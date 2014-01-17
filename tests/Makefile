@@ -7,6 +7,7 @@ COMPILER = $(CC) $(COPTS)
 
 ### Locations ###
 PYTHIA8LOCATION=/home/maikel/Programs/pythia8180
+HEPMCLOCATION=/home/maikel/Programs/HepMC-Install
 FASTJETLOCATION=/home/maikel/Programs/fastjet-install
 PYTHONDIR=/usr
 
@@ -14,8 +15,9 @@ PYTHONDIR=/usr
 LBOOST = -lboost_filesystem -lboost_system -lboost_python
 LPYTHON = -L$(PYTHONDIR)/lib -lpython2.7
 LGZSTREAM = -L../deps/gzstream/ -lz -lgzstream
-LROOT = -L$(ROOTSYS)/lib -lCore -lRIO -lNet -lHist -lGpad -lGraf3d -lGraf -lPostscript -lMatrix -lPhysics -lMathCore -lThread -pthread -lm -ldl
-LPYTHIA = -L$(PYTHIA8LOCATION)/lib/archive -lpythia8 -llhapdfdummy
+LROOT = -L$(ROOTSYS)/lib -lCore -lRIO -lNet -lHist -lGpad -lGraf3d -lGraf -lPostscript -lMatrix -lPhysics -lMathCore -lMathMore -lThread -pthread -lm -ldl
+LPYTHIA = -L$(PYTHIA8LOCATION)/lib/archive -lpythia8 -llhapdfdummy -lpythia8tohepmc
+LHEPMC = -L$(HEPMCLOCATION)/lib -lHepMC
 LFASTJET = -L$(FASTJETLOCATION)/lib `$(FASTJETLOCATION)/bin/fastjet-config --libs --plugins`
 LINKS = $(LBOOST) $(LPYTHON) $(LGZSTREAM) $(LROOT) $(LPYTHIA) $(LFASTJET)
 
@@ -24,6 +26,7 @@ IPYTHON = -I$(PYTHONDIR)/include/python2.7
 IGZSTREAM = ../deps/gzstream/gzstream.h ../deps/gzstream/gzstream.C 
 IROOT = -I$(ROOTSYS)/include
 IPYTHIA = -I$(PYTHIA8LOCATION)/include
+IHEPMC = -I$(HEPMCLOCATION)/include 
 IFASTJET = `$(FASTJETLOCATION)/bin/fastjet-config --cxxflags --plugins`
 DEPS = $(IPYTHON) $(IGZSTREAM) $(IROOT) $(IPYTHIA) $(IFASTJET)
 
@@ -66,6 +69,14 @@ test_bumphunter: source/test_bumphunter.o $(OBJHUNT)
 	-o $@ $+ \
 	$(LBOOST) \
 	$(LROOT) \
+	
+test_hepmc: source/test_hepmc.cpp
+	$(COMPILER) $(LDFLAGS) \
+	$(IPYTHIA) \
+	$(IHEPMC) \
+	-o $@ $+ \
+	$(LPYTHIA) \
+	$(LHEPMC) \
 
 ### Make Clean ###
 clean:
