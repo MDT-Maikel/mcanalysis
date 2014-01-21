@@ -1,4 +1,6 @@
 /* BumpHunter Tests
+ * 
+ * Test the different features and methods of the bumphunter class.
  *
 */
 
@@ -28,7 +30,7 @@ int main(int argc, const char* argv[])
 	gRandom->SetSeed(rd());
 	
 	// parameters
-	double gauss_height = 50;
+	double gauss_height = 60;
 	double gauss_width = 20;
 	double gauss_mean = 500;
 	double exp_const = 1500;

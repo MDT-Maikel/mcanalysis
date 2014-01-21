@@ -1,5 +1,7 @@
 /* Histogram Tests
  *
+ * Test all the different histogram classes.
+ * 
 */
 
 #include <iostream> 

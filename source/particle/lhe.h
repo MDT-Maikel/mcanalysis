@@ -22,6 +22,7 @@ namespace analysis
 
 		/* con & destructor */
 		lhe() = default;
+		lhe(double px, double py, double pz, double pe, double mass);
 		//virtual ~lhe() = default;	
 
 		/* copy & assignment */

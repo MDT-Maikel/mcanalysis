@@ -12,9 +12,9 @@ FASTJETLOCATION=/home/maikel/Programs/fastjet-install
 PYTHONDIR=/usr
 
 ### Libraries ###
+LGZSTREAM = -L../deps/gzstream -lz -lgzstream
 LBOOST = -lboost_filesystem -lboost_system -lboost_python
 LPYTHON = -L$(PYTHONDIR)/lib -lpython2.7
-LGZSTREAM = -L../deps/gzstream/ -lz -lgzstream
 LROOT = -L$(ROOTSYS)/lib -lCore -lRIO -lNet -lHist -lGpad -lGraf3d -lGraf -lPostscript -lMatrix -lPhysics -lMathCore -lMathMore -lThread -pthread -lm -ldl
 LPYTHIA = -L$(PYTHIA8LOCATION)/lib/archive -lpythia8 -llhapdfdummy -lpythia8tohepmc
 LHEPMC = -L$(HEPMCLOCATION)/lib -lHepMC
@@ -22,11 +22,11 @@ LFASTJET = -L$(FASTJETLOCATION)/lib `$(FASTJETLOCATION)/bin/fastjet-config --lib
 LINKS = $(LBOOST) $(LPYTHON) $(LGZSTREAM) $(LROOT) $(LPYTHIA) $(LFASTJET)
 
 ### Dependencies ###
+IGZSTREAM = ../deps/gzstream/gzstream.h ../deps/gzstream/gzstream.C
 IPYTHON = -I$(PYTHONDIR)/include/python2.7
-IGZSTREAM = ../deps/gzstream/gzstream.h ../deps/gzstream/gzstream.C 
 IROOT = -I$(ROOTSYS)/include
 IPYTHIA = -I$(PYTHIA8LOCATION)/include
-IHEPMC = -I$(HEPMCLOCATION)/include 
+IHEPMC = -I$(HEPMCLOCATION)/include
 IFASTJET = `$(FASTJETLOCATION)/bin/fastjet-config --cxxflags --plugins`
 DEPS = $(IPYTHON) $(IGZSTREAM) $(IROOT) $(IPYTHIA) $(IFASTJET)
 
@@ -42,10 +42,14 @@ OBJJETS = ../source/jet_analysis/jet_analysis.o
 OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS) $(OBJHUNT) $(OBJJETS)
 
 ### Make EXES ###
-EXE = test_histogram test_jetanalysis test_bumphunter
-OBJEXES = source/test_histogram.o source/test_jetanalysis.o source/test_bumphunter.o
+EXE = test_event test_histogram test_jetanalysis test_bumphunter
+OBJEXES = source/test_event.o source/test_histogram.o source/test_jetanalysis.o source/test_bumphunter.o
 
 all: $(EXE)
+
+test_event: source/test_event.o $(OBJPART) $(OBJEVNT)
+	$(COMPILER) $(LDFLAGS) \
+	-o $@ $+ \
 
 test_histogram: source/test_histogram.o $(OBJHIST)
 	$(COMPILER) $(LDFLAGS) \
@@ -85,6 +89,9 @@ clean:
 	rm -f $(OBJ)
 
 ### Make Targets ###
+source/test_event.o: source/test_event.cpp
+	$(COMPILER) $(CFLAGS) \
+	-c -o $@ $< \
 
 source/test_histogram.o: source/test_histogram.cpp
 	$(COMPILER) $(CFLAGS) \
@@ -104,9 +111,8 @@ source/test_bumphunter.o: source/test_bumphunter.cpp
 	-c -o $@ $< \
 	
 ### Make Sources ###	
-
 ../source/particle/particle.o: ../source/particle/particle.cpp ../source/particle/particle.h 
-	$(COMPILER) $(CFLAGS) \ 
+	$(COMPILER) $(CFLAGS) \
 	-c -o $@ $< \
 
 ../source/particle/lhco.o: ../source/particle/lhco.cpp ../source/particle/lhco.h 
@@ -169,8 +175,10 @@ source/test_bumphunter.o: source/test_bumphunter.cpp
 	$(IFASTJET) \
 	-c -o $@ $< \
 
-
-#$@ refers to the target file
-#$< refers to first dependency
-#$+ refers to all dependencies
-
+### Notes ###
+# Local dependencies like gzstream should always be included before any global dependencies.
+# Also these dependencies should only be included in the make exes commands.
+#
+# $@ refers to the target file
+# $< refers to first dependency
+# $+ refers to all dependencies

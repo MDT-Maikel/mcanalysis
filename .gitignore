@@ -33,6 +33,7 @@
 # Tests programs
 /tests/test_histogram
 /tests/test_bumphunter
+/tests/test_event
 
 # Tool programs
 /tools/mergemc
