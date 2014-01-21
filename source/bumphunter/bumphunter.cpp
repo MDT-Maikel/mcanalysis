@@ -265,6 +265,16 @@ namespace analysis
 		return local_pvalue;
 	}
 	
+	double bumphunter::get_global_sigma()
+	{
+		return GetZValue(global_pvalue); 
+	}
+
+	double bumphunter::get_local_sigma()
+	{
+		return GetZValue(local_pvalue);
+	}
+	
 	/* statistics */
 	
 	Double_t bumphunter::GetPoissonPValue(Double_t nobs, Double_t e) 
@@ -362,6 +372,13 @@ namespace analysis
 			overflow = true;
 			return 6.; 
 		}
+		return sqrt(2.) * TMath::ErfInverse(1. - 2. * pvalue);
+	}
+	
+	Double_t bumphunter::GetZValue(Double_t pvalue) 
+	{
+		if (pvalue < 0.000000001) 
+			return 6.; 
 		return sqrt(2.) * TMath::ErfInverse(1. - 2. * pvalue);
 	}
 	

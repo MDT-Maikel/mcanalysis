@@ -108,12 +108,15 @@ namespace analysis
 		/* hunt properties: results */
 		double get_global_pvalue();
 		double get_local_pvalue();
+		double get_global_sigma();
+		double get_local_sigma();
 
 		/* statistics */
 		static Double_t GetPoissonPValue(Double_t nobs, Double_t e);
 		static Double_t GetGaussianPValue(Double_t nobs, Double_t e, Double_t sigma);
 		static Double_t GetPoissonConvGammaPValue(Double_t nobs, Double_t e, Double_t err);
 		static Double_t GetZValue(Double_t pvalue, bool& overflow);
+		static Double_t GetZValue(Double_t pvalue);
 		
 		/* bump hunting */
 		Int_t run(); // do bumphunting. 0 = success

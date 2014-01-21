@@ -154,4 +154,9 @@ int main(int argc, const char* argv[])
 	cout << "Histogram test: 2D histogram XYZ completed in " << duration << " seconds." << endl;
 	cout << "CHECK: same 2D gaussian peak as XY with double resolution." << endl;
 	cout << "=====================================================================" << endl;
+	
+	// return whether tests passed
+	if (true)
+		return EXIT_SUCCESS;
+	return EXIT_FAILURE;
 }

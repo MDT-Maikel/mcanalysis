@@ -28,7 +28,7 @@ int main(int argc, const char* argv[])
 	double duration;
 	
 	// set test precision
-	double test_precision = 0.0001;
+	double test_precision = 0.000001;
 	
 	// initiate random device
 	std::random_device rd;
@@ -64,21 +64,21 @@ int main(int argc, const char* argv[])
 	for (unsigned int i = 0; i < ev_lhco.size(); i++)
 	{
 		// test pt
-		if (!(fabs(ev_lhco[i]->pt() - ev_lhe[i]->pt()) < test_precision))
+		if (!(fabs((ev_lhco[i]->pt() - ev_lhe[i]->pt()) / ev_lhco[i]->pt()) < test_precision))
 		{
 			cout << std::setprecision(3) << "pt: " << ev_lhco[i]->pt() << " != " << ev_lhe[i]->pt() << endl;
 			test_lhco_lhe_passed = false;
 			break;			
 		}
 		// test eta
-		if (!(fabs(ev_lhco[i]->eta() - ev_lhe[i]->eta()) < test_precision))
+		if (!(fabs((ev_lhco[i]->eta() - ev_lhe[i]->eta()) / ev_lhco[i]->eta()) < test_precision))
 		{
 			cout << std::setprecision(3) << "eta: " << ev_lhco[i]->eta() << " != " << ev_lhe[i]->eta() << endl;
 			test_lhco_lhe_passed = false;
 			break;			
 		}
 		// test phi
-		if (!(fabs(ev_lhco[i]->phi() - ev_lhe[i]->phi()) < test_precision))
+		if (!(fabs((ev_lhco[i]->phi() - ev_lhe[i]->phi()) / ev_lhco[i]->phi()) < test_precision))
 		{
 			cout << std::setprecision(3) << "phi: " << ev_lhco[i]->phi() << " != " << ev_lhe[i]->phi() << endl;
 			cout << std::setprecision(3) << "phi diff: " << ev_lhco[i]->phi() - ev_lhe[i]->phi() << endl;
@@ -91,7 +91,7 @@ int main(int argc, const char* argv[])
 		double pz = ev_lhe[i]->pz();
 		double pe = ev_lhe[i]->pe();
 		double mass = ev_lhe[i]->mass();		
-		if (!(fabs(pe * pe - px * px - py * py - pz * pz - mass * mass) < test_precision))
+		if (!(fabs((pe * pe - px * px - py * py - pz * pz - mass * mass) / (pe * pe)) < test_precision))
 		{
 			cout << "lhe lorentz invariance failed" << endl;
 			cout << std::setprecision(3) << "E^2 - p^2 != m^2: " << pe * pe - px * px - py * py - pz * pz << " != " << mass * mass << endl;
@@ -103,21 +103,20 @@ int main(int argc, const char* argv[])
 	// test event functions between both formats
 	bool test_event_passed = true;
 	// test the event.mass() function
-	if (!fabs(ev_lhco.mass() - ev_lhe.mass()) < test_precision)
+	if (!fabs((ev_lhco.mass() - ev_lhe.mass()) / ev_lhco.mass()) < test_precision)
 	{
-		cout << std::setprecision(3) << "event.mass(): " << ev_lhco.mass() << " != " << ev_lhe.mass() << endl;
+		cout << std::setprecision(6) << "event.mass(): " << ev_lhco.mass() << " != " << ev_lhe.mass() << endl;
 		test_event_passed = false;
 	}
 	// test the event.ht() function
-	if (!fabs(ev_lhco.ht(0, 5.0, 5.0) - ev_lhe.ht(0, 5.0, 5.0)) < test_precision)
+	if (!fabs((ev_lhco.ht(0, 5.0, 5.0) - ev_lhe.ht(0, 5.0, 5.0)) / ev_lhco.ht(0, 5.0, 5.0)) < test_precision)
 	{
-		cout << std::setprecision(3) << "event.ht(0, 5.0, 5.0): " << ev_lhco.ht(0, 5.0, 5.0) << " != " << ev_lhe.ht(0, 5.0, 5.0) << endl;
+		cout << std::setprecision(6) << "event.ht(0, 5.0, 5.0): " << ev_lhco.ht(0, 5.0, 5.0) << " != " << ev_lhe.ht(0, 5.0, 5.0) << endl;
 		test_event_passed = false;
 	}
 		
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
-	clock_old = clock();
 	cout << "=====================================================================" << endl;
 	cout << "Event & particle test: completed in " << duration << " seconds." << endl;
 	cout << "Kinematics checks between lhco and lhe classes have ";
@@ -131,4 +130,9 @@ int main(int argc, const char* argv[])
 	else
 		cout << "failed!" << endl;
 	cout << "=====================================================================" << endl;
+	
+	// return whether tests passed
+	if (test_lhco_lhe_passed && test_event_passed)
+		return EXIT_SUCCESS;
+	return EXIT_FAILURE;
 }

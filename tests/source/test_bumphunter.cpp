@@ -4,6 +4,7 @@
  *
 */
 
+#include <ctime>
 #include <iostream>
 #include <random>
 #include <string>
@@ -60,7 +61,7 @@ int main(int argc, const char* argv[])
 	bumphunter hunt(hist_pred, hist_data);
 	hunt.set_folder("output/");
 	hunt.set_name("test_bumphunter_result");
-	hunt.SetNPseudoExperiments(100000);
+	hunt.SetNPseudoExperiments(5000);
 	hunt.SetBinModel(bumphunter::BUMP_POISSON);
 	hunt.SetSearchRegion(100, 1000);
 	hunt.SetMinWindowSize(2);
@@ -69,26 +70,25 @@ int main(int argc, const char* argv[])
 	
 	// run bumphunter analysis
 	hunt.run();
-	double sigma_poisson = hunt.get_global_pvalue();
+	double sigma_poisson = hunt.get_global_sigma();
 	
 	// run bumphunter analysis a second time with gaussian bin model
 	hunt.SetBinModel(bumphunter::BUMP_GAUSSIAN);
 	hunt.run();
-	double sigma_gaussian = hunt.get_global_pvalue();
+	double sigma_gaussian = hunt.get_global_sigma();
 	
 	// run bumphunter analysis a second time with poisson-gamma bin model
 	hunt.SetBinModel(bumphunter::BUMP_POISSON_GAMMA);
 	hunt.run();
-	double sigma_poissongamma = hunt.get_global_pvalue();
+	double sigma_poissongamma = hunt.get_global_sigma();
 	
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
-	clock_old = clock();
 	cout << "=====================================================================" << endl;
 	cout << "BumpHunter test: hunt completed in " << duration << " seconds." << endl;
-	cout << "Poisson bin model significance: " << sigma_poisson << endl;
-	cout << "Gaussian bin model significance: " << sigma_gaussian << endl;
-	cout << "PoissonGamma bin model significance: " << sigma_poissongamma << endl;
+	cout << "Poisson bin model significance: " << sigma_poisson << " sigma" << endl;
+	cout << "Gaussian bin model significance: " << sigma_gaussian << " sigma" << endl;
+	cout << "PoissonGamma bin model significance: " << sigma_poissongamma << " sigma" << endl;
 	cout << "CHECK: what exactly?" << endl;
 	cout << "=====================================================================" << endl;
 		
@@ -98,4 +98,9 @@ int main(int argc, const char* argv[])
 	delete f_data;
 	delete hist_pred;
 	delete hist_data;
+	
+	// return whether tests passed
+	if (true)
+		return EXIT_SUCCESS;
+	return EXIT_FAILURE;
 }

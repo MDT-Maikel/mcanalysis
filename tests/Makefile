@@ -42,10 +42,17 @@ OBJJETS = ../source/jet_analysis/jet_analysis.o
 OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS) $(OBJHUNT) $(OBJJETS)
 
 ### Make EXES ###
-EXE = test_event test_histogram test_jetanalysis test_bumphunter
-OBJEXES = source/test_event.o source/test_histogram.o source/test_jetanalysis.o source/test_bumphunter.o
+EXE = test_all test_event test_histogram test_jetanalysis test_bumphunter
+OBJEXES = source/test_all.o source/test_event.o source/test_histogram.o source/test_jetanalysis.o source/test_bumphunter.o
 
 all: $(EXE)
+
+test: $(EXE)
+	./test_all
+
+test_all: source/test_all.o
+	$(COMPILER) $(LDFLAGS) \
+	-o $@ $+ \
 
 test_event: source/test_event.o $(OBJPART) $(OBJEVNT)
 	$(COMPILER) $(LDFLAGS) \
@@ -89,6 +96,10 @@ clean:
 	rm -f $(OBJ)
 
 ### Make Targets ###
+source/test_all.o: source/test_all.cpp
+	$(COMPILER) $(CFLAGS) \
+	-c -o $@ $< \
+
 source/test_event.o: source/test_event.cpp
 	$(COMPILER) $(CFLAGS) \
 	-c -o $@ $< \
