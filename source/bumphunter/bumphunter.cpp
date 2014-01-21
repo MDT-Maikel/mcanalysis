@@ -560,7 +560,10 @@ namespace analysis
 		if (global_pvalue > 0.) 
 			Info("Run","global p = %f (%f sigma)",global_pvalue,GetZValue(global_pvalue,overflow));
 		else //none of the pseudodata was bigger than our pvalue, so estimate the global p-value as 1/nPseudo 
-			Info("Run","global p < %f (%f sigma)",1./double(nPseudo),GetZValue(1./double(nPseudo),overflow));
+		{
+			global_pvalue = 1. / double(nPseudo);
+			Info("Run","global p < %f (%f sigma)",1./double(nPseudo),GetZValue(1./double(nPseudo),overflow));			
+		}
   
 		// export the final plot to a png file
 		fBumpHunterResultCanvas->Print((hunt_folder + hunt_name + ".png").c_str());

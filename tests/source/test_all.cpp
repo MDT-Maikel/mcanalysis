@@ -17,11 +17,18 @@ int main(int argc, const char* argv[])
 	if (!system(nullptr)) 
 		exit(EXIT_FAILURE);
 		
-	// log start
+	// log start with instructions
 	cout << "=====================================================================" << endl;
 	cout << "=-------------------------------------------------------------------=" << endl;
-	cout << "=====================================================================" << endl;	
-	
+	cout << "=====================================================================" << endl;
+	cout << "= Starting different unit tests, all tests should pass. When all    =" << endl;
+	cout << "= tests are done, a summary is given which tests have failed. Look  =" << endl;
+	cout << "= at the specific test logging to see what has gone wrong within    =" << endl;
+	cout << "= the test and fix the source accordingly before pushing!           =" << endl;
+	cout << "=====================================================================" << endl;
+	cout << "=-------------------------------------------------------------------=" << endl;
+	cout << "=====================================================================" << endl;
+		
 	// keep track of whether all tests have passed
 	bool all_tests_passed = true;	
 	
@@ -56,19 +63,22 @@ int main(int argc, const char* argv[])
 	cout << "=====================================================================" << endl;
 	cout << "=-------------------------------------------------------------------=" << endl;
 	cout << "=====================================================================" << endl;
-	cout << "All tests completed. Results per test:" << endl;
-	cout << "Event test has " << (test_event_passed ? "passed!" : "failed!") << endl;
-	cout << "Histogram test has " << (test_histogram_passed ? "passed!" : "failed!") << endl;	
-	cout << "BumpHunter test has " << (test_bumphunter_passed ? "passed!" : "failed!") << endl;	
+	cout << "= All tests completed. Results per test:                            =" << endl;
+	cout << "= Event test has " << (test_event_passed ? "passed" : "failed");
+	cout << "!                                            =" << endl;
+	cout << "= Histogram test has " << (test_histogram_passed ? "passed" : "failed");
+	cout << "!                                        =" << endl;	
+	cout << "= BumpHunter test has " << (test_bumphunter_passed ? "passed" : "failed");
+	cout << "!                                       =" << endl;	
 	cout << "=====================================================================" << endl;
 	if (all_tests_passed)
 	{
-		cout << "All tests have passed!" << endl;
+		cout << "= All tests have passed!                                            =" << endl;
 	}
 	else
 	{
-		cout << "Not all tests have passed!" << endl;
-		cout << "See above for details." << endl;
+		cout << "= At least on of the tests failed!                                  =" << endl;
+		cout << "= See above results for details.                                    =" << endl;
 	}
 	cout << "=====================================================================" << endl;
 	cout << "=-------------------------------------------------------------------=" << endl;

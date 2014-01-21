@@ -10,10 +10,13 @@
 #include <random>
 #include <vector> 
 
+#include <boost/filesystem.hpp>
+
 #include "../../source/histogram/histogram.h"
 #include "../../source/histogram/histogram2D.h"
 
 using namespace std;
+using namespace boost::filesystem;
 using namespace analysis;
 
 
@@ -25,9 +28,14 @@ int main(int argc, const char* argv[])
 	clock_old = clock();
 	double duration;
 	
+	// remove possible existing output files
+	remove("output/test_histogram_1D.png");
+	remove("output/test_histogram_2D_XY.png");
+	remove("output/test_histogram_2D_XYZ.png");
+	
 	
 	/* 1D histogram */
-	
+		
 	// test one dimensional histogram: counting x 
 	histogram hist_1d;
 	hist_1d.set_title("output/test_histogram_1D");
@@ -59,8 +67,10 @@ int main(int argc, const char* argv[])
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	clock_old = clock();
+	bool hist_1d_success = is_regular_file("output/test_histogram_1D.png");
 	cout << "=====================================================================" << endl;
 	cout << "Histogram test: 1D histogram completed in " << duration << " seconds." << endl;
+	cout << "Histogram creation has " << (hist_1d_success ? "succeeded!" : "failed!") << endl; 
 	cout << "CHECK: exponential falling background with gaussian and gamma peaks." << endl;
 	cout << "=====================================================================" << endl;
 
@@ -92,8 +102,10 @@ int main(int argc, const char* argv[])
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	clock_old = clock();
+	bool hist_2d_xy_success = is_regular_file("output/test_histogram_2D_XY.png");
 	cout << "=====================================================================" << endl;
 	cout << "Histogram test: 2D histogram XY completed in " << duration << " seconds." << endl;
+	cout << "Histogram creation has " << (hist_2d_xy_success ? "succeeded!" : "failed!") << endl;
 	cout << "CHECK: 2D gaussian peak around (50, 50)." << endl;
 	cout << "=====================================================================" << endl;
 		
@@ -150,13 +162,15 @@ int main(int argc, const char* argv[])
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	clock_old = clock();
+	bool hist_2d_xyz_success = is_regular_file("output/test_histogram_2D_XYZ.png");
 	cout << "=====================================================================" << endl;
 	cout << "Histogram test: 2D histogram XYZ completed in " << duration << " seconds." << endl;
+	cout << "Histogram creation has " << (hist_2d_xyz_success ? "succeeded!" : "failed!") << endl;
 	cout << "CHECK: same 2D gaussian peak as XY with double resolution." << endl;
 	cout << "=====================================================================" << endl;
 	
 	// return whether tests passed
-	if (true)
+	if (hist_1d_success && hist_2d_xy_success && hist_2d_xyz_success)
 		return EXIT_SUCCESS;
 	return EXIT_FAILURE;
 }
