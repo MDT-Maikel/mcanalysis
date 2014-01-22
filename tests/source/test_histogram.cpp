@@ -24,8 +24,7 @@ using namespace analysis;
 int main(int argc, const char* argv[]) 
 {
 	// initiate timing procedure
-	clock_t clock_old;
-	clock_old = clock();
+	clock_t clock_old = clock();
 	double duration;
 	
 	// remove possible existing output files
@@ -63,22 +62,13 @@ int main(int argc, const char* argv[])
 	hist_1d.add_sample(gauss, "gauss");
 	hist_1d.add_sample(gamma, "gamma");
 	hist_1d.draw();
-	
-	// log results
-	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
-	clock_old = clock();
 	bool hist_1d_success = is_regular_file("output/test_histogram_1D.png");
-	cout << "=====================================================================" << endl;
-	cout << "Histogram test: 1D histogram completed in " << duration << " seconds." << endl;
-	cout << "Histogram creation has " << (hist_1d_success ? "succeeded!" : "failed!") << endl; 
-	cout << "CHECK: exponential falling background with gaussian and gamma peaks." << endl;
-	cout << "=====================================================================" << endl;
 
 
 	/* 2D histogram: XY pairs */
 
 	// test two dimensional histogram: counting x vs y
-	unsigned int nr_bins = 20;
+	unsigned int nr_bins = 10;
 	histogram2D hist_2d_xy;
 	hist_2d_xy.set_title("output/test_histogram_2D_XY");
 	hist_2d_xy.set_x_bins(nr_bins);
@@ -98,16 +88,7 @@ int main(int argc, const char* argv[])
 	// draw the histogram	
 	hist_2d_xy.add_sample_xy(sample_xy);
 	hist_2d_xy.draw();
-	
-	// log results
-	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
-	clock_old = clock();
 	bool hist_2d_xy_success = is_regular_file("output/test_histogram_2D_XY.png");
-	cout << "=====================================================================" << endl;
-	cout << "Histogram test: 2D histogram XY completed in " << duration << " seconds." << endl;
-	cout << "Histogram creation has " << (hist_2d_xy_success ? "succeeded!" : "failed!") << endl;
-	cout << "CHECK: 2D gaussian peak around (50, 50)." << endl;
-	cout << "=====================================================================" << endl;
 		
 		
 	/* 2D histogram: XYZ pairs */
@@ -158,17 +139,20 @@ int main(int argc, const char* argv[])
 	// draw the histogram
 	hist_2d_xyz.add_sample_xyz(list_xyz);
 	hist_2d_xyz.draw();
+	bool hist_2d_xyz_success = is_regular_file("output/test_histogram_2D_XYZ.png");
 	
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
-	clock_old = clock();
-	bool hist_2d_xyz_success = is_regular_file("output/test_histogram_2D_XYZ.png");
 	cout << "=====================================================================" << endl;
-	cout << "Histogram test: 2D histogram XYZ completed in " << duration << " seconds." << endl;
-	cout << "Histogram creation has " << (hist_2d_xyz_success ? "succeeded!" : "failed!") << endl;
-	cout << "CHECK: same 2D gaussian peak as XY with double resolution." << endl;
+	cout << "Histogram test: completed in " << duration << " seconds." << endl;
+	cout << "1D Histogram creation has " << (hist_1d_success ? "succeeded!" : "failed!") << endl; 
+	cout << "Check: exponential falling background with gaussian and gamma peaks." << endl;
+	cout << "2D Histogram XY creation has " << (hist_2d_xy_success ? "succeeded!" : "failed!") << endl;
+	cout << "Check: 2D gaussian peak around (50, 50)." << endl;
+	cout << "2D Histogram XYZ creation has " << (hist_2d_xyz_success ? "succeeded!" : "failed!") << endl;
+	cout << "Check: same 2D gaussian peak as XY with double resolution." << endl;
 	cout << "=====================================================================" << endl;
-	
+		
 	// return whether tests passed
 	if (hist_1d_success && hist_2d_xy_success && hist_2d_xyz_success)
 		return EXIT_SUCCESS;

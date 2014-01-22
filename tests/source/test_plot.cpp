@@ -27,13 +27,14 @@ using namespace analysis;
 int main(int argc, const char* argv[])
 {
 	// initiate timing procedure
-	clock_t clock_old;
-	clock_old = clock();
+	clock_t clock_old = clock();
 	double duration;
 	
-	// keep track of success
-	bool test_plot_passed = true;
-		
+	// remove possible existing output files
+	remove("output/plot_test_ht.png");
+	remove("output/plot_test_met.png");
+	remove("output/plot_test_htmet.png");
+	
 	// load the lhco events for this test
 	vector<event*> events;
 	read_lhco(events, "input/test_plot_events.lhco.gz");
@@ -44,7 +45,7 @@ int main(int argc, const char* argv[])
 	ht.set_folder("output/");
 	ht.add_sample(events, "events");
 	ht.run();
-	test_plot_passed = test_plot_passed && is_regular_file("output/plot_test_ht.png");
+	bool test_plot_ht_passed = is_regular_file("output/plot_test_ht.png");
 	
 	// make a 1D met plot
 	plot_met met;
@@ -52,27 +53,32 @@ int main(int argc, const char* argv[])
 	met.set_folder("output/");
 	met.add_sample(events, "events");
 	met.run();
-	test_plot_passed = test_plot_passed && is_regular_file("output/plot_test_met.png");
+	bool test_plot_met_passed = is_regular_file("output/plot_test_met.png");
 	
 	// make a 2D ht vs met plot
-	plot2d_ht_met ht_met;
-	ht_met.set_name("test_ht_met");
-	ht_met.set_folder("output/");
-	ht_met.set_x_bins(25, 0, 1200);
-	ht_met.set_y_bins(25, 0, 800);
-	ht_met.add_sample(events, "events");
-	ht_met.run();
-	test_plot_passed = test_plot_passed && is_regular_file("output/plot_test_ht_met.png");
+	plot2d_ht_met htmet;
+	htmet.set_name("test_htmet");
+	htmet.set_folder("output/");
+	htmet.set_x_bins(25, 0, 1200);
+	htmet.set_y_bins(25, 0, 800);
+	htmet.add_sample(events, "events");
+	htmet.run();
+	bool test_plot_htmet_passed = is_regular_file("output/plot_test_htmet.png");
 	
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	cout << "=====================================================================" << endl;
 	cout << "Plot test: completed in " << duration << " seconds." << endl;
-	cout << "Plotting 1D and 2D plots has " << (test_plot_passed ? "succeeded!" : "failed!") << endl;
+	cout << "HT plot creation has " << (test_plot_ht_passed ? "succeeded!" : "failed!") << endl; 
+	cout << "Check: reasonable HT distribution." << endl;
+	cout << "MET plot creation has " << (test_plot_met_passed ? "succeeded!" : "failed!") << endl; 
+	cout << "Check: reasonable MET distribution." << endl;
+	cout << "2D HT vs MET plot creation has " << (test_plot_htmet_passed ? "succeeded!" : "failed!") << endl;
+	cout << "Check: previous distribution combined in 2D." << endl;
 	cout << "=====================================================================" << endl;
 	
 	// return whether tests passed
-	if (test_plot_passed)
+	if (test_plot_ht_passed && test_plot_met_passed && test_plot_htmet_passed)
 		return EXIT_SUCCESS;
 	return EXIT_FAILURE;	
 }

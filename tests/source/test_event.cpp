@@ -23,8 +23,7 @@ using namespace analysis;
 int main(int argc, const char* argv[])
 {
 	// initiate timing procedure
-	clock_t clock_old;
-	clock_old = clock();
+	clock_t clock_old = clock();
 	double duration;
 		
 	// set test precision

@@ -31,8 +31,7 @@ int main(int argc, const char* argv[])
 	return EXIT_FAILURE;	
 	
 	// initiate timing procedure
-	clock_t clock_old;
-	clock_old = clock();
+	clock_t clock_old = clock();
 	double duration;
 	
 	// keep track of success

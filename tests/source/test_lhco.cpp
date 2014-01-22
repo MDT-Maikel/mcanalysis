@@ -26,14 +26,11 @@ using namespace analysis;
 int main(int argc, const char* argv[])
 {
 	// initiate timing procedure
-	clock_t clock_old;
-	clock_old = clock();
+	clock_t clock_old = clock();
 	double duration;
-	
-	// keep track of success
-	bool test_lhco_passed = true;
-		
+
 	// check if file exists, if so read the lhco events 
+	bool test_reading_passed = true;
 	vector<event*> events;
 	if (is_regular_file("input/test_lhco_events.lhco.gz"))
 	{
@@ -42,16 +39,37 @@ int main(int argc, const char* argv[])
 	else
 	{
 		cout << "File (input/test_lhco_events.lhco.gz) for reading lhco events not available." << endl;
-		test_lhco_passed = false;
+		test_reading_passed = false;
 	}
+	
+	// check approximate transverse momentum balance of each event
+	bool test_momentum_passed = true;
+	for (unsigned int i = 0; i < events.size(); i++)
+	{
+		event *ev = events[i];
+		double px_sum = 0;
+		double py_sum = 0;
+		for (unsigned int j = 0; j < ev->size(); j++)
+		{
+			px_sum += (*ev)[j]->px();
+			py_sum += (*ev)[j]->py();
+		}
+		// transverse momentum imbalance may at most be 200 GeV
+		if (sqrt(px_sum * px_sum + py_sum * py_sum) > 200)
+		{
+			cout << "momentum imbalance found (px, py): (" << px_sum << ", " << py_sum << ")" << endl;
+			test_momentum_passed = false;
+		}
+	}	
 		
 	// if reading has succeeded write the events to file
-	if (test_lhco_passed)
+	bool test_writing_passed = false;
+	if (test_reading_passed)
 	{
 		write_lhco(events, "output/test_lhco_events.lhco.gz");
 		
 		// test whether the writing has succeeded
-		test_lhco_passed = false;
+		
 		if (is_regular_file("output/test_lhco_events.lhco.gz"))
 		{
 			// check file size of the newly created lhco file 
@@ -59,7 +77,7 @@ int main(int argc, const char* argv[])
 			unsigned int in_size = file_size("input/test_lhco_events.lhco.gz");
 			unsigned int out_size = file_size("output/test_lhco_events.lhco.gz");
 			if (out_size < 11 * in_size / 10 && out_size > 9 * in_size / 10)
-				test_lhco_passed = true;
+				test_writing_passed = true;
 				
 			// delete the created file as it is not needed for any checks
 			remove("output/test_lhco_events.lhco.gz");
@@ -70,11 +88,13 @@ int main(int argc, const char* argv[])
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	cout << "=====================================================================" << endl;
 	cout << "LHCO test: completed in " << duration << " seconds." << endl;
-	cout << "LHCO reading and writing has " << (test_lhco_passed ? "succeeded!" : "failed!") << endl;
+	cout << "LHCO reading has " << (test_reading_passed ? "succeeded!" : "failed!") << endl;
+	cout << "LHCO writing has " << (test_writing_passed ? "succeeded!" : "failed!") << endl;
+	cout << "LHCO momentum balance has " << (test_momentum_passed ? "succeeded!" : "failed!") << endl;
 	cout << "=====================================================================" << endl;
 	
 	// return whether tests passed
-	if (test_lhco_passed)
+	if (test_reading_passed && test_writing_passed && test_momentum_passed)
 		return EXIT_SUCCESS;
 	return EXIT_FAILURE;
 }

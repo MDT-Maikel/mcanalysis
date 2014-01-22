@@ -53,7 +53,7 @@ int main(int argc, const char* argv[])
 			
 	// run: test_lhe
 	cout << "=====================================================================" << endl;
-	cout << "= TEST: LHE                                                        =" << endl;
+	cout << "= TEST: LHE                                                         =" << endl;
 	cout << "=====================================================================" << endl;
 	bool test_lhe_passed = true;
 	int result_lhe = system("./test_lhe") / 256;
