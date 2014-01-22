@@ -26,7 +26,7 @@ int main(int argc, const char* argv[])
 	clock_t clock_old;
 	clock_old = clock();
 	double duration;
-	
+		
 	// set test precision
 	double test_precision = 0.000001;
 	
@@ -119,16 +119,8 @@ int main(int argc, const char* argv[])
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	cout << "=====================================================================" << endl;
 	cout << "Event & particle test: completed in " << duration << " seconds." << endl;
-	cout << "Kinematics checks between lhco and lhe classes have ";
-	if (test_lhco_lhe_passed)
-		cout << "passed!" << endl;
-	else
-		cout << "failed!" << endl;
-	cout << "Event function checks between lhco and lhe classes have ";
-	if (test_event_passed)
-		cout << "passed!" << endl;
-	else
-		cout << "failed!" << endl;
+	cout << "Kinematics checks between lhco and lhe classes have " << (test_lhco_lhe_passed ? "passed!" : "failed!") << endl;
+	cout << "Event function checks between lhco and lhe classes have " << (test_event_passed ? "passed!" : "failed!") << endl;
 	cout << "=====================================================================" << endl;
 	
 	// return whether tests passed

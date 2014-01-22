@@ -35,15 +35,15 @@ OBJPART = ../source/particle/lhco.o ../source/particle/particle.o ../source/part
 OBJEVNT = ../source/event/event.o 
 OBJUTIL = ../source/utility/utility.o
 OBJHIST = ../source/histogram/histogram.o ../source/histogram/histogram2D.o
-OBJPLOT = ../source/plot/plot.o ../source/plot/plot_standard.o
+OBJPLOT = ../source/plot/plot.o ../source/plot/plot_standard.o ../source/plot/plot2d.o
 OBJCUTS = ../source/cuts/cuts.o ../source/cuts/cuts_standard.o ../source/cuts/cuts_advanced.o
 OBJHUNT = ../source/bumphunter/bumphunter.o
 OBJJETS = ../source/jet_analysis/jet_analysis.o
 OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS) $(OBJHUNT) $(OBJJETS)
 
 ### Make EXES ###
-EXE = test_all test_event test_histogram test_jetanalysis test_bumphunter
-OBJEXES = source/test_all.o source/test_event.o source/test_histogram.o source/test_jetanalysis.o source/test_bumphunter.o
+EXE = test_all test_lhco test_lhe test_event test_histogram test_plot test_bumphunter
+OBJEXES = source/test_all.o source/test_lhco.o source/test_lhe.o source/test_event.o source/test_histogram.o source/test_plot.o source/test_bumphunter.o
 
 all: $(EXE)
 
@@ -53,6 +53,20 @@ test: $(EXE)
 test_all: source/test_all.o
 	$(COMPILER) $(LDFLAGS) \
 	-o $@ $+ \
+	
+test_lhco: source/test_lhco.o $(OBJPART) $(OBJEVNT) $(OBJUTIL)
+	$(COMPILER) $(LDFLAGS) \
+	$(IGZSTREAM) \
+	-o $@ $+ \
+	$(LGZSTREAM) \
+	$(LBOOST) \
+	
+test_lhe: source/test_lhe.o $(OBJPART) $(OBJEVNT) $(OBJUTIL)
+	$(COMPILER) $(LDFLAGS) \
+	$(IGZSTREAM) \
+	-o $@ $+ \
+	$(LGZSTREAM) \
+	$(LBOOST) \
 
 test_event: source/test_event.o $(OBJPART) $(OBJEVNT)
 	$(COMPILER) $(LDFLAGS) \
@@ -62,6 +76,16 @@ test_histogram: source/test_histogram.o $(OBJHIST)
 	$(COMPILER) $(LDFLAGS) \
 	$(IROOT) \
 	-o $@ $+ \
+	$(LBOOST) \
+	$(LROOT) \
+	$(LPYTHON) \
+	
+test_plot: source/test_plot.o $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT)
+	$(COMPILER) $(LDFLAGS) \
+	$(IGZSTREAM) \
+	$(IROOT) \
+	-o $@ $+ \
+	$(LGZSTREAM) \
 	$(LBOOST) \
 	$(LROOT) \
 	$(LPYTHON) \
@@ -99,12 +123,26 @@ clean:
 source/test_all.o: source/test_all.cpp
 	$(COMPILER) $(CFLAGS) \
 	-c -o $@ $< \
+	
+source/test_lhco.o: source/test_lhco.cpp
+	$(COMPILER) $(CFLAGS) \
+	-c -o $@ $< \
+			
+source/test_lhe.o: source/test_lhe.cpp
+	$(COMPILER) $(CFLAGS) \
+	-c -o $@ $< \
 
 source/test_event.o: source/test_event.cpp
 	$(COMPILER) $(CFLAGS) \
 	-c -o $@ $< \
 
 source/test_histogram.o: source/test_histogram.cpp
+	$(COMPILER) $(CFLAGS) \
+	$(IROOT) \
+	$(IPYTHON) \
+	-c -o $@ $< \
+	
+source/test_plot.o: source/test_plot.cpp
 	$(COMPILER) $(CFLAGS) \
 	$(IROOT) \
 	$(IPYTHON) \
@@ -161,6 +199,12 @@ source/test_bumphunter.o: source/test_bumphunter.cpp
 ../source/plot/plot_standard.o: ../source/plot/plot_standard.cpp ../source/plot/plot_standard.h
 	$(COMPILER) $(CFLAGS) \
 	$(IROOT) \
+	-c -o $@ $< \
+	
+../source/plot/plot2d.o: ../source/plot/plot2d.cpp ../source/plot/plot2d.h
+	$(COMPILER) $(CFLAGS) \
+	$(IROOT) \
+	$(IPYTHON) \
 	-c -o $@ $< \
 
 ../source/cuts/cuts.o: ../source/cuts/cuts.cpp ../source/cuts/cuts.h 
