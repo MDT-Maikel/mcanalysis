@@ -40,7 +40,7 @@ namespace analysis
 		};
 		enum particle_type
 		{
-			type_photon = 0, type_electron = 1, type_muon = 2, type_tau = 3, type_jet = 4, type_met = 6
+			type_unknown = -1, type_photon = 0, type_electron = 1, type_muon = 2, type_tau = 3, type_jet = 4, type_met = 6
 		};
 
 	public:

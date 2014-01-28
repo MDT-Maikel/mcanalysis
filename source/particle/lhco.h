@@ -26,7 +26,7 @@ namespace analysis
 	public:
 
 		/* con & destructor */
-		lhco(int type = 0, double eta = 0, double phi = 0, double pt = 0, double jmass = 0, double ntrk = 0, double btag = 0, double hadem = 0, double dum1 = 0, double dum2 = 0);
+		lhco(int type = particle::type_unknown, double eta = 0, double phi = 0, double pt = 0, double jmass = 0, double ntrk = 0, double btag = 0, double hadem = 0, double dum1 = 0, double dum2 = 0);
 		//~lhco() = default;
 
 		/* copy & assignment */

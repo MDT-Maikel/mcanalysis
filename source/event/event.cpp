@@ -97,24 +97,30 @@ namespace analysis
 
 	double event::met() const
 	{
-		double met = 0;
+		double px_inv = 0;
+		double py_inv = 0;
 		for (unsigned int index = 0; index < size(); index++)
 		{
 			particle *p = particles[index];
-			if (p->type() == particle::type_met)
-				met += p->pt();
+			if (p->is_final() && p->type() == particle::type_met)
+			{
+				px_inv += p->px();
+				py_inv += p->py();				
+			}
 		}
-		return met;
+		return std::sqrt(px_inv * px_inv + py_inv * py_inv);
 	}
 
+	// returns the ht of all particles satisfying the conditions
 	double event::ht(int type, double min_pt, double max_eta) const
 	{
 		double ht = 0;
 		for (unsigned int index = 0; index < size(); index++)
 		{
 			particle *p = particles[index];
-			if (p->type() == type && p->pt() > min_pt && std::abs(p->eta()) < max_eta)
-				ht += p->pt();
+			if (p->type() == particle::type_unknown || p->type() == type)
+				if (p->pt() > min_pt && std::abs(p->eta()) < max_eta)
+					ht += p->pt();
 		}
 		return ht;
 	}

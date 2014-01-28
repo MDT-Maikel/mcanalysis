@@ -9,9 +9,14 @@ Compile all unit tests by writing in a shell:
 	cd mcanalysis/tests
 	make
 
-Then run the tests by writing
+Then compile and run a single test by writing:
 
+	make test_<name of test>	
 	./test_<name of test>
+
+Or compile run all tests by writing:
+
+	make test
 
 At all times all tests should compile and return success on running.
 
@@ -22,4 +27,11 @@ At all times all tests should compile and return success on running.
 All unit tests should consist of a single .cpp file which tests a single 
 class or structure in "/source". Outputs like files or images should be 
 placed in the folder "/output". The executables reside in the main folder
-"/tests" itself. 
+"/tests" itself. Some of the tests require input file, which have to be 
+place in the filer "/input". A list of required files is given by:
+
+	test_lhco_events.lhco.gz	1k random LHCO events
+	test_lhe_events.lhe.gz		1k random LHE events
+	test_plot_events.lhco.gz	50k LHCO events with met and ht
+	test_plot_events.lhe.gz		50k LHE events with met and ht
+

@@ -13,6 +13,7 @@ namespace analysis
 	
 	lhe::lhe(double px, double py, double pz, double pe, double mass)
 	{
+		p_id = 0;
 		p_px = px;
 		p_py = py;
 		p_pz = pz;
@@ -23,8 +24,44 @@ namespace analysis
 	/* properties */
 
 	int lhe::id() const { return p_id; }
-	int lhe::type() const { return 0; } // TODO transform p_id into p_type if not set
-	bool lhe::is_final() const { return p_inout == 1; }
+	
+	int lhe::type() const 
+	{ 
+		switch (p_id)
+		{		
+		// photon
+		case 22:
+			return particle::type_photon;
+		// electron		
+		case 11: case -11:
+			return particle::type_electron;
+		// muon
+		case 13: case -13:
+			return particle::type_muon;
+		// tau
+		case 15: case -15:
+			return particle::type_tau;
+		// jet
+		case 21:
+		case 1: case 2: case 3: case 4: case 5: case 6:
+		case -1: case -2: case -3: case -4: case -5: case -6:
+			return particle::type_jet;	
+		// missing energy
+		case 12: case -12: case 14: case -14: case 16: case -16:
+		case 8880022:
+			return particle::type_met;
+		// unknown
+		default:
+			return particle::type_unknown;	
+		}		
+		// unknown
+		return particle::type_unknown; 
+	} 
+	
+	bool lhe::is_final() const 
+	{ 
+		return p_inout == 1; 
+	}
 
 	/* kinematics */
 
@@ -100,14 +137,6 @@ namespace analysis
 		p_pz = boost::lexical_cast<double>(str_pz);
 		p_pe = boost::lexical_cast<double>(str_pe);
 		p_mass = boost::lexical_cast<double>(str_mass);		
-	}
-	
-	double lhe::convert(std::string sci) const
-	{
-		double result = 0;
-		
-		
-		return result;
 	}
 
 /* NAMESPACE */

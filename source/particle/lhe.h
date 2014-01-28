@@ -61,7 +61,6 @@ namespace analysis
 		void read(std::ifstream& ifs);
 		void write(ogzstream& ogzs) const;
 		void read(igzstream& igzs);
-		double convert(std::string sci) const;
 
 	private:
 
