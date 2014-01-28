@@ -34,9 +34,6 @@ int main(int argc, const char* argv[])
 	cout << "=-------------------------------------------------------------------=" << endl;
 	cout << "=====================================================================" << endl;
 	cout << endl << endl << endl;
-		
-	// keep track of whether all tests have passed
-	bool all_tests_passed = true;
 	
 	// run: test_lhco
 	cout << "=====================================================================" << endl;
@@ -45,10 +42,7 @@ int main(int argc, const char* argv[])
 	bool test_lhco_passed = true;
 	int result_lhco = system("./test_lhco") / 256;
 	if (result_lhco == EXIT_FAILURE)
-	{
-		all_tests_passed = false;
 		test_lhco_passed = false;
-	}
 	cout << endl << endl << endl;
 			
 	// run: test_lhe
@@ -58,10 +52,7 @@ int main(int argc, const char* argv[])
 	bool test_lhe_passed = true;
 	int result_lhe = system("./test_lhe") / 256;
 	if (result_lhe == EXIT_FAILURE)
-	{
-		all_tests_passed = false;
 		test_lhe_passed = false;
-	}
 	cout << endl << endl << endl;
 	
 	// run: test_event
@@ -71,10 +62,17 @@ int main(int argc, const char* argv[])
 	bool test_event_passed = true;
 	int result_event = system("./test_event") / 256;
 	if (result_event == EXIT_FAILURE)
-	{
-		all_tests_passed = false;
 		test_event_passed = false;
-	}
+	cout << endl << endl << endl;
+	
+	// run: test_cuts
+	cout << "=====================================================================" << endl;
+	cout << "= TEST: CUTS                                                       =" << endl;
+	cout << "=====================================================================" << endl;
+	bool test_cuts_passed = true;
+	int result_cuts = system("./test_cuts") / 256;
+	if (result_cuts == EXIT_FAILURE)
+		test_cuts_passed = false;
 	cout << endl << endl << endl;
 	
 	// run: test_histogram
@@ -84,10 +82,7 @@ int main(int argc, const char* argv[])
 	bool test_histogram_passed = true;
 	int result_histogram = system("./test_histogram") / 256;
 	if (result_histogram == EXIT_FAILURE)
-	{
-		all_tests_passed = false;
 		test_histogram_passed = false;
-	}
 	cout << endl << endl << endl;
 	
 	// run: test_plot
@@ -97,10 +92,7 @@ int main(int argc, const char* argv[])
 	bool test_plot_passed = true;
 	int result_plot = system("./test_plot") / 256;
 	if (result_plot == EXIT_FAILURE)
-	{
-		all_tests_passed = false;
 		test_plot_passed = false;
-	}
 	cout << endl << endl << endl;
 	
 	// run: test_bumphunter	
@@ -110,11 +102,12 @@ int main(int argc, const char* argv[])
 	bool test_bumphunter_passed = true;
 	int result_bumphunter = system("./test_bumphunter") / 256;
 	if (result_bumphunter == EXIT_FAILURE)
-	{
-		all_tests_passed = false;
 		test_bumphunter_passed = false;
-	}
 	cout << endl << endl << endl;
+	
+	// determine success of all test
+	bool all_tests_passed = test_lhco_passed && test_lhe_passed && test_event_passed && test_cuts_passed
+		&& test_histogram_passed && test_plot_passed && test_bumphunter_passed;
 	
 	// log results of all tests
 	cout << "=====================================================================" << endl;
@@ -127,6 +120,8 @@ int main(int argc, const char* argv[])
 	cout << "!                                              =" << endl;
 	cout << "= Event test has " << (test_event_passed ? "passed" : "failed");
 	cout << "!                                            =" << endl;
+	cout << "= Cuts test has " << (test_cuts_passed ? "passed" : "failed");
+	cout << "!                                             =" << endl;
 	cout << "= Histogram test has " << (test_histogram_passed ? "passed" : "failed");
 	cout << "!                                        =" << endl;
 	cout << "= Plot test has " << (test_plot_passed ? "passed" : "failed");

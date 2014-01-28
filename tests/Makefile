@@ -42,8 +42,8 @@ OBJJETS = ../source/jet_analysis/jet_analysis.o
 OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS) $(OBJHUNT) $(OBJJETS)
 
 ### Make EXES ###
-EXE = test_all test_lhco test_lhe test_event test_histogram test_plot test_bumphunter
-OBJEXES = source/test_all.o source/test_lhco.o source/test_lhe.o source/test_event.o source/test_histogram.o source/test_plot.o source/test_bumphunter.o
+EXE = test_all test_lhco test_lhe test_event test_cuts test_histogram test_plot test_bumphunter
+OBJEXES = source/test_all.o source/test_lhco.o source/test_lhe.o source/test_event.o source/test_cuts.o source/test_histogram.o source/test_plot.o source/test_bumphunter.o
 
 all: $(EXE)
 
@@ -71,6 +71,13 @@ test_lhe: source/test_lhe.o $(OBJPART) $(OBJEVNT) $(OBJUTIL)
 test_event: source/test_event.o $(OBJPART) $(OBJEVNT)
 	$(COMPILER) $(LDFLAGS) \
 	-o $@ $+ \
+	
+test_cuts: source/test_cuts.o $(OBJPART) $(OBJEVNT) $(OBJCUTS) $(OBJUTIL)
+	$(COMPILER) $(LDFLAGS) \
+	$(IGZSTREAM) \
+	-o $@ $+ \
+	$(LGZSTREAM) \
+	$(LBOOST) \
 
 test_histogram: source/test_histogram.o $(OBJHIST)
 	$(COMPILER) $(LDFLAGS) \
@@ -133,6 +140,10 @@ source/test_lhe.o: source/test_lhe.cpp
 	-c -o $@ $< \
 
 source/test_event.o: source/test_event.cpp
+	$(COMPILER) $(CFLAGS) \
+	-c -o $@ $< \
+	
+source/test_cuts.o: source/test_cuts.cpp
 	$(COMPILER) $(CFLAGS) \
 	-c -o $@ $< \
 
