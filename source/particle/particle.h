@@ -72,6 +72,10 @@ namespace analysis
 		virtual void read(igzstream& igzs);
 
 	};
+	
+	/* utility functions */
+	
+	bool compare_pt(particle *p1, particle *p2);
 
 /* NAMESPACE */
 }

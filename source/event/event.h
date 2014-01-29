@@ -50,6 +50,9 @@ namespace analysis
 		double ht(int type, double min_pt, double max_eta) const;
 		double mass() const;
 		double mass(int type, const std::vector<int> &comb) const;
+		
+		/* utility */
+		void sort_pt();
 
 		/* input & output */
 		void write(std::ostream& os) const;

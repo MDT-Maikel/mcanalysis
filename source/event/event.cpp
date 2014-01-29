@@ -41,12 +41,14 @@ namespace analysis
 
 	void event::resize(unsigned int n)  
 	{ 
-		particles.resize(n); 
+		particles.resize(n);
 	}
 
 	void event::push_back(particle *p) 
 	{ 
-		particles.push_back(p); 
+		particles.push_back(p);
+		// sort particles according to pt
+		sort_pt();
 	}
 
 	void event::erase(int n)
@@ -164,6 +166,14 @@ namespace analysis
 		double inv_mass = std::pow(pe, 2.0) - std::pow(px, 2.0) - std::pow (py, 2.0) - std::pow(pz, 2.0);
 		return std::sqrt(std::max(inv_mass, 0.0));
 	}
+	
+	/* utility */
+	
+	// sorts the current particles in the event by its pt, highest pt first
+	void event::sort_pt()
+	{
+		std::sort(particles.begin(), particles.end(), compare_pt);		
+	}
 
 	/* input & output */
 
@@ -200,10 +210,6 @@ namespace analysis
 		}
 		std::cout << particles.size() << std::endl;
 	}
-
-
-
-
 
 /* NAMESPACE */
 }

@@ -11,6 +11,7 @@ namespace analysis
 {
 
 	/* con & destructor */
+	
 	particle::particle() {}
 	particle::~particle() {}
 
@@ -42,6 +43,13 @@ namespace analysis
 	void particle::read(std::ifstream& ifs) {}
 	void particle::write(ogzstream& ogzs) const {}
 	void particle::read(igzstream& igzs) {}
+	
+	/* utility functions */
+	
+	bool compare_pt(particle *p1, particle *p2)
+	{
+		return p1->pt() > p2->pt();		
+	}
 
 /* NAMESPACE */
 }
