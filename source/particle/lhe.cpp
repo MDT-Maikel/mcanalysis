@@ -56,7 +56,12 @@ namespace analysis
 		}		
 		// unknown
 		return particle::type_unknown; 
-	} 
+	}
+	
+	void lhe::set_final(bool is_final)
+	{
+		p_inout = is_final ? 1 : 0;
+	}
 	
 	bool lhe::is_final() const 
 	{ 

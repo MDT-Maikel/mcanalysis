@@ -30,6 +30,8 @@ namespace analysis
 
 	int lhco::id() const { return 0; }
 	int lhco::type() const { return p_type; }
+	void lhco::set_final(bool is_final) { /* to be overloaded */ };
+	bool lhco::is_final() const { return true; }
 
 	/* kinematics */
 

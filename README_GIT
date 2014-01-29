@@ -24,5 +24,5 @@ purpose: add commits to the server repository
 
 command: git stash
 command: git stash pop
-purpose: 
+purpose: cleaning up the working directory before doing a pull
 

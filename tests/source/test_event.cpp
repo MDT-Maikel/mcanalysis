@@ -33,84 +33,88 @@ int main(int argc, const char* argv[])
 	std::random_device rd;
 	
 	// create an event of lhco particles
-	event ev_lhco;
-	for (unsigned int i = 0; i < 10000; i++)
+	event *ev_lhco = new event;
+	for (unsigned int i = 0; i < 1000; i++)
 	{
 		double eta = normal_distribution<double>(0.0, 1.5)(rd);
 		double phi = uniform_real_distribution<double>(-3.14, 3.14)(rd);
 		double pt = uniform_real_distribution<double>(0.0, 1000.0)(rd);
 		double mass = uniform_real_distribution<double>(0.0, 10.0)(rd);
 		lhco* p = new lhco(particle::type_unknown, eta, phi, pt, mass);
-		ev_lhco.push_back(p);
+		ev_lhco->push_back(p);
 	}
 
 	// convert into an event of lhe particles
-	event ev_lhe;
-	for (unsigned int i = 0; i < ev_lhco.size(); i++)
+	event *ev_lhe = new event;
+	for (unsigned int i = 0; i < ev_lhco->size(); i++)
 	{
-		double px = ev_lhco[i]->px();
-		double py = ev_lhco[i]->py();
-		double pz = ev_lhco[i]->pz();
-		double pe = ev_lhco[i]->pe();
-		double mass = ev_lhco[i]->mass();
+		particle *p_lhco = (*ev_lhco)[i];
+		double px = p_lhco->px();
+		double py = p_lhco->py();
+		double pz = p_lhco->pz();
+		double pe = p_lhco->pe();
+		double mass = p_lhco->mass();
 		lhe* p = new lhe(px, py, pz, pe, mass);
-		ev_lhe.push_back(p);
+		p->set_final(true);
+		ev_lhe->push_back(p);
 	}
 	
 	// test for each particle if kinematics are equivalent between lhco and lhe
 	// test: pt, eta, phi and mass
 	bool test_lhco_lhe_passed = true;
-	for (unsigned int i = 0; i < ev_lhco.size(); i++)
+	for (unsigned int i = 0; i < ev_lhco->size(); i++)
 	{
+		particle *p_lhco = (*ev_lhco)[i];
+		particle *p_lhe = (*ev_lhe)[i];		
 		// test pt
-		if (!(fabs((ev_lhco[i]->pt() - ev_lhe[i]->pt()) / ev_lhco[i]->pt()) < test_precision))
+		if (!(fabs((p_lhco->pt() - p_lhe->pt()) / p_lhco->pt()) < test_precision))
 		{
-			cout << std::setprecision(3) << "pt: " << ev_lhco[i]->pt() << " != " << ev_lhe[i]->pt() << endl;
+			cout << std::setprecision(3) << "pt: " << p_lhco->pt() << " != " << p_lhe->pt() << " " << i << endl;
 			test_lhco_lhe_passed = false;
-			break;			
+			//break;			
 		}
 		// test eta
-		if (!(fabs((ev_lhco[i]->eta() - ev_lhe[i]->eta()) / ev_lhco[i]->eta()) < test_precision))
+		if (!(fabs((p_lhco->eta() - p_lhe->eta()) / p_lhco->eta()) < test_precision))
 		{
-			cout << std::setprecision(3) << "eta: " << ev_lhco[i]->eta() << " != " << ev_lhe[i]->eta() << endl;
+			cout << std::setprecision(3) << "eta: " << p_lhco->eta() << " != " << p_lhe->eta() << endl;
 			test_lhco_lhe_passed = false;
-			break;			
+			//break;			
 		}
 		// test phi
-		if (!(fabs((ev_lhco[i]->phi() - ev_lhe[i]->phi()) / ev_lhco[i]->phi()) < test_precision))
+		if (!(fabs((p_lhco->phi() - p_lhe->phi()) / p_lhco->phi()) < test_precision))
 		{
-			cout << std::setprecision(3) << "phi: " << ev_lhco[i]->phi() << " != " << ev_lhe[i]->phi() << endl;
-			cout << std::setprecision(3) << "phi diff: " << ev_lhco[i]->phi() - ev_lhe[i]->phi() << endl;
+			cout << std::setprecision(3) << "phi: " << p_lhco->phi() << " != " << p_lhe->phi() << endl;
+			cout << std::setprecision(3) << "phi diff: " << p_lhco->phi() - p_lhe->phi() << endl;
 			test_lhco_lhe_passed = false;
-			break;			
+			//break;			
 		}		
 		// test lhe lorentz invariance
-		double px = ev_lhe[i]->px();
-		double py = ev_lhe[i]->py();
-		double pz = ev_lhe[i]->pz();
-		double pe = ev_lhe[i]->pe();
-		double mass = ev_lhe[i]->mass();		
+		double px = p_lhe->px();
+		double py = p_lhe->py();
+		double pz = p_lhe->pz();
+		double pe = p_lhe->pe();
+		double mass = p_lhe->mass();		
 		if (!(fabs((pe * pe - px * px - py * py - pz * pz - mass * mass) / (pe * pe)) < test_precision))
 		{
 			cout << "lhe lorentz invariance failed" << endl;
 			cout << std::setprecision(3) << "E^2 - p^2 != m^2: " << pe * pe - px * px - py * py - pz * pz << " != " << mass * mass << endl;
 			test_lhco_lhe_passed = false;
-			break;			
+			//break;			
 		}		
 	}
 	
 	// test event functions between both formats
 	bool test_event_passed = true;
 	// test the event.mass() function
-	if (!fabs((ev_lhco.mass() - ev_lhe.mass()) / ev_lhco.mass()) < test_precision)
+	if (!fabs((ev_lhco->mass() - ev_lhe->mass()) / ev_lhco->mass()) < test_precision)
 	{
-		cout << std::setprecision(6) << "event.mass(): " << ev_lhco.mass() << " != " << ev_lhe.mass() << endl;
+		cout << std::setprecision(6) << "event.mass(): " << ev_lhco->mass() << " != " << ev_lhe->mass() << endl;
 		test_event_passed = false;
 	}
 	// test the event.ht() function
-	if (fabs((ev_lhco.ht(particle::type_unknown, 5.0, 5.0) - ev_lhe.ht(particle::type_unknown, 5.0, 5.0)) / ev_lhco.ht(particle::type_unknown, 5.0, 5.0)) > test_precision)
+	if (fabs((ev_lhco->ht(particle::type_unknown, 5.0, 5.0) - ev_lhe->ht(particle::type_unknown, 5.0, 5.0)) / ev_lhco->ht(particle::type_unknown, 5.0, 5.0)) > test_precision)
 	{
-		cout << std::setprecision(6) << "event.ht(-1, 5.0, 5.0): " << ev_lhco.ht(particle::type_unknown, 5.0, 5.0) << " != " << ev_lhe.ht(particle::type_unknown, 5.0, 5.0) << endl;
+		cout << std::setprecision(6) << "event.ht(-1, 5.0, 5.0): " << ev_lhco->ht(particle::type_unknown, 5.0, 5.0) << " != " << ev_lhe->ht(particle::type_unknown, 5.0, 5.0) << endl;
 		test_event_passed = false;
 	}
 		

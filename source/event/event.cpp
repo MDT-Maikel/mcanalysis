@@ -188,8 +188,6 @@ namespace analysis
 
 	void event::read(std::istream& is)
 	{
-
-
 	}
 
 	void event::write(std::ofstream& ofs) const
