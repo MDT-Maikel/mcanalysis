@@ -13,6 +13,12 @@ namespace analysis {
 
 	jet_analysis::jet_analysis() 
 	{
+		// lhe input files, number of events to be analysed by Pythia and print options
+		nEvent = 1000;
+		firstEvent = true;
+		printTopTagDetails = true;
+		printBDRSDetails = true;
+
 		// Detector range and Isolation parameters
 		MaxEta = 4.9;
 
@@ -30,12 +36,8 @@ namespace analysis {
 		deltaR_IsolatedPhoton = 0.2; 
 		sumEtInCone_IsolatedPhoton = 2.6;
 
-		// lhe input & number of events to be analysed by Phytia
-		lhe_name = "";
-		nEvent = 1000;
-		firstEvent = true;
-		printTopTagDetails = true;
-		printBRDSDetails = true;
+		// Merging procedure
+		DoMerging = false;
 
 		// Jet clustering parameters
 		Rsize_fat = 1.4;
@@ -45,6 +47,13 @@ namespace analysis {
 		DoTopTagger = true;
 		JHTopTagger_delta_p = 0.05; 
 		JHTopTagger_delta_r = 0.19;
+
+		//BDRS parameters
+		DoBDRS = true;
+		BDRS_w_min = 65.;
+		BDRS_w_max = 95.;
+		BDRS_higgs_min = 100.;
+		BDRS_higgs_max = 130.;
 	}
 
 	jet_analysis::~jet_analysis()
@@ -56,7 +65,18 @@ namespace analysis {
 	//	       Set parameters and lhe input   	  //
 	// ========================================== //
 
-	void jet_analysis::set_Isolation(const std::string & type, const double & eta, const double & pt, const double & Rcone, const double & EtCone) //TODO: update using p_type
+	void jet_analysis::add_lhe(const std::string & name)
+	{
+		lhe_input.push_back(name);
+	}
+
+	void jet_analysis::set_nEvents(const int & events)
+	{
+		nEvent = events;
+	}
+
+	// ===== TODO: update using p_type ===== //
+	void jet_analysis::set_Isolation(const std::string & type, const double & eta, const double & pt, const double & Rcone, const double & EtCone)
 	{
 		if (type == "electron")
 		{
@@ -79,19 +99,7 @@ namespace analysis {
 			sumEtInCone_IsolatedPhoton = EtCone;
 		}
 		else
-		{
 			std::cout << "Wrong type assignment." << std::endl;
-		}
-	}
-
-	void jet_analysis::set_nEvent(const int & events)
-	{
-		nEvent = events;
-	}
-
-	void jet_analysis::add_lhe(const std::string & name)
-	{
-		lhe_name = name;
 	}
 
 	void jet_analysis::set_Rsize_fat(const double & R)
@@ -106,8 +114,46 @@ namespace analysis {
 
 	void jet_analysis::set_JHTopTagger(const double & delta_p, const double & delta_r)
 	{
+		DoTopTagger = true;
 		JHTopTagger_delta_p = delta_p;
 		JHTopTagger_delta_r = delta_r;
+	}
+
+	void jet_analysis::set_BDRS_w_range(const double & w_min, const double & w_max)
+	{
+		DoBDRS = true;
+		BDRS_w_min = w_min;
+		BDRS_w_max = w_max;
+	}
+
+	void jet_analysis::set_BDRS_higgs_range(const double & higgs_min, const double & higgs_max)
+	{
+		DoBDRS = true;
+		BDRS_higgs_min = higgs_min;
+		BDRS_higgs_max = higgs_max;
+	}
+
+	void jet_analysis::undo_TopTagging()
+	{
+		DoTopTagger = false;
+	}
+
+	void jet_analysis::undo_BDRSTagging()
+	{
+		DoBDRS = false;
+	}
+
+
+	// ========================================== // 
+	//	            Merging procedure	 	   	  //
+	// ========================================== //
+
+	void jet_analysis::set_merging(const double & ms, const int & njmax, const std::string & process)
+	{
+		DoMerging = true;
+		MergingTMS = ms;
+		MergingNJetMax = njmax;
+		MergingProcess = process;
 	}
 
 
@@ -143,14 +189,15 @@ namespace analysis {
 						  particles[i].idAbs() != 12 && 
 						  particles[i].idAbs() != 14 && 
 						  particles[i].idAbs() != 16 && 
-						  particles[i].idAbs() != 1000022 
-						  && abs(particles[i].eta()) < MaxEta) 
+						  particles[i].idAbs() != 1000022 &&
+						  particles[i].idAbs() != 8880022 &&
+						  abs(particles[i].eta()) < MaxEta) 
 						{
 							double deltaEta = x.eta() - electron.eta();
 							double deltaPhi = x.phi() - electron.phi();
 							double deltaR   = sqrt(deltaEta * deltaEta + deltaPhi * deltaPhi);
 							if (deltaR < deltaR_IsolatedLepton)
-							  sumEtInCone += abs(x.pt());
+								sumEtInCone += abs(x.pt());
 
 						} // end if(visible and not considered electron)
 
@@ -160,7 +207,7 @@ namespace analysis {
 
 				// isolation criterium: pT within cone less than 10% of pT(e)
 				if (sumEtInCone < 0.1*abs(electron.pt())) 
-				return true;
+					return true;
 
 			} // end if(pTmin, etamax)
 
@@ -197,14 +244,15 @@ namespace analysis {
 						  particles[i].idAbs() != 12 && 
 						  particles[i].idAbs() != 14 && 
 						  particles[i].idAbs() != 16 && 
-						  particles[i].idAbs() != 1000022 
-						  && abs(particles[i].eta()) < MaxEta) 
+						  particles[i].idAbs() != 1000022 &&
+						  particles[i].idAbs() != 8880022 &&
+						  abs(particles[i].eta()) < MaxEta) 
 						{
 							double deltaEta = x.eta() - muon.eta();
 							double deltaPhi = x.phi() - muon.phi();
 							double deltaR   = sqrt(deltaEta * deltaEta + deltaPhi * deltaPhi);
 							if (deltaR < deltaR_IsolatedLepton)
-							  sumEtInCone += abs(x.pt());
+								sumEtInCone += abs(x.pt());
 
 						} // end if(visible and not considered muon)
 
@@ -214,7 +262,7 @@ namespace analysis {
 
 				// isolation criterium: pT within cone less than sumEtInCone_IsolatedMuon GeV
 				if (sumEtInCone < sumEtInCone_IsolatedMuon) 
-				return true;
+					return true;
 
 			} // end if(pTmin, etamax)
 
@@ -251,14 +299,15 @@ namespace analysis {
 						  particles[i].idAbs() != 12 && 
 						  particles[i].idAbs() != 14 && 
 						  particles[i].idAbs() != 16 && 
-						  particles[i].idAbs() != 1000022 
-						  && abs(particles[i].eta()) < MaxEta) 
+						  particles[i].idAbs() != 1000022 &&
+						  particles[i].idAbs() != 8880022 &&
+						  abs(particles[i].eta()) < MaxEta) 
 						{
 							double deltaEta = x.eta() - photon.eta();
 							double deltaPhi = x.phi() - photon.phi();
 							double deltaR   = sqrt(deltaEta * deltaEta + deltaPhi * deltaPhi);
 							if (deltaR < deltaR_IsolatedPhoton)
-							  sumEtInCone += abs(x.pt());
+								sumEtInCone += abs(x.pt());
 
 						} // end if(visible and not considered photon)
 
@@ -268,7 +317,7 @@ namespace analysis {
 
 				// isolation criterium: pT within cone less than sumEtInCone_IsolatedPhoton GeV
 				if (sumEtInCone < sumEtInCone_IsolatedPhoton) 
-				return true;
+					return true;
 
 			} // end if(pTmin, etamax)
 
@@ -280,17 +329,13 @@ namespace analysis {
 	bool jet_analysis::JetElectronOverlapping(const fastjet::PseudoJet & jet, const std::vector< fastjet::PseudoJet > & leptons) 
 	{
 		if (leptons.size() == 0)
-		{
 			return false;
-		}
 
 		for (unsigned int i = 0; i < leptons.size(); ++i)
 		{
-			double deltaR   = jet.delta_R(leptons[i]);
-			if (/*leptons[i].idAbs() == 11 &&*/ deltaR < 0.2) //TODO: add pdg information
-			{
+			double deltaR = jet.delta_R(leptons[i]);
+			if ( leptons[i].user_info<Pythia8::Particle>().idAbs() == 11 && deltaR < 0.2 )
 				return true;
-			}
 		}
 
 		return false;
@@ -303,21 +348,18 @@ namespace analysis {
 
 	fastjet::PseudoJet jet_analysis::JHTopTagging(const fastjet::PseudoJet & jet)
 	{
-		// Tagging algorithm
+		// Definition of JH Top-tagger algorithm
 		fastjet::JHTopTagger top_tagger(JHTopTagger_delta_p, JHTopTagger_delta_r);
 		top_tagger.set_top_selector(fastjet::SelectorMassRange(150,200));
 		top_tagger.set_W_selector  (fastjet::SelectorMassRange( 65, 95));
 		fastjet::PseudoJet tagged = top_tagger(jet);
 
+		// Print Top-tagging details
 		if (printTopTagDetails)
-		{
-			// Print Top-tagging details
-			cout << "\nRan the following top tagger:\n" 
-		   		 << top_tagger.description() << endl;
-		}
+			cout << "\nRan the following top tagger:\n" << top_tagger.description() << endl;
 
 		// Set TagInfo
-		if ( tagged!=0 )
+		if ( tagged!=0 ) // return top-tagged jet
 		{
 			bool top_tag = true;
 			bool w_tag = false;
@@ -328,20 +370,58 @@ namespace analysis {
 		return tagged;
 	}
 
-	fastjet::PseudoJet jet_analysis::BRDSTagging(const fastjet::PseudoJet & jet)
+	fastjet::PseudoJet jet_analysis::HEPTopTagging(const fastjet::PseudoJet & jet)
 	{
-		// from example 12 of FastJet
+		// Definition of HEP Top-tagger algorithm
+		double topmass=172.3;
+		double wmass=80.4;
+		HEPTopTagger top_tagger(*(jet.associated_cs()),jet,topmass,wmass);
+		top_tagger.set_top_range(150.,200.);
+		top_tagger.run_tagger();		
+
+		// Print Top-tagging details
+		if (printTopTagDetails)
+		{
+			cout << "\nRan HEPTopTagger with the following parameters:" << endl; 
+			top_tagger.get_setting();
+			cout << endl;
+			// top_tagger.get_info();
+			// cout << endl;
+		}
+
+		// Set TagInfo
+		if ( top_tagger.is_masscut_passed() ) // return top-tagged jet
+		{
+			fastjet::PseudoJet top = top_tagger.top_candidate();
+			// fastjet::PseudoJet b = top_tagger.top_subjets().at(0);
+			// fastjet::PseudoJet W1 = top_tagger.top_subjets().at(1);
+			// fastjet::PseudoJet W2 = top_tagger.top_subjets().at(2);
+			bool top_tag = true;
+			bool w_tag = false;
+			bool h_tag = false;
+			top.set_user_info(new TagInfo(top_tag, w_tag, h_tag));
+
+			return top;
+		}
+		else // return void jet
+		{
+			fastjet::PseudoJet voidJet;
+			return voidJet;
+		}
+
+	}
+
+	fastjet::PseudoJet jet_analysis::BDRSTagging(const fastjet::PseudoJet & jet)
+	{
+		/* from example 12 of FastJet */
 
 		// Definition of Mass drop tagger with \mu=0.667 and ycut=0.09
 		fastjet::MassDropTagger md_tagger(0.667, 0.09);
 		fastjet::PseudoJet tagged = md_tagger(jet);
 
-		if (printBRDSDetails)
-		{
-			// Print BRDS-tagging details
-			cout << "\nRan the following BRDS tagger:\n" 
-		   		 << md_tagger.description() << endl << endl;
-		}
+		// Print BDRS-tagging details
+		if (printBDRSDetails)
+			cout << "\nRan the following BDRS tagger:\n" << md_tagger.description() << endl << endl;
 
 		if ( tagged!=0 )
 		{
@@ -366,29 +446,27 @@ namespace analysis {
 	  		fastjet::PseudoJet candidate;
 	  		candidate = join(filtered_pieces[0], filtered_pieces[1]);
 	  		double invMass = candidate.m();
-			if ( 65. < invMass && invMass < 95. )
+			if ( BDRS_w_min < invMass && invMass < BDRS_w_max ) // return W-tagged jet
 			{
 				bool top_tag = false;
 				bool w_tag = true;
 				bool h_tag = false;
 				filtered.set_user_info(new TagInfo(top_tag, w_tag, h_tag));
+				return filtered;
 			}
-			else if ( 100. < invMass && invMass < 130. )
+			else if ( BDRS_higgs_min < invMass && invMass < BDRS_higgs_max ) // return h-tagged jet
 			{
 				bool top_tag = false;
 				bool w_tag = false;
 				bool h_tag = true;
 				filtered.set_user_info(new TagInfo(top_tag, w_tag, h_tag));
+				return filtered;
 			}
-			else
+			else // return void jet
 			{
-				bool top_tag = false;
-				bool w_tag = false;
-				bool h_tag = false;
-				filtered.set_user_info(new TagInfo(top_tag, w_tag, h_tag));
+				fastjet::PseudoJet voidJet;
+				return voidJet;
 			}
-
-			return filtered;
 		}
 
 		return tagged;
@@ -401,36 +479,245 @@ namespace analysis {
 
 	void jet_analysis::reduce_sample(cuts cut_list)
 	{	
-		// map_lhco_fatJets iterator definition
+		// map_lhco_taggedJets iterator definition
 		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
 
 		// extract vector of event pointers "events"
 		std::vector< event * > events;
-		for (it=map_lhco_fatJets.begin(); it!=map_lhco_fatJets.end(); ++it)
-		{
+		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
 			events.push_back(it->first);
-		}
 
 		// perform the cuts defined in cut_list on "events"
 		cut_list.apply(events);
 		cut_list.write(cout);
 
-		// retrieve from map_lhco_fatJets only the elements which passed the cuts
+		// retrieve from map_lhco_taggedJets only the elements which passed the cuts
 		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
 		for (unsigned int i = 0; i < events.size(); ++i)
 		{
-			it = map_lhco_fatJets.find(events[i]);
-			if ( it!=map_lhco_fatJets.end() )
-			{
+			it = map_lhco_taggedJets.find(events[i]);
+			if ( it!=map_lhco_taggedJets.end() )
 				reduced_map.insert( 
 					std::make_pair( events[i], 
-									map_lhco_fatJets[events[i]] ) 
+									map_lhco_taggedJets[events[i]] ) 
 					); // end insert
-			}
 		}
 
-		// resize the map_lhco_fatJets
-		map_lhco_fatJets = reduced_map;
+		// resize the map_lhco_taggedJets
+		map_lhco_taggedJets = reduced_map;
+	}
+
+	double jet_analysis::require_top_tagged(const int & n)
+	{
+		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
+		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
+		int map_size = 0, passed = 0;
+		double eff;
+
+		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
+		{
+			map_size++;
+			int toptag = 0;
+
+			if ((it->second).size()!=0)
+			{
+				for (unsigned int i = 0; i < (it->second).size(); ++i)
+				{
+					fastjet::PseudoJet tagged;
+					tagged = (it->second)[i];
+
+					if (tagged.user_info<TagInfo>().top_tag())
+					{
+						// cout << "Found tagged top" << endl;
+						// cout << "top candidate:     " << tagged << endl;
+						// cout << "|_ W   candidate:  " << tagged.structure_of<fastjet::JHTopTagger>().W() << endl;
+						// cout << "|  |_  W subjet 1: " << tagged.structure_of<fastjet::JHTopTagger>().W1() << endl;
+						// cout << "|  |_  W subjet 2: " << tagged.structure_of<fastjet::JHTopTagger>().W2() << endl;
+						// cout << "|  cos(theta_W) =  " << tagged.structure_of<fastjet::JHTopTagger>().cos_theta_W() << endl;
+						// cout << "|_ non-W subjet:   " << tagged.structure_of<fastjet::JHTopTagger>().non_W() << endl;
+						toptag++;
+					}
+
+				} // for (it->second).size() -> calculates how many tops are tagged within the event
+
+				if (toptag >= n)
+				{
+					passed++;
+					reduced_map.insert( std::make_pair(it->first,it->second) );
+				}
+
+			} // if ((it->second).size()!=0) -> look among events with tagged jets
+
+		} // for (map_lhco_taggedJets)
+
+		// calculate efficiency
+		eff = (double) passed/map_size;
+
+		// resize the map_lhco_taggedJets
+		map_lhco_taggedJets = reduced_map;
+
+		return eff;
+	}
+
+	double jet_analysis::require_higgs_tagged(const int & n)
+	{
+		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
+		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
+		int map_size = 0, passed = 0;
+		double eff;
+
+		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
+		{
+			map_size++;
+			int higgstag = 0;
+
+			if ((it->second).size()!=0)
+			{
+				for (unsigned int i = 0; i < (it->second).size(); ++i)
+				{
+					fastjet::PseudoJet tagged;
+					tagged = (it->second)[i];
+
+					if (tagged.user_info<TagInfo>().h_tag())
+					{
+						// cout << "Found tagged higgs" << endl;
+						// std::vector< fastjet::PseudoJet > tagged_pieces = tagged.pieces();
+						// fastjet::PseudoJet candidate;
+						// candidate = join(tagged_pieces[0], tagged_pieces[1]);
+						// double invMass = candidate.m();
+
+						// cout << "Filtered pieces are " << endl;
+						// for (unsigned i = 0; i < 3 && i < tagged_pieces.size(); i++) 
+						// {
+						// cout << " " << tagged_pieces[i] << endl;
+						// }
+						// cout << "Filtered total is " << endl;
+						// cout << " " << tagged << endl;
+						// cout << "Invariant mass of the two leading pieces: " << invMass << endl;
+						higgstag++;
+					}
+
+				} // for (it->second).size() -> calculates how many Higgses are tagged within the event
+
+				if (higgstag >= n)
+				{
+					passed++;
+					reduced_map.insert( std::make_pair(it->first,it->second) );
+				}
+
+			} // if ((it->second).size()!=0) -> look among events with tagged jets
+
+		} // for (map_lhco_taggedJets)
+
+		// calculate efficiency
+		eff = (double) passed/map_size;
+		
+		// resize the map_lhco_taggedJets
+		map_lhco_taggedJets = reduced_map;
+
+		return eff;
+	}
+
+	double jet_analysis::require_w_tagged(const int & n)
+	{
+		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
+		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
+		int map_size = 0, passed = 0;
+		double eff;
+
+		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
+		{
+			map_size++;
+			int wtag = 0;
+
+			if ((it->second).size()!=0)
+			{
+				for (unsigned int i = 0; i < (it->second).size(); ++i)
+				{
+					fastjet::PseudoJet tagged;
+					tagged = (it->second)[i];
+
+					if (tagged.user_info<TagInfo>().w_tag())
+					{
+						// cout << "Found tagged W" << endl;
+						// std::vector< fastjet::PseudoJet > tagged_pieces = tagged.pieces();
+						// fastjet::PseudoJet candidate;
+						// candidate = join(tagged_pieces[0], tagged_pieces[1]);
+						// double invMass = candidate.m();
+
+						// cout << "Filtered pieces are " << endl;
+						// for (unsigned i = 0; i < 3 && i < tagged_pieces.size(); i++) 
+						// {
+						// cout << " " << tagged_pieces[i] << endl;
+						// }
+						// cout << "Filtered total is " << endl;
+						// cout << " " << tagged << endl;
+						// cout << "Invariant mass of the two leading pieces: " << invMass << endl;
+						wtag++;
+					}
+
+				} // for (it->second).size() -> calculates how many W are tagged within the event
+
+				if (wtag >= n)
+				{
+					passed++;
+					reduced_map.insert( std::make_pair(it->first,it->second) );
+				}
+
+			} // if ((it->second).size()!=0) -> look among events with tagged jets
+
+		} // for (map_lhco_taggedJets)
+
+		// calculate efficiency
+		eff = (double) passed/map_size;
+		
+		// resize the map_lhco_taggedJets
+		map_lhco_taggedJets = reduced_map;
+
+		return eff;
+	}
+
+	double jet_analysis::require_t_or_w_tagged(const int & n)
+	{
+		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
+		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
+		int map_size = 0, passed = 0;
+		double eff;
+
+		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
+		{
+			map_size++;
+			int twtag = 0;
+
+			if ((it->second).size()!=0)
+			{
+				for (unsigned int i = 0; i < (it->second).size(); ++i)
+				{
+					fastjet::PseudoJet tagged;
+					tagged = (it->second)[i];
+
+					if ( tagged.user_info<TagInfo>().top_tag() || tagged.user_info<TagInfo>().w_tag() )
+						twtag++;
+
+				} // for (it->second).size() -> calculates how many W are tagged within the event
+
+				if (twtag >= n)
+				{
+					passed++;
+					reduced_map.insert( std::make_pair(it->first,it->second) );
+				}
+
+			} // if ((it->second).size()!=0) -> look among events with tagged jets
+
+		} // for (map_lhco_taggedJets)
+
+		// calculate efficiency
+		eff = (double) passed/map_size;
+		
+		// resize the map_lhco_taggedJets
+		map_lhco_taggedJets = reduced_map;
+
+		return eff;
 	}
 
 
@@ -440,12 +727,32 @@ namespace analysis {
 
 	void jet_analysis::initialise(fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &))
 	{
-		// Initialise Pythia on LHE file
+		//============= Initialisation =============//
 		Pythia pythia;
-		// pythia.init("./w2emveb_light_lhc8_0.lhe");
-		pythia.init(lhe_name.c_str());
 
-		// Fastjet analysis: select algorithm and parameters
+		// Set the merging procedure if required
+		if (DoMerging)
+		{	
+			pythia.readString("Merging:doKTMerging = on");
+
+			std::string tms_string = "Merging:TMS = " + boost::lexical_cast<std::string>(MergingTMS);
+			pythia.settings.readString(tms_string.c_str());
+
+			std::string nj_string = "Merging:nJetMax = " + boost::lexical_cast<std::string>(MergingNJetMax);
+			pythia.settings.readString(nj_string.c_str());
+
+			std::string prc_string = "Merging:Process = " + MergingProcess;
+			pythia.settings.readString(prc_string.c_str());
+		}		
+
+		// ===== TODO: modify for merging procedure ===== //
+		// Initialise lhe input files
+		if ( lhe_input.size() != 0 )
+			pythia.init(lhe_input[0].c_str());
+		else
+			cout << "Error: no input file specified." << endl;
+
+		// Select FastJet algorithm and parameters
 		std::vector <fastjet::PseudoJet>  isolLeptons;
 		std::vector <fastjet::PseudoJet>  isolPhotons;
 		std::vector <fastjet::PseudoJet>  fjInputs;
@@ -461,20 +768,39 @@ namespace analysis {
 		fastjet::JetAlgorithm             antikt = fastjet::antikt_algorithm;
 		skinnyJetDef = new fastjet::JetDefinition(antikt, Rsize_skinny, recombScheme, strategy);
 
-		// Event loop
+
+		//============= Event loop =============//
 		for (int iEvent = 0; iEvent < nEvent; ++iEvent)
 		{
 			// Generate event
-			if (!pythia.next()) continue;
+			if (!pythia.next())
+			{
+				if( pythia.info.atEndOfFile() ) break;
+				else continue;
+			}
 
-			// Reset Fastjet inputs
+			// Reset FastJet inputs
 			isolLeptons.clear();
 			isolPhotons.clear();
 			fjInputs.clear();
 
-			// Loop over event record to decide what to pass to FastJet
+			// Define Etmiss vector
+			double pxmiss = 0.0;
+			double pymiss = 0.0;
+
+			// Index vector to take trace of outgoing b-quarks of the hardest process
+			std::vector< int > index;
+
+
+			//============= Collect Isolated particles and FastJet input within each event=============//
 			for (int i = 0; i < pythia.event.size(); ++i) 
 			{ 
+				// Identify the index of the outgoing b-quarks of the hardest process
+				long pdg = pythia.event[i].idAbs();
+				int status = pythia.event[i].status();
+				if (pdg == 5 && status == -23)
+					index.push_back(i);
+
 				// Final state only
 				if (!pythia.event[i].isFinal()) 
 					continue;
@@ -483,10 +809,14 @@ namespace analysis {
 				if ( pythia.event[i].eta() > MaxEta )
 					continue;
 
-				// Don't include neutrinos or neutralinos
+				// Don't include invisible particles (neutrinos neutralinos, heavy photon)
 				long id = pythia.event[i].idAbs();
-				if ( id == 12 || id == 14 || id == 16 || id == 1000022 ) 
+				if ( id == 12 || id == 14 || id == 16 || id == 1000022 || id == 8880022 ) 
 					continue;
+
+				// Take trace of Etmiss vector components from visible particles
+				pxmiss += pythia.event[i].px();
+				pymiss += pythia.event[i].py();
 
 				// Collect isolated leptons
 				if ( isolatedElectron(i, pythia.event) || 
@@ -503,35 +833,33 @@ namespace analysis {
 					continue;
 				}
 
-				// Collect Fastjet input, with TagInfo
-				fastjet::PseudoJet jetCandidate;
-				jetCandidate = pythia.event[i];
-				// jetCandidate.set_user_info(new TagInfo()); //TODO: insert b-tag info
-				fjInputs.push_back(jetCandidate);
-			}
+				// Collect FastJet input
+				fjInputs.push_back(pythia.event[i]);
+
+			} // End of particle loop
 
 			// Print Warning
 			if ( fjInputs.size() == 0 ) 
-				{
-					cout << "Event no. " << iEvent+1 << " with no final state particles." << endl;
-					continue;
-				}
+			{
+				cout << "Event no. " << iEvent+1 << " with no final state particles." << endl;
+				continue;
+			}
 
 			// Sort isolLeptons, isolPhotons by pT
 			isolLeptons = sorted_by_pt( isolLeptons );
 			isolPhotons = sorted_by_pt( isolPhotons );
 
-			// Run Fastjet algorithm for fatJets and skinnyJets
+
+			//============= Run FastJet algorithm on fatJets and skinnyJets =============//
 			fastjet::ClusterSequence *CSfatJets; 
 			CSfatJets = new fastjet::ClusterSequence(fjInputs, *fatJetDef);
 
 			fastjet::ClusterSequence *CSskinnyJets;
 			CSskinnyJets = new fastjet::ClusterSequence(fjInputs, *skinnyJetDef);
 
-			// First event only
+			// Print FastJet details
 			if (firstEvent)
 			{
-				// Print FastJet details
 				cout << "\nSkinny Jets clustering:\n" 
 					 << skinnyJetDef->description() << ". ";
 				cout << "Strategy adopted by FastJet was "
@@ -544,13 +872,72 @@ namespace analysis {
 			}
 
 			// Extract inclusive jets sorted by pT (note minimum pT veto)
-			std::vector <fastjet::PseudoJet>  skinnyJets;
-			std::vector <fastjet::PseudoJet>  fatJets;
+			std::vector< fastjet::PseudoJet >  skinnyJets;
+			std::vector< fastjet::PseudoJet >  fatJets;
 			fatJets = sorted_by_pt( CSfatJets->inclusive_jets(jetMinPt) );
 			skinnyJets = sorted_by_pt( CSskinnyJets->inclusive_jets(jetMinPt) );
 
+			// ===== TODO: implement b-flavour information ===== //
+			// // Determine b-tag information of skinnyJets
+			// for (unsigned int i = 0; i < skinnyJets.size(); ++i)
+			// {
+			// 	std::vector< fastjet::PseudoJet > pieces = skinnyJets[i].constituents();
+			// 	for (unsigned int j = 0; j < pieces.size(); ++j)
+			// 	{
+			// 		bool isB = false;
+			// 		for (unsigned int k = 0; k < index.size(); ++k)
+			// 		{
+			// 	        int iAncestor = index[k];
+			// 	        int iPos = pieces[j].user_info<Pythia8::Particle>().mother1();
 
-			//=== Store clustered events ===//
+			// 	        bool isMatched = pythia.event.isAncestor(iPos,iAncestor);
+
+			// 	        // if a b-quark ancestor is found: set b-tag information, remove b-index and jump at the next skinnyJet (isB = true)
+			// 	        if(isMatched)
+			// 	        {
+			// 	        	skinnyJets[i].set_user_info(new FlavourInfo(true));
+			// 	        	isB = true;
+			// 				index.erase(index.begin()+k);
+			// 				break;
+			// 	        }
+			// 		} // end index loop
+
+			// 		if (isB)
+			// 			break;
+
+			// 		// if no b-quark is found among the ancestors of the skinnyJet constituents, then set no-b information	
+			// 		if (j == (pieces.size()-1))
+			// 			skinnyJets[i].set_user_info(new FlavourInfo(false));
+
+			// 	} // end pieces loop
+
+			// } // end skinnyJets loop
+
+			// // Check b-quark history of final state particles
+			// for (unsigned int i = 0; i < fjInputs.size(); ++i)
+			// {
+			// 	for (unsigned int k = 0; k < index.size(); ++k)
+			// 	{
+			//         int iAncestor = index[k];
+			//         int iPos = fjInputs[i].user_info<Pythia8::Particle>().mother1();
+
+			//         bool isMatched = pythia.event.isAncestor(iPos,iAncestor);
+
+			//         if(isMatched)
+			//         {
+			//         	if(firstEvent)
+			//         		cout << "found ancestor, with id: " << iAncestor << endl;;
+			//         }
+			// 	} // end index loop
+
+			// } // end fjInputs loop
+
+			// Temporary null-assignment of b-tag information
+			for (unsigned int i = 0; i < skinnyJets.size(); ++i)
+				skinnyJets[i].set_user_info(new FlavourInfo(false));
+
+
+			//============= Store clustered events in lhco format =============//
 			event *ev = new event;
 
 			// Translate isolLeptons into lhco format and push back into the list of event pointers
@@ -564,13 +951,9 @@ namespace analysis {
 						p_ch	= isolLeptons[i].user_info<Pythia8::Particle>().charge();
 
 				if (p_id == 11)
-				{
 					p_type = particle::type_electron;
-				}
 				else
-				{
 					p_type = particle::type_muon;
-				}
 
 				lhco *p = new lhco(p_type, p_eta, p_phi, p_pt, 0.0, p_ch);
 				ev->push_back(p);
@@ -598,32 +981,17 @@ namespace analysis {
 					double	p_eta 	= skinnyJets[i].eta(), 
 							p_phi 	= skinnyJets[i].phi(), 
 							p_pt 	= skinnyJets[i].pt(), 
-							p_m 	= skinnyJets[i].m();
+							p_m 	= skinnyJets[i].m(),
+							p_bjet	= skinnyJets[i].user_info<FlavourInfo>().b_type();
 
-					lhco *p = new lhco(p_type, p_eta, p_phi, p_pt, p_m);
+					lhco *p = new lhco(p_type, p_eta, p_phi, p_pt, p_m, 0.0, p_bjet);
 					ev->push_back(p);
 				}
 			}
 
 			// Translate Etmiss into lhco format and push back into the list of event pointers
 			int p_type = particle::type_met;
-			double Etmiss, pxmiss = 0.0, pymiss = 0.0;
-			for (unsigned int i = 0; i < skinnyJets.size(); i++) 
-			{
-				pxmiss += skinnyJets[i].px();        
-				pymiss += skinnyJets[i].py();
-			}
-			for (unsigned int i = 0; i < isolLeptons.size(); i++) 
-			{
-				pxmiss += isolLeptons[i].px();
-				pymiss += isolLeptons[i].py();
-			}
-			for (unsigned int i = 0; i < isolPhotons.size(); i++) 
-			{
-				pxmiss += isolPhotons[i].px();
-				pymiss += isolPhotons[i].py();
-			}
-			Etmiss = sqrt( pxmiss*pxmiss + pymiss*pymiss );
+			double Etmiss = sqrt( pxmiss*pxmiss + pymiss*pymiss );
 			double Etmiss_phi = atan2(pymiss,pxmiss);
 			lhco *p = new lhco(p_type, 0.0, Etmiss_phi, Etmiss);
 			ev->push_back(p);
@@ -635,33 +1003,41 @@ namespace analysis {
   				ev->write(cout);
   			}
 
-			// Tagging analysis
+
+			//============= Tagging analysis =============//
 			std::vector <fastjet::PseudoJet>  taggedJets;
   			for (unsigned int i = 0; i < fatJets.size(); ++i)
   			{
   				// Top tagging
-  				fastjet::PseudoJet TopTagged;
-  				TopTagged=(this->*TopTagger)(fatJets[i]);
-  				if ( printTopTagDetails )
-  					printTopTagDetails = false;
-  				if ( TopTagged!=0 )
+  				if (DoTopTagger)
   				{
-  					taggedJets.push_back(TopTagged);
-  					continue;
+	  				fastjet::PseudoJet TopTagged;
+	  				TopTagged=(this->*TopTagger)(fatJets[i]);
+	  				if ( printTopTagDetails )
+	  					printTopTagDetails = false;
+	  				if ( TopTagged!=0 )
+	  				{
+	  					taggedJets.push_back(TopTagged);
+	  					continue;
+	  				}
   				}
   				
-  				// BRDS tagging: only on non-top tagged fat jets
-				fastjet::PseudoJet BRDSTagged;
-				BRDSTagged = BRDSTagging(fatJets[i]);
-				if ( printBRDSDetails )
-					printBRDSDetails = false;
-				if ( BRDSTagged!=0 )
-					taggedJets.push_back(BRDSTagged);
+  				// BDRS tagging: only on non-top tagged fat jets
+  				if (DoBDRS)
+  				{
+					fastjet::PseudoJet BDRSTagged;
+					BDRSTagged = BDRSTagging(fatJets[i]);
+					if ( printBDRSDetails )
+						printBDRSDetails = false;
+					if ( BDRSTagged!=0 )
+						taggedJets.push_back(BDRSTagged);
+				}
 
   			}
 
-			// Fill the (lhco, taggedJets) map
-			map_lhco_fatJets.insert(std::make_pair(ev,taggedJets));
+
+  			//============= Fill the (lhco, taggedJets) map =============//
+			map_lhco_taggedJets.insert(std::make_pair(ev,taggedJets));
 
 			// Print evolution
 			if ((iEvent+1)%100 == 0)
@@ -679,7 +1055,7 @@ namespace analysis {
 		// // Print statistics
 		// pythia.statistics();
 
-		cout << "\n" << endl;
+		cout << "\n" << endl;		
 
 		delete fatJetDef;
 		delete skinnyJetDef;
@@ -687,7 +1063,7 @@ namespace analysis {
 	}
 
 	// ========================================== // 
-	//	            TagInfo class 			   	  //
+	//	          Tagging information 		   	  //
 	// ========================================== //
 	// default con- & destructor
 	TagInfo::TagInfo(const bool & top_tag, const bool & w_tag, const bool & h_tag)
@@ -711,6 +1087,41 @@ namespace analysis {
 	bool TagInfo::h_tag() const
 		{ return _h_tag; }
 
+
+	// ========================================== // 
+	//	         b-flavour information 		   	  //
+	// ========================================== //
+	// default con- & destructor
+	FlavourInfo::FlavourInfo(const bool & b)
+	{
+		_b = b;
+	}
+
+	FlavourInfo::~FlavourInfo()
+	{
+	}
+
+	// access to flavour information
+	bool FlavourInfo::b_type() const
+		{ return _b; }
+
+
+	// ========================================== // 
+	//	      b-hadron pdg identification 	   	  //
+	// ========================================== //
+	bool isBHadron(int pdg)
+	{
+		while (pdg!=0)
+		{
+			int tmp = pdg%10;
+			if (tmp == 5)
+				return true;
+			else
+				pdg = int((pdg-tmp)/10);
+		}
+
+		return false;
+	}
 
 	// ========================================== // 
 	//	            Jet << operator 		   	  //
