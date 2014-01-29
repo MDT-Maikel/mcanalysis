@@ -36,7 +36,7 @@ OBJEVNT = ../source/event/event.o
 OBJUTIL = ../source/utility/utility.o
 OBJHIST = ../source/histogram/histogram.o ../source/histogram/histogram2D.o
 OBJPLOT = ../source/plot/plot.o ../source/plot/plot_standard.o ../source/plot/plot2d.o
-OBJCUTS = ../source/cuts/cuts.o ../source/cuts/cuts_standard.o ../source/cuts/cuts_advanced.o
+OBJCUTS = ../source/cuts/cuts.o ../source/cuts/cuts_standard.o
 OBJHUNT = ../source/bumphunter/bumphunter.o
 OBJJETS = ../source/jet_analysis/jet_analysis.o
 OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS) $(OBJHUNT) $(OBJJETS)
@@ -223,10 +223,6 @@ source/test_bumphunter.o: source/test_bumphunter.cpp
 	-c -o $@ $< \
 
 ../source/cuts/cuts_standard.o: ../source/cuts/cuts_standard.cpp ../source/cuts/cuts_standard.h 
-	$(COMPILER) $(CFLAGS) \
-	-c -o $@ $< \
-
-../source/cuts/cuts_advanced.o: ../source/cuts/cuts_advanced.cpp ../source/cuts/cuts_advanced.h 
 	$(COMPILER) $(CFLAGS) \
 	-c -o $@ $< \
 	

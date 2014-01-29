@@ -23,7 +23,7 @@ OBJEVNT = ../source/event/event.o
 OBJUTIL = ../source/utility/utility.o
 OBJHIST = ../source/histogram/histogram.o
 OBJPLOT = ../source/plot/plot.o ../source/plot/plot_standard.o
-OBJCUTS = ../source/cuts/cuts.o ../source/cuts/cuts_standard.o ../source/cuts/cuts_advanced.o
+OBJCUTS = ../source/cuts/cuts.o ../source/cuts/cuts_standard.o
 OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS)
 
 ### Make EXES ###
@@ -81,9 +81,6 @@ plot/plotmc.o: plot/plotmc.cpp
 	$(COMPILER) $(CFLAGS) -c -o $@ $<
 
 ../source/cuts/cuts_standard.o: ../source/cuts/cuts_standard.cpp ../source/cuts/cuts_standard.h 
-	$(COMPILER) $(CFLAGS) -c -o $@ $<
-
-../source/cuts/cuts_advanced.o: ../source/cuts/cuts_advanced.cpp ../source/cuts/cuts_advanced.h 
 	$(COMPILER) $(CFLAGS) -c -o $@ $<
 
 #$@ refers to the target file
