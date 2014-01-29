@@ -15,12 +15,16 @@
 #include "../../source/event/event.h"
 #include "../../source/utility/utility.h"
 #include "../../source/plot/plot.h"
-#include "../../source/plot/plot_standard.h"
 #include "../../source/plot/plot2d.h"
 
 using namespace std;
 using namespace boost::filesystem;
 using namespace analysis;
+
+
+// plotting declarations
+double plott_ht(const event *ev);
+double plott_met(const event *ev);
 
 
 // main program
@@ -31,10 +35,10 @@ int main(int argc, const char* argv[])
 	double duration;
 	
 	// remove possible existing output files
-	remove("output/plot_test_ht.png");
-	remove("output/plot_test_met.png");
-	remove("output/plot_test_2d_lhco.png");
-	remove("output/plot_test_2d_lhe.png");
+	remove("output/test_plot_ht.png");
+	remove("output/test_plot_met.png");
+	remove("output/test_plot_2d_lhco.png");
+	remove("output/test_plot_2d_lhe.png");
 	
 	// load the lhco and lhe events for this test
 	vector<event*> events_lhco;
@@ -43,42 +47,36 @@ int main(int argc, const char* argv[])
 	read_lhe(events_lhe, "input/test_plot_events.lhe.gz");
 	
 	// make a 1D ht plot
-	plot_ht ht;
-	ht.set_name("test_ht");
-	ht.set_folder("output/");
-	ht.add_sample(events_lhco, "LHCO");
-	ht.add_sample(events_lhe, "LHE");
+	plot ht("test_plot_ht", "output/");
+	ht.add_sample(events_lhco, plot_ht, "LHCO");
+	ht.add_sample(events_lhe, plot_ht, "LHE");
 	ht.run();
-	bool test_plot_ht_passed = is_regular_file("output/plot_test_ht.png");
+	bool test_plot_ht_passed = is_regular_file("output/test_plot_ht.png");
 	
 	// make a 1D met plot
-	plot_met met;
-	met.set_name("test_met");
-	met.set_folder("output/");
-	met.add_sample(events_lhco, "LHCO");
-	met.add_sample(events_lhe, "LHE");
+	plot met("test_plot_met", "output/");
+	met.add_sample(events_lhco, plot_met, "LHCO");
+	met.add_sample(events_lhe, plot_met, "LHE");
 	met.run();
-	bool test_plot_met_passed = is_regular_file("output/plot_test_met.png");
+	bool test_plot_met_passed = is_regular_file("output/test_plot_met.png");
 	
 	// make a 2D ht vs met plot for LHCO
-	plot2d_ht_met lhco_2d;
-	lhco_2d.set_name("test_2d_lhco");
-	lhco_2d.set_folder("output/");
+	plot2d lhco_2d("test_plot_2d_lhco", "output/");
+	lhco_2d.set_functions(plot_ht, plot_met);
 	lhco_2d.set_x_bins(25, 0, 1200);
 	lhco_2d.set_y_bins(25, 0, 800);
-	lhco_2d.add_sample(events_lhco, "events");
+	lhco_2d.add_sample(events_lhco, "LHCO");
 	lhco_2d.run();
-	bool test_plot_lhco_2d_passed = is_regular_file("output/plot_test_2d_lhco.png");
+	bool test_plot_lhco_2d_passed = is_regular_file("output/test_plot_2d_lhco.png");
 	
 	// make a 2D ht vs met plot for LHCO
-	plot2d_ht_met lhe_2d;
-	lhe_2d.set_name("test_2d_lhe");
-	lhe_2d.set_folder("output/");
+	plot2d lhe_2d("test_plot_2d_lhe", "output/");
+	lhe_2d.set_functions(plot_ht, plot_met);
 	lhe_2d.set_x_bins(25, 0, 1200);
 	lhe_2d.set_y_bins(25, 0, 800);
-	lhe_2d.add_sample(events_lhe, "events");
+	lhe_2d.add_sample(events_lhe, "LHE");
 	lhe_2d.run();
-	bool test_plot_lhe_2d_passed = is_regular_file("output/plot_test_2d_lhe.png");
+	bool test_plot_lhe_2d_passed = is_regular_file("output/test_plot_2d_lhe.png");
 	
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
@@ -99,3 +97,6 @@ int main(int argc, const char* argv[])
 		return EXIT_SUCCESS;
 	return EXIT_FAILURE;	
 }
+
+
+

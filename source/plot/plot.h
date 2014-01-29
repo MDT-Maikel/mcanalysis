@@ -26,15 +26,14 @@ namespace analysis
 	public:
 	
 		/* con & destructor */
-		plot(std::string new_name = "");
+		plot(std::string name = "", std::string folder = "");
 		~plot();
 
-		/* plot properties */
-		virtual void add_sample(const std::vector<event*> &events, const std::string &name, double weight = 1);
+		/* plot data */
+		void add_sample(const std::vector<event*> &events, double(*func)(const event*), const std::string &name = "", double weight = 1);
 		void run(); 
 		
 		/* plot properties */
-		virtual std::string name() const;
 		void set_name(std::string n);
 		void set_folder(std::string f);
 
@@ -44,15 +43,20 @@ namespace analysis
 		
 		void set_bins(double nbins, double min, double max);
 
-	public:
+	private:
 
 		histogram hist;
 		std::string plot_name;
 		std::string plot_folder;
 
-	private:
-
 	};
+	
+	/* standard plot definitions */
+	double plot_pt(const event *ev);
+	double plot_met(const event *ev);
+	double plot_ht(const event *ev);
+	double plot_mass(const event *ev);
+	
 
 /* NAMESPACE */
 }

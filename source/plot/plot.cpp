@@ -12,14 +12,14 @@ namespace analysis
 
 	/* plot base class */
 
-	plot::plot(std::string new_name)
+	plot::plot(std::string name, std::string folder)
 	{
 		// name defaults to empty string
-		plot_name = new_name;
-		plot_folder = "";
+		plot_name = name;
+		plot_folder = folder;
 
 		// standard histogram options		
-		hist.set_title(plot_folder + "plot_" + name());
+		hist.set_title(plot_folder + plot_name);
 		hist.set_leg_title("Legend");
 		hist.set_bins(100);
 		hist.set_logy(true);	
@@ -28,28 +28,29 @@ namespace analysis
 	plot::~plot()
 	{
 	}
+	
+	/* plot data */
 
-	void plot::add_sample(const std::vector<event*> &events, const std::string &name, double weight)
+	void plot::add_sample(const std::vector<event*> &events, double(*func)(const event*), const std::string &name, double weight)
 	{
-		// implementation: add data to histogram and set sample name
+		std::vector<double> result;
+		for (unsigned int j = 0; j < events.size(); j++)
+		{
+			double res = func(events[j]);
+			result.push_back(res);
+		}
+		hist.add_sample(result, name, weight);	
 	}
 
 	void plot::run()
 	{
 		// set histogram title based on name
-		hist.set_title(plot_folder + "plot_" + name());
+		hist.set_title(plot_folder + plot_name);
 		// draw histograms
 		hist.draw();
 	}
 
 	/* plot properties */
-
-	std::string plot::name() const
-	{
-		if (plot_name != "")
-			return plot_name;		
-		return "WARNING: using base plot class";
-	}
 
 	void plot::set_name(std::string n)
 	{
@@ -80,6 +81,30 @@ namespace analysis
 	{
 		hist.set_bins(nbins);
 		hist.set_range(min, max);		
+	}
+	
+	/* standard plot definitions */
+	
+	double plot_pt(const event *ev)
+	{
+		if (ev->size() == 0)
+			return 0;
+		return (*ev)[0]->pt();		
+	}
+
+	double plot_met(const event *ev)
+	{
+		return ev->met();	
+	}
+	
+	double plot_ht(const event *ev)
+	{
+		return ev->ht(particle::type_jet, 40, 2.8);	
+	}
+
+	double plot_mass(const event *ev)
+	{
+		return ev->mass();
 	}
 
 /* NAMESPACE */

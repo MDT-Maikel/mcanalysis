@@ -121,23 +121,26 @@ namespace analysis
 		{
 			particle *p = particles[index];
 			if (p->type() == particle::type_unknown || p->type() == type)
-				if (p->pt() > min_pt && std::abs(p->eta()) < max_eta)
+				if (p->is_final() && p->pt() > min_pt && std::abs(p->eta()) < max_eta)
 					ht += p->pt();
 		}
 		return ht;
 	}
 
-	// returns the invariant mass of all the particles in the event
+	// returns the invariant mass of all final state particles in the event
 	double event::mass() const
 	{
 		double pe = 0.0; double px = 0.0; double py = 0.0; double pz = 0.0;		
 		for (unsigned int index = 0; index < size(); index++)
 		{
 			particle *p = particles[index];
-			pe += p->pe();
-			px += p->px();
-			py += p->py();
-			pz += p->pz();
+			if (p->is_final())
+			{
+				pe += p->pe();
+				px += p->px();
+				py += p->py();
+				pz += p->pz();
+			}
 		}
 		double inv_mass = std::pow(pe, 2.0) - std::pow(px, 2.0) - std::pow (py, 2.0) - std::pow(pz, 2.0);
 		return std::sqrt(std::max(inv_mass, 0.0));
@@ -151,7 +154,7 @@ namespace analysis
 		for (unsigned int index = 0; index < size(); index++)
 		{
 			particle *p = particles[index];
-			if (p->type() == type)
+			if (p->type() == type && p->is_final())
 			{
 				count++;
 				if (std::find(comb.begin(), comb.end(), count) != comb.end())

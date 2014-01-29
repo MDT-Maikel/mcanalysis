@@ -35,7 +35,7 @@ OBJPART = ../source/particle/lhco.o ../source/particle/particle.o ../source/part
 OBJEVNT = ../source/event/event.o 
 OBJUTIL = ../source/utility/utility.o
 OBJHIST = ../source/histogram/histogram.o ../source/histogram/histogram2D.o
-OBJPLOT = ../source/plot/plot.o ../source/plot/plot_standard.o ../source/plot/plot2d.o
+OBJPLOT = ../source/plot/plot.o ../source/plot/plot2d.o
 OBJCUTS = ../source/cuts/cuts.o ../source/cuts/cuts_standard.o
 OBJHUNT = ../source/bumphunter/bumphunter.o
 OBJJETS = ../source/jet_analysis/jet_analysis.o
@@ -203,11 +203,6 @@ source/test_bumphunter.o: source/test_bumphunter.cpp
 	-c -o $@ $< \
 
 ../source/plot/plot.o: ../source/plot/plot.cpp ../source/plot/plot.h
-	$(COMPILER) $(CFLAGS) \
-	$(IROOT) \
-	-c -o $@ $< \
-
-../source/plot/plot_standard.o: ../source/plot/plot_standard.cpp ../source/plot/plot_standard.h
 	$(COMPILER) $(CFLAGS) \
 	$(IROOT) \
 	-c -o $@ $< \
