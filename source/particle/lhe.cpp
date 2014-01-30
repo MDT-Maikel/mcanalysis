@@ -9,6 +9,7 @@
 /* NAMESPACE */
 namespace analysis
 {
+	
 	/* con & destructor */
 	
 	lhe::lhe(double px, double py, double pz, double pe, double mass)

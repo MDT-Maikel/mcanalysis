@@ -103,5 +103,23 @@ namespace analysis
 		
 	};
 	
+	/* cut: mt2 */
+	class cut_mt2: public cut
+	{
+		
+	public:
+		cut_mt2(double mt2, double mn) : mt2_cut(mt2), mt2_mn(mn) {};
+		
+		bool operator() (const event *ev) 
+		{ 
+			return ev->mt2(mt2_mn) > mt2_cut;
+		};
+		
+	private: 
+		double mt2_cut;
+		double mt2_mn;			
+		
+	};
+	
 /* NAMESPACE */
 }

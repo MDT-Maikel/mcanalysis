@@ -32,8 +32,8 @@ DEPS = $(IPYTHON) $(IGZSTREAM) $(IROOT) $(IPYTHIA) $(IFASTJET)
 
 ### Object Files ###
 OBJPART = ../source/particle/lhco.o ../source/particle/particle.o ../source/particle/lhe.o
-OBJEVNT = ../source/event/event.o 
-OBJUTIL = ../source/utility/utility.o
+OBJEVNT = ../source/event/event.o ../source/event/mt2_bisect.o
+OBJUTIL = ../source/utility/utility.o 
 OBJHIST = ../source/histogram/histogram.o ../source/histogram/histogram2D.o
 OBJPLOT = ../source/plot/plot.o ../source/plot/plot2d.o
 OBJCUTS = ../source/cuts/cuts.o 
@@ -184,6 +184,10 @@ source/test_bumphunter.o: source/test_bumphunter.cpp
 	-c -o $@ $< \
 
 ../source/event/event.o: ../source/event/event.cpp ../source/event/event.h 
+	$(COMPILER) $(CFLAGS) \
+	-c -o $@ $< \
+	
+../source/event/mt2_bisect.o: ../source/event/mt2_bisect.cpp ../source/event/mt2_bisect.h 
 	$(COMPILER) $(CFLAGS) \
 	-c -o $@ $< \
 

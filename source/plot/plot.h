@@ -56,6 +56,7 @@ namespace analysis
 	double plot_met(const event *ev);
 	double plot_ht(const event *ev);
 	double plot_mass(const event *ev);
+	double plot_mt2(const event *ev);
 	
 
 /* NAMESPACE */

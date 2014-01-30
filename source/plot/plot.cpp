@@ -106,6 +106,11 @@ namespace analysis
 	{
 		return ev->mass();
 	}
+	
+	double plot_mt2(const event *ev)
+	{
+		return ev->mt2();	
+	}
 
 /* NAMESPACE */
 }

@@ -13,6 +13,7 @@
 #include "../particle/particle.h"
 #include "../particle/lhco.h"
 #include "../particle/lhe.h"
+#include "mt2_bisect.h"
 
 
 /* NAMESPACE */
@@ -50,6 +51,7 @@ namespace analysis
 		double ht(int type, double min_pt, double max_eta) const;
 		double mass() const;
 		double mass(int type, const std::vector<int> &comb) const;
+		double mt2(double mn = 0) const;
 		
 		/* utility */
 		void sort_pt();

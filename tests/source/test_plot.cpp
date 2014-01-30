@@ -22,11 +22,6 @@ using namespace boost::filesystem;
 using namespace analysis;
 
 
-// plotting declarations
-double plott_ht(const event *ev);
-double plott_met(const event *ev);
-
-
 // main program
 int main(int argc, const char* argv[])
 {
@@ -97,6 +92,3 @@ int main(int argc, const char* argv[])
 		return EXIT_SUCCESS;
 	return EXIT_FAILURE;	
 }
-
-
-

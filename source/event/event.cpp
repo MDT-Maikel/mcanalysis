@@ -170,6 +170,49 @@ namespace analysis
 		return std::sqrt(std::max(inv_mass, 0.0));
 	}
 	
+	// returns the mt2 for the event
+	double event::mt2(double mn) const
+	{
+		// identify leptons within the event
+		std::vector< particle* > leptons;
+		for (unsigned int index = 0; index < size(); index++)
+		{
+			particle *p = particles[index];
+			if (p->is_final() && (p->type() == particle::type_electron || p->type() == particle::type_muon))
+				leptons.push_back(p);
+		}
+		// TODO: generalise?
+		// at least two leptons has to be present in order to calculate mT2
+		if (leptons.size() < 2)
+			return 0;
+
+		// extract MET components
+		double px_inv = 0;
+		double py_inv = 0;
+		for (unsigned int index = 0; index < size(); index++)
+		{
+			particle *p = particles[index];
+			if (p->is_final() && p->type() == particle::type_met)
+			{
+				px_inv += p->px();
+				py_inv += p->py();				
+			}
+		}
+
+		// calculate mT2 using the two leading leptons, MET and mn as input values
+		double pa[3]    = { 0, leptons[0]->px(), leptons[0]->py() };
+		double pb[3]    = { 0, leptons[1]->px(), leptons[1]->py() };
+		double pmiss[3] = { 0, px_inv, py_inv };
+
+		mt2_bisect::mt2 mt2_event;
+		mt2_event.set_momenta(pa,pb,pmiss);
+		mt2_event.set_mn(mn);
+		double mt2_value = mt2_event.get_mt2();
+		
+		return mt2_value;
+
+	}
+	
 	/* utility */
 	
 	// sorts the current particles in the event by its pt, highest pt first
