@@ -19,37 +19,16 @@
 /* NAMESPACE */
 namespace analysis
 {
-
 	/* cut base class */
 	class cut
 	{
 		
 	public:
-		cut();
-		virtual ~cut();
+		cut() = default;
+		virtual bool operator() (const event *ev) { return false; }
 	
-		virtual void init();
-		virtual bool passed(const event *ev);
-
-		double efficiency() const;
-		virtual std::string name() const;
-
-		// methods to track the efficiency
-		void increase_total();
-		void increase_passed();
-		void clear();
-
-		unsigned int get_total() const;
-		unsigned int get_passed() const;
-
-	private:
-		// number of events that have been handled by the cut
-		unsigned int total;
-		// number of events that have passed the cut
-		unsigned int pass;
-
 	};
-
+	
 	/* cut & count class */
 	class cuts 
 	{
@@ -57,22 +36,29 @@ namespace analysis
 	public:
 		cuts();
 		
-		void add_cut(cut *add);
+		void add_cut(cut *add, std::string n = "");
 		void apply(std::vector<event*> &events);
 		double efficiency() const;
+		double efficiency(unsigned int p, unsigned int t) const;
 		void clear();
 	
 		void write(std::ostream& os) const;
 		void write(std::ofstream& ofs) const;	
 
 	private:
-		std::vector<cut*> cut_list;
+		std::vector<cut*> list_cuts;
+		std::vector<std::string> list_names;
+		std::vector<unsigned int> list_total;
+		std::vector<unsigned int> list_pass;
 		unsigned int total;
 		unsigned int pass;
 
 	};
-
+	
 /* NAMESPACE */
 }
+
+/* TEMPLATE IMPLEMENTATIONS */
+#include "cuts_imp.h"
 
 #endif

@@ -12,71 +12,6 @@
 namespace analysis
 {
 
-	/* cut base class */
-
-	cut::cut()
-	{
-		total = 0;
-		pass = 0;
-	}
-
-	cut::~cut()
-	{
-	}
-
-	void cut::init()
-	{
-		// this function is called just before the cut is applied to a list of events
-		// it can be used to initialize certain variables
-		std::cout << "WARNING: called virtual cut base class." << std::endl;
-	}
-
-	bool cut::passed(const event *ev)
-	{
-		std::cout << "WARNING: called virtual cut base class." << std::endl; 
-		total++;
-		pass++;
-		return true; 
-	}
-
-	double cut::efficiency() const
-	{
-		if (total == 0)
-			return 0.0;
-		return static_cast<double>(pass) / total;
-	}
-
-	std::string cut::name() const
-	{
-		return "WARNING: using base cut class";
-	}
-
-	void cut::increase_total()
-	{
-		total++;
-	}
-
-	void cut::increase_passed()
-	{
-		pass++;
-	}
-
-	void cut::clear()
-	{
-		total = 0;
-		pass = 0;
-	}
-
-	unsigned int cut::get_total() const
-	{
-		return total;
-	}
-
-	unsigned int cut::get_passed() const
-	{
-		return pass;
-	}
-
 	/* cut & count class */
 
 	cuts::cuts()
@@ -85,9 +20,12 @@ namespace analysis
 		pass = 0;
 	}
 
-	void cuts::add_cut(cut *add)
+	void cuts::add_cut(cut *add, std::string n)
 	{
-		cut_list.push_back(add);
+		list_cuts.push_back(add);;
+		list_names.push_back(n);
+		list_total.push_back(0);
+		list_pass.push_back(0);
 	}
 
 	void cuts::apply(std::vector<event*> &events) 
@@ -96,20 +34,27 @@ namespace analysis
 		total = events.size();		
 	
 		// loop over all cuts and events
-		for (unsigned int i = 0; i < cut_list.size(); i++)
+		for (unsigned int i = 0; i < list_cuts.size(); i++)
 		{
-			cut *apply_cut = cut_list[i];
-			apply_cut->init();
+			// get the cut
+			cut *apply_cut = list_cuts[i];
 
+			// loop over all events
 			for (int index = events.size() - 1; index >= 0; index--)
 			{	
 				event *ev = events[index];
-				if (!apply_cut->passed(ev))
+				// test the cut on the event and determine whether it passed				
+				if ((*apply_cut)(ev))
+				{
+					list_pass[i]++;
+				}
+				else
 				{
 					// delete also the pointer to the event
 					delete ev;
 					events.erase(events.begin() + index);
 				}
+				list_total[i]++;
 			}
 		}
 
@@ -123,45 +68,51 @@ namespace analysis
 			return 0.0;
 		return static_cast<double>(pass) / total;
 	}
+	
+	double cuts::efficiency(unsigned int p, unsigned int t) const
+	{
+		if (t == 0)
+			return 0.0;
+		return static_cast<double>(p) / t;
+	}
 
 	void cuts::clear()
 	{
 		total = 0;
 		pass = 0;
-		// also clear the different cuts in the list
-		for (unsigned int i = 0; i < cut_list.size(); i++)
-			cut_list[i]->clear();		
+		// also clear the different totals in the lists
+		for (unsigned int i = 0; i < list_cuts.size(); i++)
+		{
+			list_pass[i] = 0;
+			list_total[i] = 0;
+		}
 	}
 
 	void cuts::write(std::ostream& os) const
 	{
 		os << "Efficiencies for each of the different cuts:" << std::endl;		
-		for (unsigned int i = 0; i < cut_list.size(); i++)
+		for (unsigned int i = 0; i < list_cuts.size(); i++)
 		{
-			cut *print_cut = cut_list[i];
-			os << "cut: " << cut_list[i]->name() << " -> efficiency: " << 100.0 * print_cut->efficiency() << "%";
-			os << " (" << print_cut->get_passed() << "/" << print_cut->get_total() << ")" << std::endl;
+			unsigned int p = list_pass[i];
+			unsigned int t = list_total[i];
+			os << "cut: " << list_names[i] << " -> efficiency: " << 100 * efficiency(p, t) << "%";
+			os << " (" << p << "/" << t << ")" << std::endl;
 		}
-		double efficiency = 0.0;
-		if (total != 0)
-			efficiency = 100.0 * static_cast<double>(pass) / total;
-		os << "total efficiency: " << efficiency << "%";
+		os << "total efficiency: " << 100 * efficiency() << "%";
 		os << " (" << pass << "/" << total << ")" << std::endl;
 	}
 
 	void cuts::write(std::ofstream& ofs) const
 	{
 		ofs << "Efficiencies of different cuts:" << std::endl;		
-		for (unsigned int i = 0; i < cut_list.size(); i++)
+		for (unsigned int i = 0; i < list_cuts.size(); i++)
 		{
-			cut *print_cut = cut_list[i];
-			ofs << "cut: " << cut_list[i]->name() << " -> efficiency: " << 100.0 * print_cut->efficiency() << "%";
-			ofs << " (" << print_cut->get_passed() << "/" << print_cut->get_total() << ")" << std::endl;
+			unsigned int p = list_pass[i];
+			unsigned int t = list_total[i];
+			ofs << "cut: " << list_names[i] << " -> efficiency: " << 100 * efficiency(p, t) << "%";
+			ofs << " (" << p << "/" << t << ")" << std::endl;
 		}
-		double efficiency = 0.0;
-		if (total != 0)
-			efficiency = 100.0 * static_cast<double>(pass) / total;
-		ofs << "total efficiency: " << efficiency << "%";
+		ofs << "total efficiency: " << 100 * efficiency() << "%";
 		ofs << " (" << pass << "/" << total << ")" << std::endl;
 	}
 
