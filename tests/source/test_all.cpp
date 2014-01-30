@@ -105,9 +105,19 @@ int main(int argc, const char* argv[])
 		test_bumphunter_passed = false;
 	cout << endl << endl << endl;
 	
+	// run: test_jets
+	cout << "=====================================================================" << endl;
+	cout << "= TEST: JET ANALYSIS                                                =" << endl;
+	cout << "=====================================================================" << endl;
+	bool test_jets_passed = true;
+	int result_jets = system("./test_jets") / 256;
+	if (result_jets == EXIT_FAILURE)
+		test_jets_passed = false;
+	cout << endl << endl << endl;
+	
 	// determine success of all test
 	bool all_tests_passed = test_lhco_passed && test_lhe_passed && test_event_passed && test_cuts_passed
-		&& test_histogram_passed && test_plot_passed && test_bumphunter_passed;
+		&& test_histogram_passed && test_plot_passed && test_bumphunter_passed && test_jets_passed;
 	
 	// log results of all tests
 	cout << "=====================================================================" << endl;
@@ -128,6 +138,8 @@ int main(int argc, const char* argv[])
 	cout << "!                                             =" << endl;
 	cout << "= BumpHunter test has " << (test_bumphunter_passed ? "passed" : "failed");
 	cout << "!                                       =" << endl;
+	cout << "= Jet analysis test has " << (test_jets_passed ? "passed" : "failed");
+	cout << "!                                     =" << endl;
 	cout << "=====================================================================" << endl;
 	if (all_tests_passed)
 	{

@@ -25,6 +25,7 @@ namespace analysis
 		
 	public:
 		cut() = default;
+		virtual ~cut() {};
 		virtual bool operator() (const event *ev) { return false; }
 	
 	};

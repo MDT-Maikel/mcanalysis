@@ -38,12 +38,16 @@ OBJHIST = ../source/histogram/histogram.o ../source/histogram/histogram2D.o
 OBJPLOT = ../source/plot/plot.o ../source/plot/plot2d.o
 OBJCUTS = ../source/cuts/cuts.o 
 OBJHUNT = ../source/bumphunter/bumphunter.o
-OBJJETS = ../source/jet_analysis/jet_analysis.o
+OBJJETS = ../source/jet_analysis/jet_analysis.o ../source/jet_analysis/HEPTopTagger.o
 OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS) $(OBJHUNT) $(OBJJETS)
 
 ### Make EXES ###
-EXE = test_all test_lhco test_lhe test_event test_cuts test_histogram test_plot test_bumphunter
-OBJEXES = source/test_all.o source/test_lhco.o source/test_lhe.o source/test_event.o source/test_cuts.o source/test_histogram.o source/test_plot.o source/test_bumphunter.o
+EXE = test_all test_lhco test_lhe test_event \
+	test_cuts test_histogram test_plot \
+	test_bumphunter test_jets
+OBJEXES = source/test_all.o source/test_lhco.o source/test_lhe.o source/test_event.o \
+	source/test_cuts.o source/test_histogram.o source/test_plot.o \
+	source/test_bumphunter.o  source/test_jets.o
 
 all: $(EXE)
 
@@ -112,6 +116,16 @@ test_bumphunter: source/test_bumphunter.o $(OBJHUNT)
 	$(LBOOST) \
 	$(LROOT) \
 	
+test_jets: source/test_jets.o $(OBJPART) $(OBJEVNT) $(OBJCUTS) $(OBJJETS)
+	$(COMPILER) $(LDFLAGS) \
+	$(IPYTHIA) \
+	$(IFASTJET) \
+	-o $@ $+ \
+	$(LPYTHIA) \
+	$(LFASTJET) \
+	$(LGZSTREAM) \
+	$(LBOOST) \
+	
 test_hepmc: source/test_hepmc.cpp
 	$(COMPILER) $(LDFLAGS) \
 	$(IPYTHIA) \
@@ -159,7 +173,7 @@ source/test_plot.o: source/test_plot.cpp
 	$(IPYTHON) \
 	-c -o $@ $< \
 
-source/test_jetanalysis.o: source/test_jetanalysis.cpp
+source/test_jets.o: source/test_jets.cpp
 	$(COMPILER) $(CFLAGS) \
 	$(IPYTHIA) \
 	$(IFASTJET) \
@@ -229,6 +243,11 @@ source/test_bumphunter.o: source/test_bumphunter.cpp
 ../source/jet_analysis/jet_analysis.o: ../source/jet_analysis/jet_analysis.cpp ../source/jet_analysis/jet_analysis.h
 	$(COMPILER) $(CFLAGS) \
 	$(IPYTHIA) \
+	$(IFASTJET) \
+	-c -o $@ $< \
+
+../source/jet_analysis/HEPTopTagger.o: ../source/jet_analysis/HEPTopTagger.cpp ../source/jet_analysis/HEPTopTagger.h
+	$(COMPILER) $(CFLAGS) \
 	$(IFASTJET) \
 	-c -o $@ $< \
 

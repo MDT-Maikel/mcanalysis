@@ -41,6 +41,7 @@
 /tests/test_bumphunter
 /tests/test_plot
 /tests/test_histogram
+/tests/test_jets
 
 # Tool programs
 /tools/input

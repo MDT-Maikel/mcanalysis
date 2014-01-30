@@ -28,8 +28,6 @@
 #include "../event/event.h"
 #include "../utility/utility.h"
 #include "../cuts/cuts.h"
-#include "../cuts/cuts_standard.h"
-#include "../cuts/cuts_advanced.h"
 #include "HEPTopTagger.h"
 
 

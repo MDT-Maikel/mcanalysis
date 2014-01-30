@@ -819,8 +819,7 @@ namespace analysis {
 				pymiss += pythia.event[i].py();
 
 				// Collect isolated leptons
-				if ( isolatedElectron(i, pythia.event) || 
-					 isolatedMuon(i, pythia.event) ) 
+				if (isolatedElectron(i, pythia.event) || isolatedMuon(i, pythia.event)) 
 				{
 					isolLeptons.push_back(pythia.event[i]);
 					continue;

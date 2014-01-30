@@ -79,6 +79,13 @@ int main(int argc, const char* argv[])
 	cout << "Cuts for LHCO and LHE have " << (test_cuts_passed ? "passed!" : "failed!") << endl;
 	cout << "=====================================================================" << endl;
 	
+	// clear remaining pointers
+	delete pt1;
+	delete pt2;
+	delete met;
+	delete ht;
+	delete veto;
+	
 	// return whether tests passed
 	if (test_cuts_passed)
 		return EXIT_SUCCESS;

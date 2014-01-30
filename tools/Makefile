@@ -38,7 +38,7 @@ OBJHIST = ../source/histogram/histogram.o ../source/histogram/histogram2D.o
 OBJPLOT = ../source/plot/plot.o ../source/plot/plot2d.o
 OBJCUTS = ../source/cuts/cuts.o 
 OBJHUNT = ../source/bumphunter/bumphunter.o
-OBJJETS = ../source/jet_analysis/jet_analysis.o
+OBJJETS = ../source/jet_analysis/jet_analysis.o ../source/jet_analysis/HEPTopTagger.o
 OBJ = $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS) $(OBJHUNT) $(OBJJETS)
 
 ### Make EXES ###
@@ -54,15 +54,21 @@ mergemc: source/mergemc.o $(OBJPART) $(OBJEVNT) $(OBJUTIL)
 	$(LGZSTREAM) \
 	$(LBOOST) \
 	
-ttag: source/ttag.o $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS)
+ttag: source/ttag.o $(OBJPART) $(OBJEVNT) $(OBJUTIL) $(OBJHIST) $(OBJPLOT) $(OBJCUTS) $(OBJJETS)
 	$(COMPILER) $(LDFLAGS) \
 	$(IGZSTREAM) \
 	$(IROOT) \
+	$(IPYTHIA) \
+	$(IFASTJET) \
+	$(IHEPMC) \
 	-o $@ $+ \
 	$(LGZSTREAM) \
 	$(LBOOST) \
 	$(LROOT) \
 	$(LPYTHON) \
+	$(LPYTHIA) \
+	$(LFASTJET) \
+	$(LHEPMC) \
 
 ### Make Clean ###
 clean:
@@ -79,6 +85,9 @@ source/ttag.o: source/ttag.cpp
 	$(COMPILER) $(CFLAGS) \
 	$(IROOT) \
 	$(IPYTHON) \
+	$(IPYTHIA) \
+	$(IFASTJET) \
+	$(IHEPMC) \
 	-c -o $@ $< \
 	
 ### Make Sources ###	
@@ -140,6 +149,12 @@ source/ttag.o: source/ttag.cpp
 ../source/jet_analysis/jet_analysis.o: ../source/jet_analysis/jet_analysis.cpp ../source/jet_analysis/jet_analysis.h
 	$(COMPILER) $(CFLAGS) \
 	$(IPYTHIA) \
+	$(IHEPMC) \
+	$(IFASTJET) \
+	-c -o $@ $< \
+	
+../source/jet_analysis/HEPTopTagger.o: ../source/jet_analysis/HEPTopTagger.cpp ../source/jet_analysis/HEPTopTagger.h
+	$(COMPILER) $(CFLAGS) \
 	$(IFASTJET) \
 	-c -o $@ $< \
 
