@@ -31,16 +31,20 @@
 /files
 
 # Tests programs
+/tests/input
+/tests/output
 /tests/test_all
 /tests/test_lhco
 /tests/test_lhe
 /tests/test_event
+/tests/test_cuts
 /tests/test_bumphunter
 /tests/test_plot
 /tests/test_histogram
 
 # Tool programs
+/tools/input
+/tools/output
 /tools/mergemc
-/tools/cutmc
-/tools/plotmc
+/tools/ttag
 
