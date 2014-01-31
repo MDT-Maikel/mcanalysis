@@ -40,7 +40,7 @@ int main(int argc, const char* argv[])
 		double phi = uniform_real_distribution<double>(-3.14, 3.14)(rd);
 		double pt = uniform_real_distribution<double>(0.0, 1000.0)(rd);
 		double mass = uniform_real_distribution<double>(0.0, 10.0)(rd);
-		lhco* p = new lhco(particle::type_unknown, eta, phi, pt, mass);
+		lhco* p = new lhco(ptype_none, eta, phi, pt, mass);
 		ev_lhco->push_back(p);
 	}
 
@@ -112,9 +112,9 @@ int main(int argc, const char* argv[])
 		test_event_passed = false;
 	}
 	// test the event.ht() function
-	if (fabs((ev_lhco->ht(particle::type_unknown, 5.0, 5.0) - ev_lhe->ht(particle::type_unknown, 5.0, 5.0)) / ev_lhco->ht(particle::type_unknown, 5.0, 5.0)) > test_precision)
+	if (fabs((ev_lhco->ht(ptype_all, 5.0, 5.0) - ev_lhe->ht(ptype_all, 5.0, 5.0)) / ev_lhco->ht(ptype_all, 5.0, 5.0)) > test_precision)
 	{
-		cout << std::setprecision(6) << "event.ht(-1, 5.0, 5.0): " << ev_lhco->ht(particle::type_unknown, 5.0, 5.0) << " != " << ev_lhe->ht(particle::type_unknown, 5.0, 5.0) << endl;
+		cout << std::setprecision(6) << "event.ht(-1, 5.0, 5.0): " << ev_lhco->ht(ptype_all, 5.0, 5.0) << " != " << ev_lhe->ht(ptype_all, 5.0, 5.0) << endl;
 		test_event_passed = false;
 	}
 		

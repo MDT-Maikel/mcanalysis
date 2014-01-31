@@ -947,9 +947,9 @@ namespace analysis
 						p_ch	= isolLeptons[i].user_info<Pythia8::Particle>().charge();
 
 				if (p_id == 11)
-					p_type = particle::type_electron;
+					p_type = ptype_electron;
 				else
-					p_type = particle::type_muon;
+					p_type = ptype_muon;
 
 				lhco *p = new lhco(p_type, p_eta, p_phi, p_pt, 0.0, p_ch);
 				ev->push_back(p);
@@ -958,7 +958,7 @@ namespace analysis
 			// Translate isolPhotons into lhco format and push back into the list of event pointers
 			for (unsigned int i = 0; i < isolPhotons.size(); ++i)
 			{
-				int p_type = particle::type_photon;
+				int p_type = ptype_photon;
 				double	p_eta 	= isolPhotons[i].eta(), 
 						p_phi 	= isolPhotons[i].phi(), 
 						p_pt 	= isolPhotons[i].pt();
@@ -973,7 +973,7 @@ namespace analysis
 				// no Jet-Electron overlapping within R=0.2 cone from the electron
 				if (!JetElectronOverlapping(skinnyJets[i],isolLeptons))
 				{
-					int p_type = particle::type_jet;
+					int p_type = ptype_jet;
 					double	p_eta 	= skinnyJets[i].eta(), 
 							p_phi 	= skinnyJets[i].phi(), 
 							p_pt 	= skinnyJets[i].pt(), 
@@ -986,7 +986,7 @@ namespace analysis
 			}
 
 			// Translate Etmiss into lhco format and push back into the list of event pointers
-			int p_type = particle::type_met;
+			int p_type = ptype_met;
 			double Etmiss = sqrt( pxmiss*pxmiss + pymiss*pymiss );
 			double Etmiss_phi = atan2(pymiss,pxmiss);
 			lhco *p = new lhco(p_type, 0.0, Etmiss_phi, Etmiss);

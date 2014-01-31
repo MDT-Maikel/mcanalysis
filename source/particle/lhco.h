@@ -26,7 +26,7 @@ namespace analysis
 	public:
 
 		/* con & destructor */
-		lhco(int type = particle::type_unknown, double eta = 0, double phi = 0, double pt = 0, double jmass = 0, double ntrk = 0, double btag = 0, double hadem = 0, double dum1 = 0, double dum2 = 0);
+		lhco(unsigned int type = ptype_none, double eta = 0, double phi = 0, double pt = 0, double jmass = 0, double ntrk = 0, double btag = 0, double hadem = 0, double dum1 = 0, double dum2 = 0);
 		//~lhco() = default;
 
 		/* copy & assignment */
@@ -37,7 +37,7 @@ namespace analysis
 
 		/* properties */
 		int id() const;
-		int type() const;
+		unsigned int type() const;
 		
 		void set_final(bool is_final);
 		bool is_final() const;
@@ -55,6 +55,7 @@ namespace analysis
 		double y() const;
 
 		/* input & output */
+		int type_to_int(unsigned int type) const;
 		void write(std::ostream& os) const;
 		void read(std::istream& is);
 		void write(std::ofstream& ofs) const;
@@ -65,7 +66,7 @@ namespace analysis
 	private:
 
 		/* lhco data members */
-		int p_type;
+		unsigned int p_type;
 		double p_eta;
 		double p_phi;
 		double p_pt;

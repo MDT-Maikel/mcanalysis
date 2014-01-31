@@ -63,13 +63,13 @@ namespace analysis
 
 	/* member access */
 
-	particle* event::get(int type, unsigned int number) const
+	particle* event::get(unsigned int type, unsigned int number) const
 	{
 		// TODO: safety checks for number		
 		unsigned int count = 0;		
 		for (unsigned int index = 0; index < size(); index++)
 		{
-			if ((particles[index])->type() == type)
+			if ((particles[index])->type() & type)
 			{
 				count++;
 				if (count == number)
@@ -79,13 +79,13 @@ namespace analysis
 		return nullptr;
 	}
 
-	particle* event::get(int type, unsigned int number, double max_eta) const
+	particle* event::get(unsigned int type, unsigned int number, double max_eta) const
 	{
 		// TODO: safety checks for number	
 		unsigned int count = 0;		
 		for (unsigned int index = 0; index < size(); index++)
 		{
-			if (particles[index]->type() == type && std::abs(particles[index]->eta()) < max_eta)
+			if ((particles[index]->type() & type) && std::abs(particles[index]->eta()) < max_eta)
 			{
 				count++;
 				if (count == number)
@@ -104,7 +104,7 @@ namespace analysis
 		for (unsigned int index = 0; index < size(); index++)
 		{
 			particle *p = particles[index];
-			if (p->is_final() && p->type() == particle::type_met)
+			if (p->is_final() && (p->type() & ptype_met))
 			{
 				px_inv += p->px();
 				py_inv += p->py();				
@@ -114,13 +114,13 @@ namespace analysis
 	}
 
 	// returns the ht of all particles satisfying the conditions
-	double event::ht(int type, double min_pt, double max_eta) const
+	double event::ht(unsigned int type, double min_pt, double max_eta) const
 	{
 		double ht = 0;
 		for (unsigned int index = 0; index < size(); index++)
 		{
 			particle *p = particles[index];
-			if (p->type() == particle::type_unknown || p->type() == type)
+			if (p->type() & type)
 				if (p->is_final() && p->pt() > min_pt && std::abs(p->eta()) < max_eta)
 					ht += p->pt();
 		}
@@ -147,14 +147,14 @@ namespace analysis
 	}
 
 	// returns the invariant mass of the combination of particle of the requested type
-	double event::mass(int type, const std::vector<int> &comb) const
+	double event::mass(unsigned int type, const std::vector<int> &comb) const
 	{
 		double pe = 0.0; double px = 0.0; double py = 0.0; double pz = 0.0;
 		unsigned int count = 0;	
 		for (unsigned int index = 0; index < size(); index++)
 		{
 			particle *p = particles[index];
-			if (p->type() == type && p->is_final())
+			if ((p->type() & type) && p->is_final())
 			{
 				count++;
 				if (std::find(comb.begin(), comb.end(), count) != comb.end())
@@ -178,7 +178,7 @@ namespace analysis
 		for (unsigned int index = 0; index < size(); index++)
 		{
 			particle *p = particles[index];
-			if (p->is_final() && (p->type() == particle::type_electron || p->type() == particle::type_muon))
+			if (p->is_final() && (p->type() & ptype_lepton))
 				leptons.push_back(p);
 		}
 		// TODO: generalise?
@@ -192,7 +192,7 @@ namespace analysis
 		for (unsigned int index = 0; index < size(); index++)
 		{
 			particle *p = particles[index];
-			if (p->is_final() && p->type() == particle::type_met)
+			if (p->is_final() && p->type() & ptype_met)
 			{
 				px_inv += p->px();
 				py_inv += p->py();				

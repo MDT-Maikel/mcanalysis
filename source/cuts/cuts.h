@@ -24,8 +24,12 @@ namespace analysis
 	{
 		
 	public:
+		// constructor can be default
 		cut() = default;
+		// virtual destructor needed for being a overloadable class
 		virtual ~cut() {};
+		// all cuts are based on this class and should overload this
+		// operator, and return true for events that pass the cuts
 		virtual bool operator() (const event *ev) { return false; }
 	
 	};

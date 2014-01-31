@@ -110,7 +110,7 @@ namespace analysis
 
 				ev->push_back(p);
 				//p->write(std::cout);
-				if (p->type() == particle::type_met)
+				if (p->type() & ptype_met)
 				{
 					break;
 				}

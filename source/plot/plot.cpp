@@ -99,7 +99,7 @@ namespace analysis
 	
 	double plot_ht(const event *ev)
 	{
-		return ev->ht(particle::type_jet, 40, 2.8);	
+		return ev->ht(ptype_all, 40, 2.8);	
 	}
 
 	double plot_mass(const event *ev)

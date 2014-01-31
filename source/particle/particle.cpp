@@ -18,7 +18,7 @@ namespace analysis
 	/* properties */
 
 	int particle::id() const { return 0; }
-	int particle::type() const { return 0; }
+	unsigned int particle::type() const { return ptype_none; }
 	void particle::set_final(bool is_final) { /* to be overloaded */ };
 	bool particle::is_final() const { return true; }
 

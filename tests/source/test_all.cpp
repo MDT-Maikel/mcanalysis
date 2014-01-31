@@ -67,7 +67,7 @@ int main(int argc, const char* argv[])
 	
 	// run: test_cuts
 	cout << "=====================================================================" << endl;
-	cout << "= TEST: CUTS                                                       =" << endl;
+	cout << "= TEST: CUTS                                                        =" << endl;
 	cout << "=====================================================================" << endl;
 	bool test_cuts_passed = true;
 	int result_cuts = system("./test_cuts") / 256;

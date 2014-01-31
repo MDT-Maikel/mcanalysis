@@ -15,7 +15,7 @@ namespace analysis
 	{
 	
 	public:
-		cut_pt(double pt, int t, unsigned int n, double eta) : pt_cut(pt), type(t), number(n), eta_max(eta) {};
+		cut_pt(double pt, unsigned int t, unsigned int n, double eta) : pt_cut(pt), type(t), number(n), eta_max(eta) {};
 	
 		bool operator() (const event *ev) 
 		{ 
@@ -28,7 +28,7 @@ namespace analysis
 	private:
 		double pt_cut;
 	
-		int type;
+		unsigned int type;
 		unsigned int number;
 		double eta_max;
 
@@ -56,7 +56,7 @@ namespace analysis
 	{
 		
 	public:
-		cut_ht(double ht, int t, double pt, double eta) : ht_cut(ht), type(t), min_pt(pt), max_eta(eta) {};
+		cut_ht(double ht, unsigned int t, double pt, double eta) : ht_cut(ht), type(t), min_pt(pt), max_eta(eta) {};
 		
 		bool operator() (const event *ev) 
 		{ 
@@ -66,7 +66,7 @@ namespace analysis
 	private:
 		double ht_cut;
 	
-		int type;
+		unsigned int type;
 		double min_pt;
 		double max_eta;
 		
@@ -77,7 +77,7 @@ namespace analysis
 	{
 		
 	public:
-		cut_veto(int t, double pt, double eta) : type(t), min_pt(pt), max_eta(eta) {};
+		cut_veto(unsigned int t, double pt, double eta) : type(t), min_pt(pt), max_eta(eta) {};
 		
 		bool operator() (const event *ev) 
 		{ 
@@ -97,7 +97,7 @@ namespace analysis
 		};
 		
 	private: 
-		int type;
+		unsigned int type;
 		double min_pt;
 		double max_eta;			
 		

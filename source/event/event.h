@@ -43,14 +43,14 @@ namespace analysis
 		void clear();
 
 		/* member access */
-		particle* get(int type, unsigned int number) const;
-		particle* get(int type, unsigned int number, double max_eta) const;
+		particle* get(unsigned int type, unsigned int number) const;
+		particle* get(unsigned int type, unsigned int number, double max_eta) const;
 
 		/* kinematics */
 		double met() const;
-		double ht(int type, double min_pt, double max_eta) const;
+		double ht(unsigned int type, double min_pt, double max_eta) const;
 		double mass() const;
-		double mass(int type, const std::vector<int> &comb) const;
+		double mass(unsigned int type, const std::vector<int> &comb) const;
 		double mt2(double mn = 0) const;
 		
 		/* utility */

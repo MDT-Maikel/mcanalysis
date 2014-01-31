@@ -39,7 +39,7 @@ namespace analysis
 
 		/* properties */
 		int id() const;
-		int type() const;
+		unsigned int type() const;
 		void set_final(bool is_final);
 		bool is_final() const;
 

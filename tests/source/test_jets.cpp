@@ -47,7 +47,7 @@ int main(int argc, const char* argv[])
 
 	// apply jet pt cut
 	cuts cut_list;
-	cut_pt *pt; pt = new cut_pt(200, particle::type_jet, 1, 5.0);
+	cut_pt *pt; pt = new cut_pt(200, ptype_jet, 1, 5.0);
 	cut_list.add_cut(pt, "pt(j) > 200 GeV");
 	test.reduce_sample(cut_list);
 

@@ -26,37 +26,37 @@ namespace analysis
 
 	int lhe::id() const { return p_id; }
 	
-	int lhe::type() const 
+	unsigned int lhe::type() const 
 	{ 
 		switch (p_id)
 		{		
 		// photon
-		case 22:
-			return particle::type_photon;
+		case pid_photon:
+			return ptype_photon;
 		// electron		
 		case 11: case -11:
-			return particle::type_electron;
+			return ptype_electron;
 		// muon
 		case 13: case -13:
-			return particle::type_muon;
+			return ptype_muon;
 		// tau
 		case 15: case -15:
-			return particle::type_tau;
+			return ptype_tau;
 		// jet
-		case 21:
+		case pid_gluon:
 		case 1: case 2: case 3: case 4: case 5: case 6:
 		case -1: case -2: case -3: case -4: case -5: case -6:
-			return particle::type_jet;	
+			return ptype_jet;	
 		// missing energy
 		case 12: case -12: case 14: case -14: case 16: case -16:
 		case 8880022:
-			return particle::type_met;
+			return ptype_met;
 		// unknown
 		default:
-			return particle::type_unknown;	
+			return ptype_none;	
 		}		
 		// unknown
-		return particle::type_unknown; 
+		return ptype_none; 
 	}
 	
 	void lhe::set_final(bool is_final)

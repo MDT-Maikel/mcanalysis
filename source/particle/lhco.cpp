@@ -12,7 +12,7 @@ namespace analysis
 
 	/* con & destructor */
 
-	lhco::lhco(int type, double eta, double phi, double pt, double jmass, double ntrk, double btag, double hadem, double dum1, double dum2)
+	lhco::lhco(unsigned int type, double eta, double phi, double pt, double jmass, double ntrk, double btag, double hadem, double dum1, double dum2)
 	{
 		p_type = type;
 		p_eta = eta;
@@ -29,7 +29,7 @@ namespace analysis
 	/* properties */
 
 	int lhco::id() const { return 0; }
-	int lhco::type() const { return p_type; }
+	unsigned int lhco::type() const { return p_type; }
 	void lhco::set_final(bool is_final) { /* to be overloaded */ };
 	bool lhco::is_final() const { return true; }
 
@@ -48,9 +48,31 @@ namespace analysis
 
 	/* input & output */
 
+	int lhco::type_to_int(unsigned int type) const
+	{
+		switch (type)
+		{
+			case ptype_photon:
+				return 0;
+			case ptype_electron:
+				return 1;
+			case ptype_muon:
+				return 2;
+			case ptype_tau:
+				return 3;
+			case ptype_jet:
+				return 4;
+			case ptype_met:
+				return 6;
+			default:
+				return -1;		
+		}
+		return -1;
+	}
+
 	void lhco::write(std::ostream& os) const
 	{
-		os << p_type << "\t" << std::fixed; 
+		os << type_to_int(p_type) << "\t" << std::fixed; 
 		os << std::setprecision(3) << p_eta << "\t" << p_phi << "\t"; 
 		os << std::setprecision(2) << p_pt << "\t" << p_jmass << "\t"; 
 		os << std::setprecision(1) << p_ntrk << "\t" << p_btag << "\t"; 
@@ -60,12 +82,14 @@ namespace analysis
 
 	void lhco::read(std::istream& is)
 	{
-		is >> p_type >> p_eta >> p_phi >> p_pt >> p_jmass >> p_ntrk >> p_btag >> p_hadem >> p_dum1 >> p_dum2;
+		unsigned int type;
+		is >> type >> p_eta >> p_phi >> p_pt >> p_jmass >> p_ntrk >> p_btag >> p_hadem >> p_dum1 >> p_dum2;
+		p_type = 1 << type;
 	}
 
 	void lhco::write(std::ofstream& ofs) const
 	{
-		ofs << p_type << "\t" << std::fixed; 
+		ofs << type_to_int(p_type) << "\t" << std::fixed; 
 		ofs << std::setprecision(3) << p_eta << "\t" << p_phi << "\t";
 		ofs << std::setprecision(2) << p_pt << "\t" << p_jmass << "\t";
 		ofs << std::setprecision(1) << p_ntrk << "\t" << p_btag << "\t";
@@ -75,12 +99,14 @@ namespace analysis
 
 	void lhco::read(std::ifstream& ifs)
 	{
-		ifs >> p_type >> p_eta >> p_phi >> p_pt >> p_jmass >> p_ntrk >> p_btag >> p_hadem >> p_dum1 >> p_dum2;
+		unsigned int type;
+		ifs >> type >> p_eta >> p_phi >> p_pt >> p_jmass >> p_ntrk >> p_btag >> p_hadem >> p_dum1 >> p_dum2;
+		p_type = 1 << type;
 	}
 
 	void lhco::write(ogzstream& ogzs) const
 	{
-		ogzs << p_type << "\t" << std::fixed;
+		ogzs << type_to_int(p_type) << "\t" << std::fixed;
 		ogzs << std::setprecision(3) << p_eta << "\t" << p_phi << "\t";
 		ogzs << std::setprecision(2) << p_pt << "\t" << p_jmass << "\t";
 		ogzs << std::setprecision(1) << p_ntrk << "\t" << p_btag << "\t";
@@ -90,7 +116,9 @@ namespace analysis
 
 	void lhco::read(igzstream& igzs)
 	{
-		igzs >> p_type >> p_eta >> p_phi >> p_pt >> p_jmass >> p_ntrk >> p_btag >> p_hadem >> p_dum1 >> p_dum2;
+		unsigned int type;
+		igzs >> type >> p_eta >> p_phi >> p_pt >> p_jmass >> p_ntrk >> p_btag >> p_hadem >> p_dum1 >> p_dum2;
+		p_type = 1 << type;
 	}
 
 /* NAMESPACE */

@@ -38,11 +38,11 @@ int main(int argc, const char* argv[])
 	cuts test_cuts;
 	
 	// create pt cut on leading jet
-	cut_pt *pt1 = new cut_pt(200, particle::type_jet, 1, 2.5);
+	cut_pt *pt1 = new cut_pt(200, ptype_jet, 1, 2.5);
 	test_cuts.add_cut(pt1, "pt(j1) > 200 GeV");
 	
 	// create pt cut on second jet
-	cut_pt *pt2 = new cut_pt(200, particle::type_jet, 2, 2.5);
+	cut_pt *pt2 = new cut_pt(200, ptype_jet, 2, 2.5);
 	test_cuts.add_cut(pt2, "pt(j2) > 200 GeV");
 	
 	// create met cut
@@ -50,12 +50,12 @@ int main(int argc, const char* argv[])
 	test_cuts.add_cut(met, "met > 100 GeV");
 	
 	// create ht cut
-	cut_ht *ht = new cut_ht(400, particle::type_jet, 20, 5.0);
+	cut_ht *ht = new cut_ht(400, ptype_jet, 20, 5.0);
 	test_cuts.add_cut(ht, "ht > 400 GeV");
 	
 	// create veto cut
-	cut_veto *veto = new cut_veto(particle::type_electron, 20, 2.5);
-	test_cuts.add_cut(veto, "electron veto");
+	cut_veto *veto = new cut_veto(ptype_lepton, 20, 2.5);
+	test_cuts.add_cut(veto, "lepton veto");
 	
 	// run the cuts on the LHCO sample
 	test_cuts.apply(events_lhco);

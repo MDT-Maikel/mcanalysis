@@ -17,6 +17,52 @@
 /* NAMESPACE */
 namespace analysis
 {
+	
+	// constants for the particle types
+	const int
+		pid_nutbar     = -16,
+		pid_taubar     = -15,
+		pid_numbar     = -14,
+		pid_muonbar    = -13,
+		pid_nuebar     = -12,
+		pid_positron   = -11,
+		pid_topbar     = -6,
+		pid_bottombar  = -5,
+		pid_charmbar   = -4,
+		pid_strangebar = -3,
+		pid_upbar      = -2,
+		pid_downbar    = -1,
+		pid_none       = 0,
+		pid_down       = 1,
+		pid_up         = 2,
+		pid_strange    = 3,
+		pid_charm      = 4,
+		pid_bottom     = 5,
+		pid_top        = 6,
+		pid_electron   = 11,
+		pid_nue        = 12,
+		pid_muon       = 13,
+		pid_num        = 14,
+		pid_tau        = 15,
+		pid_nut        = 16,
+		pid_gluon      = 21,
+		pid_photon     = 22,
+		pid_z          = 23,
+		pid_w          = 24,
+		pid_h          = 25;
+	
+	// constants for the particle types
+	const unsigned int 
+		ptype_none      = 0,
+		ptype_photon    = 1,
+		ptype_electron  = 1 << 1,
+		ptype_muon      = 1 << 2,
+		ptype_tau       = 1 << 3,
+		ptype_jet       = 1 << 4,
+		ptype_met       = 1 << 6,
+		ptype_lepton    = ptype_electron | ptype_muon,
+		ptype_leptonall = ptype_lepton | ptype_tau,
+		ptype_all       = ~ptype_none;
 
 	class particle
 	{
@@ -30,30 +76,9 @@ namespace analysis
 		particle(const particle&) = default;
     	particle& operator = (const particle&) = default;
 
-	public:
-
-		/* constants */
-		// particle ids: from the pdg codes
-		enum particle_id 
-		{
-			nuebar = -12, positron,	topbar = -6, bottombar, charmbar, strangebar, upbar, downbar, gluon, up, down, strange, charm, bottom, top, electron = 11, nue
-		};
-		enum particle_type
-		{
-			type_unknown  = -1, 
-			type_photon   = 0, 
-			type_electron = 1, 
-			type_muon     = 2, 
-			type_tau      = 3, 
-			type_jet      = 4, 
-			type_met      = 6
-		};
-
-	public:
-
 		/* properties */
 		virtual int id() const;
-		virtual int type() const;
+		virtual unsigned int type() const;
 		
 		virtual void set_final(bool is_final);
 		virtual bool is_final() const;
