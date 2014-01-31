@@ -22,7 +22,7 @@ namespace analysis
 		p_mass = mass;
 	}
 
-	/* properties */
+	/* properties: type */
 
 	int lhe::id() const { return p_id; }
 	
@@ -34,21 +34,21 @@ namespace analysis
 		case pid_photon:
 			return ptype_photon;
 		// electron		
-		case 11: case -11:
+		case pid_electron: case pid_positron:
 			return ptype_electron;
 		// muon
-		case 13: case -13:
+		case pid_muon: case pid_muonbar:
 			return ptype_muon;
 		// tau
-		case 15: case -15:
+		case pid_tau: case pid_taubar:
 			return ptype_tau;
 		// jet
 		case pid_gluon:
-		case 1: case 2: case 3: case 4: case 5: case 6:
-		case -1: case -2: case -3: case -4: case -5: case -6:
+		case pid_down: case pid_up: case pid_strange: case pid_charm: case pid_bottom: case pid_top:
+		case pid_downbar: case pid_upbar: case pid_strangebar: case pid_charmbar: case pid_bottombar: case pid_topbar:
 			return ptype_jet;	
 		// missing energy
-		case 12: case -12: case 14: case -14: case 16: case -16:
+		case pid_nue: case pid_num: case pid_nut: case pid_nuebar: case pid_numbar: case pid_nutbar:
 		case 8880022:
 			return ptype_met;
 		// unknown
@@ -59,6 +59,8 @@ namespace analysis
 		return ptype_none; 
 	}
 	
+	/* properties: state */
+	
 	void lhe::set_final(bool is_final)
 	{
 		p_inout = is_final ? 1 : 0;
@@ -68,8 +70,37 @@ namespace analysis
 	{ 
 		return p_inout == 1; 
 	}
+	
+	/* properties: quantum numbers */
+	
+	double lhe::charge() const
+	{
+		switch (p_id)
+		{	
+		case pid_electron: case pid_muon: case pid_tau:
+			return -1.0;
+		case pid_positron: case pid_muonbar: case pid_taubar:
+			return 1.0;
+		case pid_down: case pid_strange: case pid_bottom:
+			return -1.0 / 3.0;
+		case pid_up: case pid_charm: case pid_top:
+			return 2.0 / 3.0;
+		case pid_downbar: case pid_strangebar: case pid_bottombar:
+			return 1.0 / 3.0;
+		case pid_upbar: case pid_charmbar: case pid_topbar:
+			return -2.0 / 3.0;
+		case pid_w:
+			return 1.0; // TODO: differentiate between Wplus and Wminus
+		case pid_nue: case pid_num: case pid_nut: case pid_nuebar: case pid_numbar: case pid_nutbar:
+		case pid_gluon: case pid_photon: case pid_z:
+			return 0.0;				
+		default:
+			return 0.0;		
+		}
+		return 0.0;
+	}
 
-	/* kinematics */
+	/* properties: kinematics */
 
 	double lhe::px() const { return p_px; }
 	double lhe::py() const { return p_py; }
@@ -87,6 +118,7 @@ namespace analysis
 		return std::atan(p_py / p_px);
 	}
 	double lhe::mass() const { return p_mass; }
+	
 	double lhe::y() const { return 0.5 * std::log((pe() + pz()) / (pe() - pz())); }
 
 	/* input & output */

@@ -26,14 +26,27 @@ namespace analysis
 		p_dum2 = dum2;
 	}
 
-	/* properties */
+	/* properties: type */
 
 	int lhco::id() const { return 0; }
 	unsigned int lhco::type() const { return p_type; }
+	
+	/* properties: state */
+	
 	void lhco::set_final(bool is_final) { /* to be overloaded */ };
 	bool lhco::is_final() const { return true; }
+	
+	/* properties: quantum numbers */
+	
+	double lhco::charge() const
+	{
+		// TODO: for other types and tau -1 vs -3
+		if (p_type & ptype_leptonall)
+			return p_ntrk;
+		return 0.0;
+	}
 
-	/* kinematics */
+	/* properties: kinematics */
 
 	double lhco::pt() const { return p_pt; }
 	double lhco::eta() const { return p_eta; }
@@ -44,6 +57,7 @@ namespace analysis
 	double lhco::py() const { return pt() * std::sin(phi()); }
 	double lhco::pz() const { return pt() * std::sinh(eta()); }
 	double lhco::pe() const { return std::sqrt(pow(pt() * std::cosh(eta()), 2) + pow(mass(), 2)); }
+	
 	double lhco::y() const { return 0.5 * std::log((pe() + pz()) / (pe() - pz())); }
 
 	/* input & output */

@@ -69,7 +69,7 @@ namespace analysis
 		unsigned int count = 0;		
 		for (unsigned int index = 0; index < size(); index++)
 		{
-			if ((particles[index])->type() & type)
+			if (particles[index]->type() & type)
 			{
 				count++;
 				if (count == number)

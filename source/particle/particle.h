@@ -66,6 +66,7 @@ namespace analysis
 
 	class particle
 	{
+		
 	public:
 
 		/* con & destructor */
@@ -76,14 +77,18 @@ namespace analysis
 		particle(const particle&) = default;
     	particle& operator = (const particle&) = default;
 
-		/* properties */
+		/* properties: type */
 		virtual int id() const;
 		virtual unsigned int type() const;
 		
+		/* properties: state */
 		virtual void set_final(bool is_final);
 		virtual bool is_final() const;
+		
+		/* properties: quantum numbers */
+		virtual double charge() const;
 
-		/* kinematics */
+		/* properties: kinematics */
 		virtual double px() const;
 		virtual double py() const;
 		virtual double pz() const;

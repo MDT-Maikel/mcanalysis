@@ -51,7 +51,7 @@ int main(int argc, const char* argv[])
 	
 	// create ht cut
 	cut_ht *ht = new cut_ht(400, ptype_jet, 20, 5.0);
-	test_cuts.add_cut(ht, "ht > 400 GeV");
+	test_cuts.add_cut(ht, "ht(j's) > 400 GeV");
 	
 	// create veto cut
 	cut_veto *veto = new cut_veto(ptype_lepton, 20, 2.5);

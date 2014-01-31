@@ -15,14 +15,21 @@ namespace analysis
 	particle::particle() {}
 	particle::~particle() {}
 
-	/* properties */
+	/* properties: type */
 
 	int particle::id() const { return 0; }
 	unsigned int particle::type() const { return ptype_none; }
-	void particle::set_final(bool is_final) { /* to be overloaded */ };
-	bool particle::is_final() const { return true; }
+	
+	/* properties: state */
 
-	/* kinematics */
+	void particle::set_final(bool is_final) { /* to be overloaded */ }
+	bool particle::is_final() const { return true; }
+	
+	/* properties: quantum numbers */
+	
+	double particle::charge() const { return 0; }
+
+	/* properties: kinematics */
 
 	double particle::px() const { return 0; }
 	double particle::py() const { return 0; }

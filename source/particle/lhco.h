@@ -33,16 +33,18 @@ namespace analysis
 		lhco(const lhco&) = default;
     	lhco& operator = (const lhco&) = default;
 
-	public:
-
-		/* properties */
+		/* properties: type */
 		int id() const;
 		unsigned int type() const;
 		
+		/* properties: state */
 		void set_final(bool is_final);
 		bool is_final() const;
+		
+		/* properties: quantum numbers */
+		double charge() const;
 
-		/* kinematics */
+		/* properties: kinematics */
 		double pt() const;
 		double eta() const;
 		double phi() const;
@@ -52,6 +54,7 @@ namespace analysis
 		double py() const;
 		double pz() const;
 		double pe() const;
+		
 		double y() const;
 
 		/* input & output */

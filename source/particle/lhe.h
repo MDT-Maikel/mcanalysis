@@ -34,16 +34,21 @@ namespace analysis
 		//virtual ~lhe() = default;	
 
 		/* copy & assignment */
+		// lhe(const lhe&) = default;
+    	// lhe& operator = (const lhe&) = default;
 
-	public:
-
-		/* properties */
+		/* properties: type */
 		int id() const;
 		unsigned int type() const;
+		
+		/* properties: state */
 		void set_final(bool is_final);
 		bool is_final() const;
+		
+		/* properties: quantum numbers */
+		double charge() const;
 
-		/* kinematics */
+		/* properties: kinematics */
 		double px() const;
 		double py() const;
 		double pz() const;
@@ -53,6 +58,7 @@ namespace analysis
 		double eta() const;
 		double phi() const;
 		double mass() const;
+		
 		double y() const;
 
 		/* input & output */
