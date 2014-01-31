@@ -254,6 +254,23 @@ namespace analysis
 		}
 		std::cout << particles.size() << std::endl;
 	}
+	
+	/* utility functions */
+	
+	double mass(std::vector<particle*> particles)
+	{
+		double pe = 0.0; double px = 0.0; double py = 0.0; double pz = 0.0;		
+		for (unsigned int index = 0; index < particles.size(); index++)
+		{
+			particle *p = particles[index];
+			pe += p->pe();
+			px += p->px();
+			py += p->py();
+			pz += p->pz();
+		}
+		double inv_mass = std::pow(pe, 2.0) - std::pow(px, 2.0) - std::pow (py, 2.0) - std::pow(pz, 2.0);
+		return std::sqrt(std::max(inv_mass, 0.0));		
+	}
 
 /* NAMESPACE */
 }

@@ -68,6 +68,9 @@ namespace analysis
 		std::vector<particle*> particles;
 
 	};
+	
+	/* utility functions */
+	double mass(std::vector<particle*> particles);
 
 /* NAMESPACE */
 }

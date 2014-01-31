@@ -122,6 +122,7 @@ namespace analysis
 
 		//=== Analysis core function ===//
 		void initialise(fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &) = &jet_analysis::JHTopTagging);
+		std::vector< event* > events();
 
 		//=== Apply cut functions ===//
 		void reduce_sample(cuts cut_list);

@@ -1057,6 +1057,19 @@ namespace analysis
 		delete skinnyJetDef;
 
 	}
+	
+	std::vector< event * > jet_analysis::events()
+	{
+		// map_lhco_taggedJets iterator definition
+		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
+
+		// extract vector of event pointers "events"
+		std::vector< event * > events;
+		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
+			events.push_back(it->first);
+			
+		return events;
+	}
 
 	// ========================================== // 
 	//	          Tagging information 		   	  //
