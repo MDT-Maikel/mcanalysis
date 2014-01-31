@@ -1,4 +1,4 @@
-/* jet_analysis class
+/* Jet analysis class
  *
  * 
 */
@@ -9,9 +9,12 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <string> 
 #include <vector> 
-#include <map>
+
+#include "boost/filesystem.hpp"
+#include "boost/lexical_cast.hpp"
 
 #include "Pythia8/Pythia.h"
 #include "Pythia8/FastJet3.h"
@@ -22,8 +25,6 @@
 #include "fastjet/tools/MassDropTagger.hh"
 #include "fastjet/tools/Filter.hh"
 
-#include "boost/filesystem.hpp"
-#include "boost/lexical_cast.hpp"
 #include "../particle/lhco.h"
 #include "../event/event.h"
 #include "../utility/utility.h"
@@ -31,9 +32,9 @@
 #include "HEPTopTagger.h"
 
 
-using namespace Pythia8;
-
-namespace analysis {
+/* NAMESPACE */
+namespace analysis
+{
 
 	class jet_analysis
 	{
@@ -109,9 +110,9 @@ namespace analysis {
 		void set_merging(const double & ms, const int & njmax, const std::string & process);
 
 		//=== Isolation functions ===//
-		bool isolatedElectron(const int & j, const Event & particles);
-		bool isolatedMuon(const int & j, const Event & particles);
-		bool isolatedPhoton(const int & j, const Event & particles);
+		bool isolatedElectron(const int & j, const Pythia8::Event & particles);
+		bool isolatedMuon(const int & j, const Pythia8::Event & particles);
+		bool isolatedPhoton(const int & j, const Pythia8::Event & particles);
 		bool JetElectronOverlapping(const fastjet::PseudoJet & jet, const std::vector< fastjet::PseudoJet > & leptons);
 
 		//=== Tagging functions ===//

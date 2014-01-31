@@ -1,11 +1,14 @@
-/* jet_analysis class
+/* Jet analysis class
  *
  * 
 */
 
 #include "jet_analysis.h"
 
-namespace analysis {
+
+/* NAMESPACE */
+namespace analysis 
+{
 
 	// ========================================== // 
 	//	       	 Class con- & destructor 		  //
@@ -161,7 +164,7 @@ namespace analysis {
 	//	            Isolation functions 	   	  //
 	// ========================================== //
 
-	bool jet_analysis::isolatedElectron(const int & j, const Event & particles) 
+	bool jet_analysis::isolatedElectron(const int & j, const Pythia8::Event & particles) 
 	{
 		long id = particles[j].idAbs();
 
@@ -216,7 +219,7 @@ namespace analysis {
 		return false;
 	}
 
-	bool jet_analysis::isolatedMuon(const int & j, const Event & particles) 
+	bool jet_analysis::isolatedMuon(const int & j, const Pythia8::Event & particles) 
 	{
 		long id = particles[j].idAbs();
 
@@ -271,7 +274,7 @@ namespace analysis {
 		return false;
 	}
 
-	bool jet_analysis::isolatedPhoton(const int & j, const Event & particles) 
+	bool jet_analysis::isolatedPhoton(const int & j, const Pythia8::Event & particles) 
 	{
 		long id = particles[j].idAbs();
 
@@ -382,9 +385,9 @@ namespace analysis {
 		// Print Top-tagging details
 		if (printTopTagDetails)
 		{
-			cout << "\nRan HEPTopTagger with the following parameters:" << endl; 
+			std::cout << "\nRan HEPTopTagger with the following parameters:" << std::endl; 
 			top_tagger.get_setting();
-			cout << endl;
+			std::cout << std::endl;
 			// top_tagger.get_info();
 			// cout << endl;
 		}
@@ -728,21 +731,15 @@ namespace analysis {
 	void jet_analysis::initialise(fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &))
 	{
 		//============= Initialisation =============//
-		Pythia pythia;
+		Pythia8::Pythia pythia;
 
 		// Set the merging procedure if required
 		if (DoMerging)
 		{	
 			pythia.readString("Merging:doKTMerging = on");
-
-			std::string tms_string = "Merging:TMS = " + boost::lexical_cast<std::string>(MergingTMS);
-			pythia.settings.readString(tms_string.c_str());
-
-			std::string nj_string = "Merging:nJetMax = " + boost::lexical_cast<std::string>(MergingNJetMax);
-			pythia.settings.readString(nj_string.c_str());
-
-			std::string prc_string = "Merging:Process = " + MergingProcess;
-			pythia.settings.readString(prc_string.c_str());
+			pythia.settings.readString(("Merging:TMS = " + boost::lexical_cast<std::string>(MergingTMS)).c_str());
+			pythia.settings.readString(("Merging:nJetMax = " + boost::lexical_cast<std::string>(MergingNJetMax)).c_str());
+			pythia.settings.readString(("Merging:Process = " + MergingProcess).c_str());
 		}		
 
 		// ===== TODO: modify for merging procedure ===== //
@@ -998,7 +995,7 @@ namespace analysis {
 			// First event only
 			if (firstEvent)
 			{
-				cout << "\nFirst event details:" << endl;
+				cout << endl << "First event details:" << endl;
   				ev->write(cout);
   			}
 
