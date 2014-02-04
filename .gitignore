@@ -18,6 +18,8 @@
 *.lhe.gz
 *.hep
 *.hep.gz
+*.hepmc
+*.hepmc.gz
 *.root
 
 # Image/plot files
@@ -55,5 +57,6 @@ Makefile
 /tools/input
 /tools/output
 /tools/mergemc
+/tools/gen_hepmc
 /tools/ttag
 

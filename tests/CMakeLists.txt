@@ -2,7 +2,7 @@
 ### CMake file for tests ###
 ############################
 
-## Include directories
+## Mandatory include directories
 include_directories(
 	"${ZLIB_INCLUDE_DIRS}"
 	"${GZSTREAM_INCLUDE_DIRS}"
@@ -13,6 +13,11 @@ include_directories(
 	"${FASTJET_INCLUDE_DIRS}"
 	"${MCANALYSIS_INCLUDE_DIRS}"
 )
+
+## Optional include directories
+if(HEPMC_FOUND)
+	include_directories("${HEPMC_INCLUDE_DIRS}")
+endif()	
 
 ## Executable: test_all
 add_executable(test_all source/test_all.cpp)

@@ -1,5 +1,6 @@
 /* Merge MC
  *
+ * merges different Monte Carlo files into one file
  * 
 */
 

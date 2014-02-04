@@ -2,7 +2,7 @@
 ### CMake file for tools ###
 ############################
 
-## Include directories
+## Mandatory include directories
 include_directories(
 	"${ZLIB_INCLUDE_DIRS}"
 	"${GZSTREAM_INCLUDE_DIRS}"
@@ -14,6 +14,11 @@ include_directories(
 	"${MCANALYSIS_INCLUDE_DIRS}"
 )
 
+## Optional include directories
+if(HEPMC_FOUND)
+	include_directories("${HEPMC_INCLUDE_DIRS}")
+endif()	
+
 ## Executable: mergemc
 add_executable(mergemc source/mergemc.cpp)
 target_link_libraries(
@@ -24,6 +29,17 @@ target_link_libraries(
 	${PYTHON_LIBRARIES}
 	${Boost_LIBRARIES}
 )
+
+## Executable: gen_hepmc
+## only build if HepMC is available
+if(HEPMC_FOUND AND PYTHIA8_HEPMC_FOUND)
+	add_executable(gen_hepmc source/gen_hepmc.cpp)
+	target_link_libraries(
+		gen_hepmc
+		${HEPMC_LIBRARIES}
+		${PYTHIA8_LIBRARIES}
+	)
+endif()
 
 ## Executable: ttag
 add_executable(ttag source/ttag.cpp)
