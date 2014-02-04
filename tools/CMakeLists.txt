@@ -19,7 +19,7 @@ add_executable(mergemc source/mergemc.cpp)
 target_link_libraries(
 	mergemc
 	${MCANALYSIS_LIBRARIES}
-	${GZSTRREAM_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${PYTHON_LIBRARIES}
 	${Boost_LIBRARIES}
@@ -30,7 +30,7 @@ add_executable(ttag source/ttag.cpp)
 target_link_libraries(
 	ttag
 	${MCANALYSIS_LIBRARIES}
-	${GZSTRREAM_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${PYTHON_LIBRARIES}
 	${Boost_LIBRARIES}

@@ -49,6 +49,7 @@ Makefile
 /tests/test_plot
 /tests/test_histogram
 /tests/test_jets
+/tests/test_heptop
 
 # Tool programs
 /tools/input

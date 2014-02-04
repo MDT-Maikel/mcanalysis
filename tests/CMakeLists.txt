@@ -22,7 +22,7 @@ add_executable(test_lhco source/test_lhco.cpp)
 target_link_libraries(
 	test_lhco
 	${MCANALYSIS_LIBRARIES}
-	${GZSTRREAM_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${Boost_LIBRARIES}
 )
@@ -32,7 +32,7 @@ add_executable(test_lhe source/test_lhe.cpp)
 target_link_libraries(
 	test_lhe
 	${MCANALYSIS_LIBRARIES}
-	${GZSTRREAM_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${Boost_LIBRARIES}
 )
@@ -49,7 +49,7 @@ add_executable(test_cuts source/test_cuts.cpp)
 target_link_libraries(
 	test_cuts
 	${MCANALYSIS_LIBRARIES}
-	${GZSTRREAM_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${Boost_LIBRARIES}
 )
@@ -59,7 +59,7 @@ add_executable(test_histogram source/test_histogram.cpp)
 target_link_libraries(
 	test_histogram
 	${MCANALYSIS_LIBRARIES}
-	${GZSTRREAM_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${PYTHON_LIBRARIES}
 	${Boost_LIBRARIES}
@@ -71,7 +71,7 @@ add_executable(test_plot source/test_plot.cpp)
 target_link_libraries(
 	test_plot
 	${MCANALYSIS_LIBRARIES}
-	${GZSTRREAM_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${PYTHON_LIBRARIES}
 	${Boost_LIBRARIES}
@@ -83,7 +83,7 @@ add_executable(test_bumphunter source/test_bumphunter.cpp)
 target_link_libraries(
 	test_bumphunter
 	${MCANALYSIS_LIBRARIES}
-	${GZSTRREAM_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${PYTHON_LIBRARIES}
 	${Boost_LIBRARIES}
@@ -95,7 +95,7 @@ add_executable(test_jets source/test_jets.cpp)
 target_link_libraries(
 	test_jets
 	${MCANALYSIS_LIBRARIES}
-	${GZSTRREAM_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${PYTHON_LIBRARIES}
 	${Boost_LIBRARIES}
@@ -109,7 +109,7 @@ add_executable(test_heptop source/test_heptop.cpp)
 target_link_libraries(
 	test_heptop
 	${MCANALYSIS_LIBRARIES}
-	${GZSTRREAM_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${PYTHON_LIBRARIES}
 	${Boost_LIBRARIES}
