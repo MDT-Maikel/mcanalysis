@@ -116,8 +116,8 @@ int main(int argc, const char* argv[])
 		double x = sample_xy[i][0];
 		double y = sample_xy[i][1];
 		
-		unsigned int posx = static_cast<unsigned int>(std::round(nr_bins * x / 100));
-		unsigned int posy = static_cast<unsigned int>(std::round(nr_bins * y / 100));
+		unsigned int posx = static_cast<unsigned int>(round(nr_bins * x / 100));
+		unsigned int posy = static_cast<unsigned int>(round(nr_bins * y / 100));
 		
 		if (posx >= 0 && posx < nr_bins && posy >= 0 && posy < nr_bins)
 			sample_xyz[posx][posy]++;

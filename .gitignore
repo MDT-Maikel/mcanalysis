@@ -4,8 +4,9 @@
 # Unix temporary files
 *~
 
-# C++ build files
+# C++ build & library files
 *.o
+*.a
 
 # Python build files
 *.pyc

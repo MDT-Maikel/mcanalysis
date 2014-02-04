@@ -33,6 +33,10 @@ set(MCANALYSIS_SOURCES
 	bumphunter/bumphunter.cpp
 	jet_analysis/jet_analysis.h
 	jet_analysis/jet_analysis.cpp
+	jet_analysis/settings.cpp
+	jet_analysis/isolation.cpp
+	jet_analysis/tagandcut.cpp
+	jet_analysis/initialisation.cpp	
 	jet_analysis/HEPTopTagger.h
 	jet_analysis/HEPTopTagger.cpp
 )

@@ -87,7 +87,7 @@ int main(int argc, const char* argv[])
 
 	// initialise jet_analysis class
 	jet_analysis ttag;
-	int nEvents = 50000;
+	int nEvents = 2000;
 	ttag.set_nEvents(nEvents);
 	ttag.undo_BDRSTagging();
 	
@@ -98,9 +98,9 @@ int main(int argc, const char* argv[])
 	
 	// load the lhco and lhe events
 	vector<event*> ttag_lhe;
-	//vector<event*> ttag_lhco;
+	vector<event*> ttag_lhco;
 	read_lhe(ttag_lhe, "input/thth_tztz/mass_1000.lhe.gz");
-	//read_lhe(ttag_lhco, "input/thth_tztz/mass_1000.lhco.gz");
+	read_lhco(ttag_lhco, "input/thth_tztz/mass_1000.lhco.gz");
 	
 	// initiate general cut class and specific cuts
 	cuts ttag_cuts;
@@ -125,15 +125,15 @@ int main(int argc, const char* argv[])
 	ttag_cuts.write(cout);
 	double eff_lhco = ttag_cuts.efficiency();
 	ttag_cuts.clear();
-	//ttag_cuts.apply(ttag_lhco);
-	//ttag_cuts.write(cout);
-	//double eff_lhe = ttag_cuts.efficiency();
-	//ttag_cuts.clear();
+	ttag_cuts.apply(ttag_lhco);
+	ttag_cuts.write(cout);
+	double eff_lhe = ttag_cuts.efficiency();
+	ttag_cuts.clear();
 	
 	// plot lepton masses
 	plot lmass("test_plot_leptonmass", "output/");
 	lmass.add_sample(ttag_lhe, plot_leptonmass, "LHE");
-	//lmass.add_sample(ttag_lhco, plot_leptonmass, "LHCO");
+	lmass.add_sample(ttag_lhco, plot_leptonmass, "LHCO");
 	lmass.add_sample(ttag_tagged, plot_leptonmass, "Tagged");
 	lmass.run();
 	

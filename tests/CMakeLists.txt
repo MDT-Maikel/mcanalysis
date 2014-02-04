@@ -104,4 +104,18 @@ target_link_libraries(
 	${FASTJET_LIBRARIES}
 )
 
+## Executable: test_heptop
+add_executable(test_heptop source/test_heptop.cpp)
+target_link_libraries(
+	test_heptop
+	${MCANALYSIS_LIBRARIES}
+	${GZSTRREAM_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${PYTHON_LIBRARIES}
+	${Boost_LIBRARIES}
+	${ROOT_LIBRARIES}
+	${PYTHIA8_LIBRARIES}
+	${FASTJET_LIBRARIES}
+)
+
 

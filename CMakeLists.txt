@@ -45,40 +45,42 @@ set(MCANALYSIS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/source")
 add_subdirectory(source)
 set(MCANALYSIS_LIBRARIES analysis)
 
-## Include directories
-message("====================================")
-message("Using following include dirs:")
-message("zlib: " "${ZLIB_INCLUDE_DIRS}")
-message("gzstream: " "${GZSTREAM_INCLUDE_DIRS}")
-message("python: " "${PYTHON_INCLUDE_DIRS}")
-message("boost: " "${Boost_INCLUDE_DIRS}")
-message("root: " "${ROOT_INCLUDE_DIRS}")
-message("pythia8: " "${PYTHIA8_INCLUDE_DIRS}")
-message("fastjet: " "${fastjet_INCLUDE_DIRS}")
-message("mcanalysis: " "${MCANALYSIS_INCLUDE_DIRS}")
-message("====================================")
-#include_directories(
-	#"${ZLIB_INCLUDE_DIRS}"
-	#"${GZSTREAM_INCLUDE_DIRS}"
-	#"${PYTHON_INCLUDE_DIRS}"
-	#"${Boost_INCLUDE_DIRS}"
-	#"${ROOT_INCLUDE_DIRS}"
-	#"${PYTHIA8_INCLUDE_DIRS}"
-	#"${fastjet_INCLUDE_DIRS}"
-	#"${MCANALYSIS_INCLUDE_DIRS}"
-#)
-
-## Print libraries
-message("====================================")
-message("zlib: " "${ZLIB_LIBRARIES}")
-message("gzstream: " "${GZSTRREAM_LIBRARIES}")
-message("python: " "${PYTHON_LIBRARIES}")
-message("boost: " "${Boost_LIBRARIES}")
-message("root: " "${ROOT_LIBRARIES}")
-message("pythia8: " "${PYTHIA8_LIBRARIES}")
-message("fastjet: " "${FASTJET_LIBRARIES}")
-message("mcanalysis: " "${MCANALYSIS_LIBRARIES}")
-message("====================================")
+## Print the status of each of the libraries
+message("=======================================================")
+message("==================== Library Status ===================")
+message("=======================================================")
+message("zlib: " "${ZLIB_FOUND}")
+message("inc: " "${ZLIB_INCLUDE_DIRS}")
+message("lib: " "${ZLIB_LIBRARIES}")
+message("=======================================================")
+message("gzstream: " "${GZSTRREAM_FOUND}")
+message("inc: " "${GZSTREAM_INCLUDE_DIRS}")
+message("lib: " "${GZSTRREAM_LIBRARIES}")
+message("=======================================================")
+message("python: " "${PYTHON_FOUND}")
+message("inc: " "${PYTHON_INCLUDE_DIRS}")
+message("lib: " "${PYTHON_LIBRARIES}")
+message("=======================================================")
+message("boost: " "${Boost_FOUND}")
+message("inc: " "${Boost_INCLUDE_DIRS}")
+message("lib: " "${Boost_LIBRARIES}")
+message("=======================================================")
+message("root: " "${ROOT_FOUND}")
+message("inc: " "${ROOT_INCLUDE_DIRS}")
+message("lib: " "${ROOT_LIBRARIES}")
+message("=======================================================")
+message("pythia8: " "${ROOT_FOUND}")
+message("inc: " "${PYTHIA8_INCLUDE_DIRS}")
+message("lib: " "${PYTHIA8_LIBRARIES}")
+message("=======================================================")
+message("fastjet: " "${ROOT_FOUND}")
+message("inc: " "${FASTJET_INCLUDE_DIRS}")
+message("lib: " "${FASTJET_LIBRARIES}")
+message("=======================================================")
+message("mcanalysis: " "${MCANALYSIS_FOUND}")
+message("inc: " "${MCANALYSIS_INCLUDE_DIRS}")
+message("lib: " "${MCANALYSIS_LIBRARIES}")
+message("=======================================================")
 
 ## Executables: tests
 add_subdirectory(tests)
