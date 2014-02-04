@@ -40,12 +40,14 @@ namespace analysis
 	{
 	// ===== TODO: private? ===== //
 	public:
-		// lhe input files, number of events to be analysed by Pythia and print options
+		// Basic settings and input
 		std::vector< std::string > lhe_input;
+		std::string lhco_input;
 		int nEvent;
 		bool firstEvent;
 		bool printTopTagDetails;
 		bool printBDRSDetails;
+		bool importedLHCO;
 
 		// Detector range and Isolation parameters
 		double MaxEta;
@@ -86,7 +88,7 @@ namespace analysis
 		double BDRS_higgs_min;
 		double BDRS_higgs_max;
 
-		// map (lhco with skinny jets, taggedJets)
+		// map (lhco, taggedJets)
 		std::map< event *, std::vector <fastjet::PseudoJet> > map_lhco_taggedJets;
 
 	public:
@@ -94,8 +96,9 @@ namespace analysis
 		jet_analysis();
 		~jet_analysis();
 
-		//=== Set parameters and lhe input ===//
+		//=== Settings and input ===//
 		void add_lhe(const std::string & name);
+		void import_lhco(const std::string & name);
 		void set_nEvents(const int & events);
 		void set_Isolation(const std::string & type, const double & eta, const double & pt, const double & Rcone, const double & EtCone = 1.8);
 		void set_Rsize_fat(const double & R);
@@ -105,9 +108,8 @@ namespace analysis
 		void set_BDRS_higgs_range(const double & higgs_min, const double & higgs_max);
 		void undo_TopTagging();
 		void undo_BDRSTagging();
-
-		//=== Merging procedure ===//
 		void set_merging(const double & ms, const int & njmax, const std::string & process);
+		std::vector< event* > events();
 
 		//=== Isolation functions ===//
 		bool isolatedElectron(const int & j, const Pythia8::Event & particles);
@@ -115,21 +117,19 @@ namespace analysis
 		bool isolatedPhoton(const int & j, const Pythia8::Event & particles);
 		bool JetElectronOverlapping(const fastjet::PseudoJet & jet, const std::vector< fastjet::PseudoJet > & leptons);
 
-		//=== Tagging functions ===//
+		//=== Tag and cut functions ===//
 		fastjet::PseudoJet JHTopTagging(const fastjet::PseudoJet & jet);
 		fastjet::PseudoJet HEPTopTagging(const fastjet::PseudoJet & jet);
 		fastjet::PseudoJet BDRSTagging(const fastjet::PseudoJet & jet);
-
-		//=== Analysis core function ===//
-		void initialise(fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &) = &jet_analysis::JHTopTagging);
-		std::vector< event* > events();
-
-		//=== Apply cut functions ===//
 		void reduce_sample(cuts cut_list);
+		double require_fatjet_pt(const double & ptcut, const int & n = 1);
 		double require_top_tagged(const int & n);
 		double require_higgs_tagged(const int & n);
 		double require_w_tagged(const int & n);
 		double require_t_or_w_tagged(const int & n);
+
+		//=== Initialisation function ===//
+		void initialise(fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &) = &jet_analysis::JHTopTagging);
 
 	};
 
@@ -158,7 +158,6 @@ namespace analysis
 
 	};
 
-
 	//=== b-flavour information ===//
 	class FlavourInfo : public fastjet::PseudoJet::UserInfoBase
 	{
@@ -174,7 +173,6 @@ namespace analysis
 		bool b_type() const;
 
 	};
-
 
 	//=== b-hadron pdg identification ===//
 	bool isBHadron(int pdg);
