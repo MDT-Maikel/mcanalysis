@@ -14,7 +14,7 @@
 
 #include "event/event.h"
 #include "utility/utility.h"
-#include "source/cuts/cuts.h"
+#include "cuts/cuts.h"
 
 using namespace std;
 using namespace boost::filesystem;
