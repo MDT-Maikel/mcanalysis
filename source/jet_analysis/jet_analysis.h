@@ -121,7 +121,7 @@ namespace analysis
 		fastjet::PseudoJet JHTopTagging(const fastjet::PseudoJet & jet);
 		fastjet::PseudoJet HEPTopTagging(const fastjet::PseudoJet & jet);
 		fastjet::PseudoJet BDRSTagging(const fastjet::PseudoJet & jet);
-		void reduce_sample(cuts cut_list);
+		double reduce_sample(cuts cut_list);
 		double require_fatjet_pt(const double & ptcut, const int & n = 1);
 		double require_top_tagged(const int & n);
 		double require_higgs_tagged(const int & n);

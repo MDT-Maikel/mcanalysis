@@ -18,6 +18,11 @@ namespace analysis
 	{
 		//============= Initialisation =============//
 		Pythia8::Pythia pythia;
+		pythia.readString("Print:quiet=ON");
+		pythia.readString("PartonLevel:MPI=OFF");
+		pythia.readString("PartonLevel:Remnants=OFF");
+		pythia.readString("Check:Event=OFF");
+		pythia.readString("HadronLevel:all=OFF");
 
 		// Set the merging procedure if required
 		if (DoMerging)
@@ -328,8 +333,16 @@ namespace analysis
 					if ( printBDRSDetails )
 						printBDRSDetails = false;
 					if ( BDRSTagged!=0 )
+					{
 						taggedJets.push_back(BDRSTagged);
+						continue;
+					}
 				}
+
+				// push_back remaining non-tagged fatjets
+				fastjet::PseudoJet fatjet = fatJets[i];
+				fatjet.set_user_info(new TagInfo());
+				taggedJets.push_back(fatjet);
 
   			}
 

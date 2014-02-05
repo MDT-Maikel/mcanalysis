@@ -145,7 +145,7 @@ namespace analysis
 	//	          Apply cut function 		   	  //
 	// ========================================== //
 
-	void jet_analysis::reduce_sample(cuts cut_list)
+	double jet_analysis::reduce_sample(cuts cut_list)
 	{	
 		// map_lhco_taggedJets iterator definition
 		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
@@ -158,6 +158,7 @@ namespace analysis
 		// perform the cuts defined in cut_list on "events"
 		cut_list.apply(events);
 		cut_list.write(cout);
+		double eff = cut_list.efficiency();
 
 		// retrieve from map_lhco_taggedJets only the elements which passed the cuts
 		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
@@ -173,6 +174,9 @@ namespace analysis
 
 		// resize the map_lhco_taggedJets
 		map_lhco_taggedJets = reduced_map;
+
+		// return total efficiency
+		return eff;
 	}
 
 	double jet_analysis::require_fatjet_pt(const double & ptcut, const int & n)
@@ -191,10 +195,10 @@ namespace analysis
 			{
 				for (unsigned int i = 0; i < (it->second).size(); ++i)
 				{
-					fastjet::PseudoJet tagged;
-					tagged = (it->second)[i];
+					fastjet::PseudoJet fatjet;
+					fatjet = (it->second)[i];
 
-					if (tagged.pt() > ptcut)
+					if (fatjet.pt() > ptcut)
 						jetcount++;
 
 				} // for (it->second).size() -> calculates how many FatJets satisfy pT requirement within the event
@@ -205,7 +209,7 @@ namespace analysis
 					reduced_map.insert( std::make_pair(it->first,it->second) );
 				}
 
-			} // if ((it->second).size()!=0) -> look among events with tagged jets
+			} // if ((it->second).size()!=0) -> look among events with reconstructed FatJets
 
 		} // for (map_lhco_taggedJets)
 
