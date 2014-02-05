@@ -12,9 +12,9 @@
 
 #include <boost/filesystem.hpp>
 
-#include "../../source/event/event.h"
-#include "../../source/utility/utility.h"
-#include "../../source/cuts/cuts.h"
+#include "event/event.h"
+#include "utility/utility.h"
+#include "source/cuts/cuts.h"
 
 using namespace std;
 using namespace boost::filesystem;

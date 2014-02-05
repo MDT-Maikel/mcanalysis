@@ -14,7 +14,7 @@
 #include <TF1.h>
 #include <TH1.h> 
 
-#include "../../source/bumphunter/bumphunter.h"
+#include "bumphunter/bumphunter.h"
 
 using namespace std;
 using namespace boost::filesystem;

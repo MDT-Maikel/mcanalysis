@@ -10,10 +10,10 @@
 #include <random>
 #include <vector> 
 
-#include "../../source/event/event.h"
-#include "../../source/particle/particle.h"
-#include "../../source/particle/lhco.h"
-#include "../../source/particle/lhe.h"
+#include "event/event.h"
+#include "particle/particle.h"
+#include "particle/lhco.h"
+#include "particle/lhe.h"
 
 using namespace std;
 using namespace analysis;

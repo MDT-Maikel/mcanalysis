@@ -12,8 +12,8 @@
 
 #include <boost/filesystem.hpp>
 
-#include "../../source/histogram/histogram.h"
-#include "../../source/histogram/histogram2D.h"
+#include "histogram/histogram.h"
+#include "histogram/histogram2D.h"
 
 using namespace std;
 using namespace boost::filesystem;

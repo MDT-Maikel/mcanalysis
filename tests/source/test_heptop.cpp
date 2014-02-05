@@ -16,7 +16,7 @@
 #include "fastjet/Selector.hh"
 #include "fastjet/tools/JHTopTagger.hh"
 
-#include "../../source/jet_analysis/jet_analysis.h"
+#include "jet_analysis/jet_analysis.h"
 
 using namespace std;
 using namespace analysis;

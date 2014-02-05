@@ -12,10 +12,10 @@
 
 #include <boost/filesystem.hpp>
 
-#include "../../source/event/event.h"
-#include "../../source/utility/utility.h"
-#include "../../source/plot/plot.h"
-#include "../../source/plot/plot2d.h"
+#include "event/event.h"
+#include "utility/utility.h"
+#include "plot/plot.h"
+#include "plot/plot2d.h"
 
 using namespace std;
 using namespace boost::filesystem;

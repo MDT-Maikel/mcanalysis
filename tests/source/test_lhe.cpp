@@ -12,10 +12,10 @@
 
 #include <boost/filesystem.hpp>
 
-#include "../../source/event/event.h"
-#include "../../source/particle/particle.h"
-#include "../../source/particle/lhe.h"
-#include "../../source/utility/utility.h"
+#include "event/event.h"
+#include "particle/particle.h"
+#include "particle/lhe.h"
+#include "utility/utility.h"
 
 using namespace std;
 using namespace boost::filesystem;
