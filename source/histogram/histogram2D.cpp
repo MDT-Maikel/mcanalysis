@@ -112,7 +112,7 @@ namespace analysis
 			Py_Initialize();
 
 	    	PyRun_SimpleString("import sys, string, random");
-	    	PyRun_SimpleString("sys.path.append('../source/histogram')");
+	    	PyRun_SimpleString("sys.path.append('../../source/histogram')");
 	    	
 	    	boost::python::list l_values;
 	  		typename std::list< std::list<double> >::const_iterator it_outer;

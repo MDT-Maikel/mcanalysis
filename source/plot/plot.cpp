@@ -10,7 +10,7 @@
 namespace analysis
 {
 
-	/* plot base class */
+	/* plotting class */
 
 	plot::plot(std::string name, std::string folder)
 	{
@@ -30,6 +30,17 @@ namespace analysis
 	}
 	
 	/* plot data */
+	
+	void plot::add_sample(const std::vector<event*> &events, plot_implementation *plot_imp, const std::string &name, double weight)
+	{
+		std::vector<double> result;
+		for (unsigned int j = 0; j < events.size(); j++)
+		{
+			double res = (*plot_imp)(events[j]);
+			result.push_back(res);
+		}
+		hist.add_sample(result, name, weight);	
+	}
 
 	void plot::add_sample(const std::vector<event*> &events, double(*func)(const event*), const std::string &name, double weight)
 	{

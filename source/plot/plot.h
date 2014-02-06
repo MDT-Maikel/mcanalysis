@@ -18,8 +18,23 @@
 /* NAMESPACE */
 namespace analysis
 {
+	
+	/* cut base class */
+	class plot_implementation
+	{
+		
+	public:
+		// constructor can be default
+		plot_implementation() = default;
+		// virtual destructor needed for being a overloadable class
+		virtual ~plot_implementation() {};
+		// all cuts are based on this class and should overload this
+		// operator, and return true for events that pass the cuts
+		virtual double operator() (const event *ev) { return 0; }
+	
+	};
 
-	/* plot base class */
+	/* plotting class */
 	class plot
 	{
 
@@ -30,6 +45,7 @@ namespace analysis
 		~plot();
 
 		/* plot data */
+		void add_sample(const std::vector<event*> &events, plot_implementation *plot_imp, const std::string &name = "", double weight = 1);
 		void add_sample(const std::vector<event*> &events, double(*func)(const event*), const std::string &name = "", double weight = 1);
 		void run(); 
 		

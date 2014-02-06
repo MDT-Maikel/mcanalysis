@@ -57,6 +57,21 @@ void plot_invmass(const vector< vector<event*> > &events_bkgs, const vector<stri
 void bump_hunter(const vector< vector<event*> > &events_bkgs, const vector<string> &names_bkg, const vector<double> &sigmas_bkg, const vector<double> &efficiencies_bkg, const vector<event*> &events_sig, const string &name_sig, const double &sigma_sig, const double &efficiency_sig, const string &output_folder, const double &luminosity, const vector<int> &topology, const vector<double> &topology_cuts);
 
 
+class plot_masscomb : public plot_implementation
+{
+public:
+	plot_masscomb(int t, const std::vector<int> & c) : type(t), comb(c) {}
+
+	double operator() (const event *ev) 
+	{ 
+		ev->mass(type, comb);
+	}
+
+private:
+	int type;
+	std::vector<int> comb;
+};
+
 // main program
 int main(int argc, const char* argv[])
 {
@@ -401,23 +416,23 @@ void plot_invmass(const vector< vector<event*> > &events_bkgs, const vector<stri
 		// make the invariant mass spectrum plot for each of the combinations
 		for (unsigned int j = 0; j < combinations.size(); j++)
 		{
-			/*// binlist name
+			// binlist name
 			vector<int> comb = combinations[j];
 			string file_name = "njet" + lexical_cast<string>(nr_jets) + "_comb";
 			for (unsigned int k = 0; k < comb.size(); k++)
 	 			file_name += lexical_cast<string>(comb[k]);	
-			// mass plot
-			plot_mass pmass;
-			pmass.set_name(file_name);
-			pmass.set_folder(output_folder);
-			pmass.set_normalized(true);
-			pmass.set_type(particle::type_jet);
-			pmass.set_comb(comb);
+	 	
+	 		// mass plot	
+	 		plot_masscomb *ftor_mass = new plot_masscomb(ptype_jet, comb); 
+	 		plot pmass(file_name, output_folder);
+	 		pmass.set_normalized(true);
 			pmass.set_bins(50, 0, 3000);
+			
 			// add bkg and signal samples
 			for (unsigned int k = 0; k < events_bkgs.size(); ++k)
-				pmass.add_sample(events_bkgs[k], names_bkg[k], luminosity * efficiencies_bkg[k] * sigmas_bkg[k]);
-			pmass.add_sample(events_sig, name_sig, luminosity * efficiency_sig * sigma_sig);
+				pmass.add_sample(events_bkgs[k], ftor_mass, names_bkg[k], luminosity * efficiencies_bkg[k] * sigmas_bkg[k]);
+			pmass.add_sample(events_sig, ftor_mass, name_sig, luminosity * efficiency_sig * sigma_sig);
+
 			// make normal, stacked and stacked/no-log-scale plot
 			pmass.run();
 			pmass.set_name(file_name + "_stacked");
@@ -425,7 +440,7 @@ void plot_invmass(const vector< vector<event*> > &events_bkgs, const vector<stri
 			pmass.run();
 			pmass.set_name(file_name + "_nolog");
 			pmass.set_logy(false);
-			pmass.run();*/
+			pmass.run();
 		}
 	}
 	cout << "################################################################################" << endl;

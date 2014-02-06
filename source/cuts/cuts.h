@@ -63,7 +63,7 @@ namespace analysis
 /* NAMESPACE */
 }
 
-/* TEMPLATE IMPLEMENTATIONS */
+/* CUT IMPLEMENTATIONS */
 #include "cuts_imp.h"
 
 #endif
