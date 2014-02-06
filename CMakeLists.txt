@@ -142,3 +142,7 @@ add_subdirectory(tests)
 ## Executables: tools
 add_subdirectory(tools)
 
+## Executables: gres
+if(INCLUDE_GRES)
+	add_subdirectory(gres)
+endif()

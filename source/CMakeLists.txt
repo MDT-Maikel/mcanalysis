@@ -2,7 +2,7 @@
 ### CMake file for mcanalysis library ###
 #########################################
 
-## library source
+## Library sources
 set(MCANALYSIS_SOURCES
 	particle/particle.h
 	particle/particle.cpp
@@ -40,6 +40,17 @@ set(MCANALYSIS_SOURCES
 	jet_analysis/HEPTopTagger.h
 	jet_analysis/HEPTopTagger.cpp
 )
+
+## Gres library sources
+if(INCLUDE_GRES)
+	set(MCANALYSIS_SOURCES
+		${MCANALYSIS_SOURCES}
+		gres/gres_cuts.h
+		gres/gres_cuts.cpp
+		gres/gres_hunter.h
+		gres/gres_hunter.cpp
+	)
+endif()
 
 ## Include directories
 include_directories(
