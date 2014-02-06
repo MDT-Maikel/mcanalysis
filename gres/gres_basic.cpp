@@ -56,22 +56,6 @@ void plot_invmass(const vector< vector<event*> > &events_bkgs, const vector<stri
 
 void bump_hunter(const vector< vector<event*> > &events_bkgs, const vector<string> &names_bkg, const vector<double> &sigmas_bkg, const vector<double> &efficiencies_bkg, const vector<event*> &events_sig, const string &name_sig, const double &sigma_sig, const double &efficiency_sig, const string &output_folder, const double &luminosity, const vector<int> &topology, const vector<double> &topology_cuts);
 
-
-class plot_masscomb : public plot_implementation
-{
-public:
-	plot_masscomb(int t, const std::vector<int> & c) : type(t), comb(c) {}
-
-	double operator() (const event *ev) 
-	{ 
-		ev->mass(type, comb);
-	}
-
-private:
-	int type;
-	std::vector<int> comb;
-};
-
 // main program
 int main(int argc, const char* argv[])
 {
@@ -423,7 +407,7 @@ void plot_invmass(const vector< vector<event*> > &events_bkgs, const vector<stri
 	 			file_name += lexical_cast<string>(comb[k]);	
 	 	
 	 		// mass plot	
-	 		plot_masscomb *ftor_mass = new plot_masscomb(ptype_jet, comb); 
+	 		plot_mass *ftor_mass = new plot_mass(ptype_jet, comb); 
 	 		plot pmass(file_name, output_folder);
 	 		pmass.set_normalized(true);
 			pmass.set_bins(50, 0, 3000);

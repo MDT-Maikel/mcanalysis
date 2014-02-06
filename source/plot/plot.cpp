@@ -31,23 +31,12 @@ namespace analysis
 	
 	/* plot data */
 	
-	void plot::add_sample(const std::vector<event*> &events, plot_implementation *plot_imp, const std::string &name, double weight)
+	void plot::add_sample(const std::vector<event*> &events, plot_default *plot_imp, const std::string &name, double weight)
 	{
 		std::vector<double> result;
 		for (unsigned int j = 0; j < events.size(); j++)
 		{
 			double res = (*plot_imp)(events[j]);
-			result.push_back(res);
-		}
-		hist.add_sample(result, name, weight);	
-	}
-
-	void plot::add_sample(const std::vector<event*> &events, double(*func)(const event*), const std::string &name, double weight)
-	{
-		std::vector<double> result;
-		for (unsigned int j = 0; j < events.size(); j++)
-		{
-			double res = func(events[j]);
 			result.push_back(res);
 		}
 		hist.add_sample(result, name, weight);	
@@ -94,34 +83,5 @@ namespace analysis
 		hist.set_range(min, max);		
 	}
 	
-	/* standard plot definitions */
-	
-	double plot_pt(const event *ev)
-	{
-		if (ev->size() == 0)
-			return 0;
-		return (*ev)[0]->pt();		
-	}
-
-	double plot_met(const event *ev)
-	{
-		return ev->met();	
-	}
-	
-	double plot_ht(const event *ev)
-	{
-		return ev->ht(ptype_all, 40, 2.8);	
-	}
-
-	double plot_mass(const event *ev)
-	{
-		return ev->mass();
-	}
-	
-	double plot_mt2(const event *ev)
-	{
-		return ev->mt2();	
-	}
-
 /* NAMESPACE */
 }

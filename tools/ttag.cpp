@@ -27,9 +27,8 @@ using namespace analysis;
 // four lepton cut 
 class cut_4lepton : public cut
 {
-
 public:
-	cut_4lepton(double pt, double eta) : pt_cut(pt), eta_max(eta) {};
+	cut_4lepton(double pt, double eta) : pt_cut(pt), eta_max(eta) {}
 
 	// event passes if two pairs of opposite sign leptons are found
 	bool operator() (const event *ev) 
@@ -51,32 +50,36 @@ public:
 		
 		// not passed
 		return false;
-	};
-
+	}
 private:
 	double pt_cut;
 	double eta_max;
-
 };
 
 // four lepton mass plot
-double plot_leptonmass(const event *ev)
+class plot_leptonmass : public plot_default
 {
-	// we know that there are four leading leptons with charge sum zero
-	// combine the oppositely charged ones into a mass and sum the two mass pairs
-	std::vector<particle*> lepplus;
-	std::vector<particle*> lepminus;
-	for (unsigned int i = 1; i <= 4; i++)
+public:
+	plot_leptonmass() {}
+
+	double operator() (const event *ev)
 	{
-		particle *p = ev->get(ptype_lepton, i, 5.0);
-		if (p->charge() == 1.0)
-			lepplus.push_back(p);
-		else
-			lepminus.push_back(p);
+		// we know that there are four leading leptons with charge sum zero
+		// combine the oppositely charged ones into a mass and sum the two mass pairs
+		std::vector<particle*> lepplus;
+		std::vector<particle*> lepminus;
+		for (unsigned int i = 1; i <= 4; i++)
+		{
+			particle *p = ev->get(ptype_lepton, i, 5.0);
+			if (p->charge() == 1.0)
+				lepplus.push_back(p);
+			else
+				lepminus.push_back(p);
+		}
+		
+		return mass({lepplus[0], lepminus[0]}) + mass({lepplus[1], lepminus[1]});
 	}
-	
-	return mass({lepplus[0], lepminus[0]}) + mass({lepplus[1], lepminus[1]});
-}
+};
 
 // main program
 int main(int argc, const char* argv[])
@@ -132,9 +135,9 @@ int main(int argc, const char* argv[])
 	
 	// plot lepton masses
 	plot lmass("test_plot_leptonmass", "../../files/tools/output/");
-	lmass.add_sample(ttag_lhe, plot_leptonmass, "LHE");
-	lmass.add_sample(ttag_lhco, plot_leptonmass, "LHCO");
-	lmass.add_sample(ttag_tagged, plot_leptonmass, "Tagged");
+	lmass.add_sample(ttag_lhe, new plot_leptonmass, "LHE");
+	lmass.add_sample(ttag_lhco, new plot_leptonmass, "LHCO");
+	lmass.add_sample(ttag_tagged, new plot_leptonmass, "Tagged");
 	lmass.run();
 	
 	// clear remaining pointers

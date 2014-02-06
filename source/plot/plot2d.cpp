@@ -36,8 +36,10 @@ namespace analysis
 		std::vector< std::vector<double> > result;
 		for (unsigned int j = 0; j < events.size(); j++)
 		{
-			event *ev = events[j]; 
-			result.push_back({x_func(ev), y_func(ev)});
+			event *ev = events[j];
+			// use ftor's to get the plot data
+			if (!!x_ftor && !!y_ftor)
+				result.push_back({(*x_ftor)(ev), (*y_ftor)(ev)});
 		}
 		hist.add_sample_xy(result);	
 	}
@@ -62,10 +64,10 @@ namespace analysis
 		plot_folder = f;
 	}
 	
-	void plot2d::set_functions(double(*x)(const event*), double(*y)(const event*))
+	void plot2d::set_functors(plot_default *x, plot_default *y)
 	{
-		x_func = x;
-		y_func = y;
+		x_ftor = x;
+		y_ftor = y;		
 	}
 	
 	void plot2d::set_x_bins(double nbins, double min, double max)
@@ -80,8 +82,5 @@ namespace analysis
 		hist.set_y_range(min, max);		
 	}
 	
-	/* standard plot definitions */
-
-
 /* NAMESPACE */
 }

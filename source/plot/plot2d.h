@@ -39,7 +39,7 @@ namespace analysis
 		void set_name(std::string n);
 		void set_folder(std::string f);
 		
-		void set_functions(double(*x)(const event*), double(*y)(const event*));
+		void set_functors(plot_default *x, plot_default *y);
 		
 		void set_x_bins(double nbins, double min, double max);
 		void set_y_bins(double nbins, double min, double max);
@@ -50,12 +50,10 @@ namespace analysis
 		std::string plot_name;
 		std::string plot_folder;
 		
-		double (*x_func)(const event*);
-		double (*y_func)(const event*);
+		plot_default *x_ftor;
+		plot_default *y_ftor;
 
 	};
-	
-
 
 /* NAMESPACE */
 }

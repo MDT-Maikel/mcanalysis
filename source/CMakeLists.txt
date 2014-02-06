@@ -19,7 +19,7 @@ set(MCANALYSIS_SOURCES
 	utility/utility.tpp
 	cuts/cuts.h
 	cuts/cuts.cpp
-	cuts/cuts_imp.h
+	cuts/cuts_default.h
 	histogram/histogram.h
 	histogram/histogram.cpp
 	histogram/histogram2D.h
@@ -27,6 +27,7 @@ set(MCANALYSIS_SOURCES
 	histogram/interpolate.py
 	plot/plot.h
 	plot/plot.cpp
+	plot/plot_default.h
 	plot/plot2d.h
 	plot/plot2d.cpp
 	bumphunter/bumphunter.h
