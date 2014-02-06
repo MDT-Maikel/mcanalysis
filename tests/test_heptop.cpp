@@ -37,10 +37,11 @@ int main(int argc, const char* argv[])
 	double cross_sec = cross_sec_orig;
 
 	jet_analysis test;
-	test.set_nEvents(10000);
+	test.set_nEvents(5000);
 	test.set_Rsize_fat(1.5);
 	test.set_Isolation("electron",2.5,15,0.3);
 	test.undo_BDRSTagging();
+	test.undo_TopTagging();
 
 	test.add_lhe("../../files/tests/input/test_heptop_events.lhe");
 	test.import_lhco("../../files/tests/input/test_heptop_events.lhco.gz");
@@ -51,8 +52,9 @@ int main(int argc, const char* argv[])
 
 	// //===== apply list of cuts as in hep-ph/1006.2833 =====//
 
-	// double eff_fatjet_pt = test.require_fatjet_pt(200,2);
-	// cout << setprecision(2) << endl << "Efficiency after requiring two FatJets with pT> 200 GeV: " << 100 * eff_fatjet_pt << "%" << endl; //just for testing
+	double eff_fatjet_pt = test.require_fatjet_pt(200,2);
+	cross_sec *= eff_fatjet_pt;
+	cout << setprecision(2) << endl << "Efficiency after requiring two FatJets with pT> 200 GeV: " << 100 * eff_fatjet_pt << "%" << endl << endl; //just for testing
 
 	// two fat jets (C/A, R=1.5) with pT> 200 GeV
 	cuts cut_list;

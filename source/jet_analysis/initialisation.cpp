@@ -304,6 +304,7 @@ namespace analysis
 			{
 				cout << endl << "First event details:" << endl;
   				ev->write(cout);
+  				cout << endl;
   			}
 
 
