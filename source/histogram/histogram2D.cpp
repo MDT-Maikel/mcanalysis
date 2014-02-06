@@ -100,7 +100,7 @@ namespace analysis
 	
 	void histogram2D::add_sample_xy(const std::vector< std::vector<double> > & list_xy)
 	{
-		sample_xy = list_xy;
+		sample_xy.push_back(list_xy);
 	}
 
 	/* interpolation */
@@ -190,8 +190,12 @@ namespace analysis
 			// fill 2D histogram with xy list values
 			for (unsigned int i = 0; i < sample_xy.size(); i++)
 			{
-				std::vector<double> xy = sample_xy[i];
-				hist2D->Fill(xy[0], xy[1]);			
+				std::vector< std::vector<double> > sample = sample_xy[i];
+				for (unsigned int j = 0; j < sample.size(); j++)
+				{
+					std::vector<double> xy = sample[j];
+					hist2D->Fill(xy[0], xy[1]);			
+				}
 			}
 		}
 	    else if (sample_xyz.size() > 0) // draw xyz sample

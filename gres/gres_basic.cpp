@@ -33,6 +33,7 @@
 #include "event/event.h"
 #include "cuts/cuts.h"
 #include "plot/plot.h"
+#include "plot/plot2d.h"
 #include "bumphunter/bumphunter.h"
 #include "gres/gres_cuts.h"
 #include "gres/gres_hunter.h"
@@ -53,6 +54,8 @@ void load_events(vector< vector<event*> > &events_bkgs, vector<event*> &events_s
 void cut_basic(vector< vector<event*> > &events_bkgs, const vector<double> &sigmas_bkg, vector<double> &efficiencies_bkg, vector<event*> &events_sig, const double &sigma_sig, double &efficiency_sig, ofstream &ofs_txt, const double &luminosity, const int &nr_jets, const double &nr_jets_ptcut, const double &nr_jets_etacut, const vector<int> &topology, const vector<double> &topology_cuts);
 
 void plot_invmass(const vector< vector<event*> > &events_bkgs, const vector<string> &names_bkg, const vector<double> &sigmas_bkg, const vector<double> &efficiencies_bkg, const vector<event*> &events_sig, const string &name_sig, const double &sigma_sig, const double &efficiency_sig, const string &output_folder, const double &luminosity, const vector<int> &topology, const vector<double> &topology_cuts);
+
+void plot_more(const vector< vector<event*> > &events_bkgs, const vector<string> &names_bkg, const vector<double> &sigmas_bkg, const vector<double> &efficiencies_bkg, const vector<event*> &events_sig, const string &name_sig, const double &sigma_sig, const double &efficiency_sig, const string &output_folder, const double &luminosity, const vector<int> &topology, const vector<double> &topology_cuts);
 
 void bump_hunter(const vector< vector<event*> > &events_bkgs, const vector<string> &names_bkg, const vector<double> &sigmas_bkg, const vector<double> &efficiencies_bkg, const vector<event*> &events_sig, const string &name_sig, const double &sigma_sig, const double &efficiency_sig, const string &output_folder, const double &luminosity, const vector<int> &topology, const vector<double> &topology_cuts);
 
@@ -95,6 +98,7 @@ int main(int argc, const char* argv[])
 
 	// plot the invariant mass combination of signal compared to background
 	plot_invmass(events_bkgs, names_bkg, sigmas_bkg, efficiencies_bkg, events_sig, name_sig, sigma_sig, efficiency_sig, output_folder, luminosity, topology, topology_cuts);
+	plot_more(events_bkgs, names_bkg, sigmas_bkg, efficiencies_bkg, events_sig, name_sig, sigma_sig, efficiency_sig, output_folder, luminosity, topology, topology_cuts);
 
 	// perform bumphunter algorithm based on the topology
 	bump_hunter(events_bkgs, names_bkg, sigmas_bkg, efficiencies_bkg, events_sig, name_sig, sigma_sig, efficiency_sig, output_folder, luminosity, topology, topology_cuts);
@@ -428,6 +432,29 @@ void plot_invmass(const vector< vector<event*> > &events_bkgs, const vector<stri
 		}
 	}
 	cout << "################################################################################" << endl;
+}
+
+void plot_more(const vector< vector<event*> > &events_bkgs, const vector<string> &names_bkg, const vector<double> &sigmas_bkg, const vector<double> &efficiencies_bkg, const vector<event*> &events_sig, const string &name_sig, const double &sigma_sig, const double &efficiency_sig, const string &output_folder, const double &luminosity, const vector<int> &topology, const vector<double> &topology_cuts)
+{
+	// construct 2d plots of the distribution of delta pt vs ht
+	
+	
+	plot2d plot_htvsdpt_bkg("htvsdeltapt_bkg", output_folder);
+	plot_htvsdpt_bkg.set_functors(new plot_ht(ptype_jet), new plot_deltapt(ptype_jet, 1, ptype_jet, 3, 5));
+	plot_htvsdpt_bkg.set_x_bins(25, 0, 3000);
+	plot_htvsdpt_bkg.set_y_bins(25, 0, 1000);
+	for (unsigned int k = 0; k < events_bkgs.size(); ++k)
+		plot_htvsdpt_bkg.add_sample(events_bkgs[k], "delta13", luminosity * efficiencies_bkg[k] * sigmas_bkg[k]);
+	plot_htvsdpt_bkg.run();
+	
+		
+	plot2d plot_htvsdpt_sig("htvsdeltapt_sig", output_folder);
+	plot_htvsdpt_sig.set_functors(new plot_ht(ptype_jet), new plot_deltapt(ptype_jet, 1, ptype_jet, 3, 5));
+	plot_htvsdpt_sig.set_x_bins(25, 0, 3000);
+	plot_htvsdpt_sig.set_y_bins(25, 0, 1000);	
+	plot_htvsdpt_sig.add_sample(events_sig, "delta13", luminosity * efficiency_sig * sigma_sig);
+	plot_htvsdpt_sig.run();
+	
 }
 
 void bump_hunter(const vector< vector<event*> > &events_bkgs, const vector<string> &names_bkg, const vector<double> &sigmas_bkg, const vector<double> &efficiencies_bkg, const vector<event*> &events_sig, const string &name_sig, const double &sigma_sig, const double &efficiency_sig, const string &output_folder, const double &luminosity, const vector<int> &topology, const vector<double> &topology_cuts)

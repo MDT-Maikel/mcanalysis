@@ -59,7 +59,7 @@
 	
 		/* histogram data */
 		std::vector< std::vector<double> > sample_xyz;
-		std::vector< std::vector<double> > sample_xy;
+		std::vector< std::vector< std::vector<double> > > sample_xy;
 		
 		/* histogram options */
 		int xbins;
