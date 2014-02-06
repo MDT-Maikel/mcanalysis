@@ -34,13 +34,13 @@ int main(int argc, const char* argv[])
 		
 	// check if file exists, if so read the lhco events 
 	vector<event*> events;
-	if (is_regular_file("input/test_lhe_events.lhe.gz"))
+	if (is_regular_file("../../files/tests/input/test_lhe_events.lhe.gz"))
 	{
-		read_lhe(events, "input/test_lhe_events.lhe.gz");
+		read_lhe(events, "../../files/tests/input/test_lhe_events.lhe.gz");
 	}
 	else
 	{
-		cout << "File (input/test_lhe_events.lhe.gz) for reading lhe events not available." << endl;
+		cout << "File (../../files/tests/input/test_lhe_events.lhe.gz) for reading lhe events not available." << endl;
 		test_reading_passed = false;
 	}
 	
@@ -75,20 +75,20 @@ int main(int argc, const char* argv[])
 	bool test_writing_passed = false;
 	if (test_reading_passed)
 	{
-		write_lhe(events, "output/test_lhe_events.lhe.gz");
+		write_lhe(events, "../../files/tests/output/test_lhe_events.lhe.gz");
 		
 		// test whether the writing has succeeded		
-		if (is_regular_file("output/test_lhe_events.lhe.gz"))
+		if (is_regular_file("../../files/tests/output/test_lhe_events.lhe.gz"))
 		{
 			// check file size of the newly created lhco file 
 			// has to be within 70 to 110 percent of old file
-			unsigned int in_size = file_size("input/test_lhe_events.lhe.gz");
-			unsigned int out_size = file_size("output/test_lhe_events.lhe.gz");
+			unsigned int in_size = file_size("../../files/tests/input/test_lhe_events.lhe.gz");
+			unsigned int out_size = file_size("../../files/tests/output/test_lhe_events.lhe.gz");
 			if (out_size < 11 * in_size / 10 && out_size > 7 * in_size / 10)
 				test_writing_passed = true;
 				
 			// delete the created file as it is not needed for any checks
-			remove("output/test_lhe_events.lhe.gz");
+			remove("../../files/tests/output/test_lhe_events.lhe.gz");
 		}
 	}
 			

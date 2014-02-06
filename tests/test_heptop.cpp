@@ -42,8 +42,8 @@ int main(int argc, const char* argv[])
 	test.set_Isolation("electron",2.5,15,0.3);
 	test.undo_BDRSTagging();
 
-	test.add_lhe("input/test_heptop_events.lhe");
-	test.import_lhco("input/test_heptop_events.lhco.gz");
+	test.add_lhe("../../files/tests/input/test_heptop_events.lhe");
+	test.import_lhco("../../files/tests/input/test_heptop_events.lhco.gz");
 
 	fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &) = &jet_analysis::HEPTopTagging;
 	test.initialise(TopTagger);

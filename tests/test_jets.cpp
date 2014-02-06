@@ -38,7 +38,7 @@ int main(int argc, const char* argv[])
 	test.undo_BDRSTagging();
 
 	// Set lhe input files
-	test.add_lhe("input/test_fastjet_events.lhe");
+	test.add_lhe("../../files/tests/input/test_fastjet_events.lhe");
 
 	// initialisation (possibly specifying the TopTagger)
 	// test.initialise(); // notice: default TopTagger is JHTopTagging, not needed to be specified

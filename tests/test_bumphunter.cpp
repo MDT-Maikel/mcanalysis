@@ -29,10 +29,10 @@ int main(int argc, const char* argv[])
 	double duration;
 	
 	// remove possible existing output files
-	remove("output/test_bumphunter_pred_data.png");
-	remove("output/test_bumphunter_poisson.png");
-	remove("output/test_bumphunter_gaussian.png");
-	remove("output/test_bumphunter_poissongamma.png");
+	remove("../../files/tests/output/test_bumphunter_pred_data.png");
+	remove("../../files/tests/output/test_bumphunter_poisson.png");
+	remove("../../files/tests/output/test_bumphunter_gaussian.png");
+	remove("../../files/tests/output/test_bumphunter_poissongamma.png");
 	
 	// initiate root with a random seed		
 	std::random_device rd;
@@ -64,11 +64,11 @@ int main(int argc, const char* argv[])
 	TCanvas* canvas = new TCanvas("test_bumphunter", "");
 	hist_pred->Draw("same");
 	hist_data->Draw("same");
-	canvas->Print("output/test_bumphunter_pred_data.png");
+	canvas->Print("../../files/tests/output/test_bumphunter_pred_data.png");
 	
 	// create a bumphunter instance and do basic settings
 	bumphunter hunt(hist_pred, hist_data);
-	hunt.set_folder("output/");
+	hunt.set_folder("../../files/tests/output/");
 	hunt.set_name("test_bumphunter_poisson");
 	hunt.SetNPseudoExperiments(5000);
 	hunt.SetBinModel(bumphunter::BUMP_POISSON);
@@ -94,9 +94,9 @@ int main(int argc, const char* argv[])
 	double sigma_poissongamma = hunt.get_global_sigma();
 	
 	// determine success conditions
-	bool bumphunter_success = is_regular_file("output/test_bumphunter_poisson.png");
-	bumphunter_success = bumphunter_success && is_regular_file("output/test_bumphunter_gaussian.png");
-	bumphunter_success = bumphunter_success && is_regular_file("output/test_bumphunter_poissongamma.png");
+	bool bumphunter_success = is_regular_file("../../files/tests/output/test_bumphunter_poisson.png");
+	bumphunter_success = bumphunter_success && is_regular_file("../../files/tests/output/test_bumphunter_gaussian.png");
+	bumphunter_success = bumphunter_success && is_regular_file("../../files/tests/output/test_bumphunter_poissongamma.png");
 	bumphunter_success = bumphunter_success && sigma_poisson >= sigma_gaussian;
 	bumphunter_success = bumphunter_success && sigma_poisson >= sigma_poissongamma;
 	

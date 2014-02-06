@@ -92,15 +92,15 @@ int main(int argc, const char* argv[])
 	ttag.undo_BDRSTagging();
 	
 	// load, shower and cluster the events
-	ttag.add_lhe("input/thth_tztz/mass_1000.lhe");
+	ttag.add_lhe("../../files/tools/input/thth_tztz/mass_1000.lhe");
 	fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &) = &jet_analysis::HEPTopTagging;
 	ttag.initialise(TopTagger);
 	
 	// load the lhco and lhe events
 	vector<event*> ttag_lhe;
 	vector<event*> ttag_lhco;
-	read_lhe(ttag_lhe, "input/thth_tztz/mass_1000.lhe.gz");
-	read_lhco(ttag_lhco, "input/thth_tztz/mass_1000.lhco.gz");
+	read_lhe(ttag_lhe, "../../files/tools/input/thth_tztz/mass_1000.lhe.gz");
+	read_lhco(ttag_lhco, "../../files/tools/input/thth_tztz/mass_1000.lhco.gz");
 	
 	// initiate general cut class and specific cuts
 	cuts ttag_cuts;
@@ -131,7 +131,7 @@ int main(int argc, const char* argv[])
 	ttag_cuts.clear();
 	
 	// plot lepton masses
-	plot lmass("test_plot_leptonmass", "output/");
+	plot lmass("test_plot_leptonmass", "../../files/tools/output/");
 	lmass.add_sample(ttag_lhe, plot_leptonmass, "LHE");
 	lmass.add_sample(ttag_lhco, plot_leptonmass, "LHCO");
 	lmass.add_sample(ttag_tagged, plot_leptonmass, "Tagged");

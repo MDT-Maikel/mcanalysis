@@ -20,7 +20,7 @@ if(HEPMC_FOUND)
 endif()	
 
 ## Executable: mergemc
-add_executable(mergemc source/mergemc.cpp)
+add_executable(mergemc mergemc.cpp)
 target_link_libraries(
 	mergemc
 	${MCANALYSIS_LIBRARIES}
@@ -33,7 +33,7 @@ target_link_libraries(
 ## Executable: gen_hepmc
 ## only build if HepMC is available
 if(HEPMC_FOUND AND PYTHIA8_HEPMC_FOUND)
-	add_executable(gen_hepmc source/gen_hepmc.cpp)
+	add_executable(gen_hepmc gen_hepmc.cpp)
 	target_link_libraries(
 		gen_hepmc
 		${HEPMC_LIBRARIES}
@@ -42,7 +42,7 @@ if(HEPMC_FOUND AND PYTHIA8_HEPMC_FOUND)
 endif()
 
 ## Executable: ttag
-add_executable(ttag source/ttag.cpp)
+add_executable(ttag ttag.cpp)
 target_link_libraries(
 	ttag
 	${MCANALYSIS_LIBRARIES}

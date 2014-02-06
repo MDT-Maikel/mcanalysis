@@ -10,7 +10,6 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}" ${CMAKE_MODULE_PATH})
 ## Compiler settings
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "-O2 -std=c++0x")
-    set(CMAKE_EXE_LINKER_FLAGS "-s")  ## Strip binary
 endif()
 
 ## Library: Zlib

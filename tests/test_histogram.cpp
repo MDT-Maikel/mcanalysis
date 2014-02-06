@@ -28,16 +28,16 @@ int main(int argc, const char* argv[])
 	double duration;
 	
 	// remove possible existing output files
-	remove("output/test_histogram_1d.png");
-	remove("output/test_histogram_2d_xy.png");
-	remove("output/test_histogram_2d_xyz.png");
+	remove("../../files/tests/output/test_histogram_1d.png");
+	remove("../../files/tests/output/test_histogram_2d_xy.png");
+	remove("../../files/tests/output/test_histogram_2d_xyz.png");
 	
 	
 	/* 1D histogram */
 		
 	// test one dimensional histogram: counting x 
 	histogram hist_1d;
-	hist_1d.set_title("output/test_histogram_1d");
+	hist_1d.set_title("../../files/tests/output/test_histogram_1d");
 	hist_1d.set_bins(100);
 	hist_1d.set_range(0, 100);
 	hist_1d.set_x_label("x");
@@ -62,7 +62,7 @@ int main(int argc, const char* argv[])
 	hist_1d.add_sample(gauss, "gauss");
 	hist_1d.add_sample(gamma, "gamma");
 	hist_1d.draw();
-	bool hist_1d_success = is_regular_file("output/test_histogram_1d.png");
+	bool hist_1d_success = is_regular_file("../../files/tests/output/test_histogram_1d.png");
 
 
 	/* 2D histogram: XY pairs */
@@ -70,7 +70,7 @@ int main(int argc, const char* argv[])
 	// test two dimensional histogram: counting x vs y
 	unsigned int nr_bins = 10;
 	histogram2D hist_2d_xy;
-	hist_2d_xy.set_title("output/test_histogram_2d_xy");
+	hist_2d_xy.set_title("../../files/tests/output/test_histogram_2d_xy");
 	hist_2d_xy.set_x_bins(nr_bins);
 	hist_2d_xy.set_y_bins(nr_bins);
 	hist_2d_xy.set_x_range(0, 100);
@@ -88,7 +88,7 @@ int main(int argc, const char* argv[])
 	// draw the histogram	
 	hist_2d_xy.add_sample_xy(sample_xy);
 	hist_2d_xy.draw();
-	bool hist_2d_xy_success = is_regular_file("output/test_histogram_2d_xy.png");
+	bool hist_2d_xy_success = is_regular_file("../../files/tests/output/test_histogram_2d_xy.png");
 		
 		
 	/* 2D histogram: XYZ pairs */
@@ -99,7 +99,7 @@ int main(int argc, const char* argv[])
 	hist_2d_xyz.set_y_bins(2 * nr_bins);
 	hist_2d_xyz.set_x_range(0, 100);
 	hist_2d_xyz.set_y_range(0, 100);
-	hist_2d_xyz.set_title("output/test_histogram_2d_xyz");
+	hist_2d_xyz.set_title("../../files/tests/output/test_histogram_2d_xyz");
 	hist_2d_xyz.set_x_label("x");
 	hist_2d_xyz.set_y_label("y");
 	hist_2d_xyz.set_palette();
@@ -139,7 +139,7 @@ int main(int argc, const char* argv[])
 	// draw the histogram
 	hist_2d_xyz.add_sample_xyz(list_xyz);
 	hist_2d_xyz.draw();
-	bool hist_2d_xyz_success = is_regular_file("output/test_histogram_2d_xyz.png");
+	bool hist_2d_xyz_success = is_regular_file("../../files/tests/output/test_histogram_2d_xyz.png");
 	
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);

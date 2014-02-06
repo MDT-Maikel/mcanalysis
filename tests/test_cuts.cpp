@@ -31,8 +31,8 @@ int main(int argc, const char* argv[])
 	// load the lhco and lhe events for this test
 	vector<event*> events_lhco;
 	vector<event*> events_lhe;
-	read_lhco(events_lhco, "input/test_cuts_events.lhco.gz");
-	read_lhe(events_lhe, "input/test_cuts_events.lhe.gz");
+	read_lhco(events_lhco, "../../files/tests/input/test_cuts_events.lhco.gz");
+	read_lhe(events_lhe, "../../files/tests/input/test_cuts_events.lhe.gz");
 	
 	// initiate general cut class
 	cuts test_cuts;

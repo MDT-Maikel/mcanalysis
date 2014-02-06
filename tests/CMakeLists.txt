@@ -20,10 +20,10 @@ if(HEPMC_FOUND)
 endif()	
 
 ## Executable: test_all
-add_executable(test_all source/test_all.cpp)
+add_executable(test_all test_all.cpp)
 
 ## Executable: test_lhco
-add_executable(test_lhco source/test_lhco.cpp)
+add_executable(test_lhco test_lhco.cpp)
 target_link_libraries(
 	test_lhco
 	${MCANALYSIS_LIBRARIES}
@@ -34,7 +34,7 @@ target_link_libraries(
 )
 
 ## Executable: test_lhe
-add_executable(test_lhe source/test_lhe.cpp)
+add_executable(test_lhe test_lhe.cpp)
 target_link_libraries(
 	test_lhe
 	${MCANALYSIS_LIBRARIES}
@@ -45,14 +45,14 @@ target_link_libraries(
 )
 
 ## Executable: test_event
-add_executable(test_event source/test_event.cpp)
+add_executable(test_event test_event.cpp)
 target_link_libraries(
 	test_event
 	${MCANALYSIS_LIBRARIES}
 )
 
 ## Executable: test_cuts
-add_executable(test_cuts source/test_cuts.cpp)
+add_executable(test_cuts test_cuts.cpp)
 target_link_libraries(
 	test_cuts
 	${MCANALYSIS_LIBRARIES}
@@ -63,7 +63,7 @@ target_link_libraries(
 )
 
 ## Executable: test_histogram
-add_executable(test_histogram source/test_histogram.cpp)
+add_executable(test_histogram test_histogram.cpp)
 target_link_libraries(
 	test_histogram
 	${MCANALYSIS_LIBRARIES}
@@ -75,7 +75,7 @@ target_link_libraries(
 )
 
 ## Executable: test_plot
-add_executable(test_plot source/test_plot.cpp)
+add_executable(test_plot test_plot.cpp)
 target_link_libraries(
 	test_plot
 	${MCANALYSIS_LIBRARIES}
@@ -87,7 +87,7 @@ target_link_libraries(
 )
 
 ## Executable: test_bumphunter
-add_executable(test_bumphunter source/test_bumphunter.cpp)
+add_executable(test_bumphunter test_bumphunter.cpp)
 target_link_libraries(
 	test_bumphunter
 	${MCANALYSIS_LIBRARIES}
@@ -99,7 +99,7 @@ target_link_libraries(
 )
 
 ## Executable: test_jets
-add_executable(test_jets source/test_jets.cpp)
+add_executable(test_jets test_jets.cpp)
 target_link_libraries(
 	test_jets
 	${MCANALYSIS_LIBRARIES}
@@ -113,7 +113,7 @@ target_link_libraries(
 )
 
 ## Executable: test_heptop
-add_executable(test_heptop source/test_heptop.cpp)
+add_executable(test_heptop test_heptop.cpp)
 target_link_libraries(
 	test_heptop
 	${MCANALYSIS_LIBRARIES}

@@ -1,0 +1,81 @@
+###########################################
+### Install Instructions for MCAnalysis ###
+###########################################
+The MCAnalysis framework can be installed using CMake (version 2.6 or higher) which can 
+be obtained here:
+	http://www.cmake.org/cmake/resources/software.html
+
+It will automatically control if the dependencies (see below) are set up correctly and 
+will produce C++ compile files depending on the compiler on your machine. As usual it
+is recommended to build in a separate directory using the commands in the source dir:
+	mkdir build && cd build
+	cmake .. <specify CMake options here>
+	make
+
+CMake comes with a lot of options, the ones relevant for this project are:
+	-DCMAKE_CXX_COMPILER=<different C++ compiler> "specifies the C++ compiler"
+	-DCMAKE_C_COMPILER=<different C compiler>     "specifies the C compiler"
+	-DINCLUDE_GRES=<false/true>                   "whether to include the gres module"
+
+
+
+######################
+### Runnings Tests ###
+######################
+A few unit tests to test the source have been compiled, one can run these with the commands:
+	cd tests
+	./test_all
+
+
+############################
+### Installing libraries ###
+############################
+TODO
+
+
+#############################
+### Required Dependencies ###
+#############################
+The Physics community has developed quite some software in the direction of Monte Carlo
+generators and analysis tools for their event samples. This is a comprehensive list
+which should aid in the installation of these dependencies. CMake will automatically
+detect them on your system, however for some of these you need to set environment 
+variables. CMake will tell you when a dependency is missing and the compilation will
+not proceed.
+
+[C++ Compiler]
+notes:    a C++ compiler which works at least with the C++0x standard
+
+[Python]
+notes:    Python 2.7 is needed as well
+
+[Gzstream]
+download: http://www.cs.unc.edu/Research/compgeom/gzstream/
+notes:    install under /deps/gzstream
+
+[Boost]
+download: http://www.boost.org/users/download/
+
+[ROOT]
+download: http://root.cern.ch/drupal/content/installing-root-source
+install: ./configure --prefix=<install dir> --etcdir=<install dir>/etc/root --enable-gsl-shared --enable-python --enable-roofit --enable-minuit2
+
+[Pythia8]
+download: http://home.thep.lu.se/~torbjorn/Pythia.html
+install:  ./configure --prefix=<install dir> --with-hepmc=<HepMC dir> --with-hepmcversion=<HepMC version>  --enable-gzip --with-boost=<Boost_dir> --with-zlib=/data/btag/programs/zlib-1.2.8
+notes:    set environment variable PYTHIA8_DIR=<install dir>, compilation with HepMC is optional 
+
+[FastJet]
+download: http://fastjet.fr/all-releases.html
+install:  ./configure --prefix=<install dir> --enable-allplugins
+notes:    set environment variable FASTJET_DIR=<install dir>
+
+
+#############################
+### Optional Dependencies ###
+#############################
+
+[HepMC]
+download: http://lcgapp.cern.ch/project/simu/HepMC/
+install:  ./configure --prefix=<install dir> --with-momentum=GEV --with-length=CM
+notes:    set environment variable HEPMC_DIR=<install dir>

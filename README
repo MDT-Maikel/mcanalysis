@@ -10,23 +10,10 @@ samples can be constructed by making a vector of <event> objects.
 On these event samples one can perform basic analyses like cut and count. For this we produced the <cut>
 class in which one can implement an analysis.
 
-
-####################
-### Dependencies ###
-####################
-Folder /deps ignored by git and used to put in external libraries. This folder should contain the following
-libraries:
- * gzstream: library from http://www.cs.unc.edu/Research/compgeom/gzstream/ and make it.
-
-Other dependencies are:
- * C++ standard library: included in any recent compiler
- * boost: take the latest release from http://www.boost.org/users/download/
- * python: should be on any system, version 2.7 needed
- * root: follow instructions from http://root.cern.ch/drupal/content/installing-root-source
- * pythia: latest release from http://home.thep.lu.se/~torbjorn/Pythia.html
- * fastjet: latest release from http://fastjet.fr/all-releases.html and make it
- * hepmc: take from http://lcgapp.cern.ch/project/simu/HepMC/ and include in pythia
-
+##################################
+### Installation & Compilation ###
+##################################
+Instructions can be found in the INSTALL readme.
 
 ######################
 ### Particle Class ###
