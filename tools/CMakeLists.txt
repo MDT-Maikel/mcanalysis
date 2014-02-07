@@ -30,6 +30,18 @@ target_link_libraries(
 	${Boost_LIBRARIES}
 )
 
+## Executable: mergemc
+add_executable(plotmc plotmc.cpp)
+target_link_libraries(
+	plotmc
+	${MCANALYSIS_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${PYTHON_LIBRARIES}
+	${Boost_LIBRARIES}
+	${ROOT_LIBRARIES}
+)
+
 ## Executable: gen_hepmc
 ## only build if HepMC is available
 if(HEPMC_FOUND AND PYTHIA8_HEPMC_FOUND)

@@ -28,6 +28,44 @@ namespace analysis
 		double eta_max;
 	};
 	
+	/* plot: eta */
+	class plot_eta : public plot_default
+	{
+	public:
+		plot_eta(unsigned int t, unsigned int n) : type(t), number(n) {}
+
+		double operator() (const event *ev) 
+		{ 
+			particle *p = ev->get(type, number);
+			if (p)
+				return p->eta();
+			return 0;
+		}
+
+	private:
+		unsigned int type;
+		unsigned int number;
+	};
+	
+	/* plot: phi */
+	class plot_phi : public plot_default
+	{
+	public:
+		plot_phi(unsigned int t, unsigned int n) : type(t), number(n) {}
+
+		double operator() (const event *ev) 
+		{ 
+			particle *p = ev->get(type, number);
+			if (p)
+				return p->phi();
+			return 0;
+		}
+
+	private:
+		unsigned int type;
+		unsigned int number;
+	};
+	
 	/* cut: delta pt */
 	class plot_deltapt : public plot_default
 	{

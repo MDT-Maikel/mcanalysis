@@ -14,8 +14,10 @@ namespace analysis
 	histogram::histogram() 
 	{
 		nbins = 100;
-		hmin = 0;
-		hmax = 100;
+		// set hmin and hmax to unrealistic values
+		// which are then automatically set later
+		hmin = 10000;
+		hmax = -10000;
 		auto_range = true;
 
 		ps_title = "new histogram";
@@ -45,6 +47,8 @@ namespace analysis
 
 	void histogram::set_range(double min, double max)
 	{
+		if (min >= max)
+			return;
 		hmin = min;
 		hmax = max;
 		auto_range = false;
