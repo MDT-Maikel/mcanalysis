@@ -61,6 +61,32 @@ namespace analysis
 		// store the passed number of events
 		pass = events.size();
 	}
+	
+	const std::vector<event*> cuts::reduce(const std::vector<event*> &events) const
+	{
+		std::vector<event*> reduced_events;
+		
+		// loop over all events
+		for (unsigned int index = 0; index < events.size(); ++index)
+		{	
+			event *ev = events[index];
+			bool passed_cuts = true;
+			
+			// loop over all cuts
+			for (unsigned int i = 0; i < list_cuts.size(); i++)
+			{
+				cut *apply_cut = list_cuts[i];
+				if (!(*apply_cut)(ev))
+				{
+					passed_cuts = false;
+					break;
+				}				
+			}
+			if (passed_cuts)
+				reduced_events.push_back(ev);
+		}
+		return reduced_events;
+	}
 
 	double cuts::efficiency() const
 	{

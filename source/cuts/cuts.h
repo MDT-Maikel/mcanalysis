@@ -43,6 +43,7 @@ namespace analysis
 		
 		void add_cut(cut *add, std::string n = "");
 		void apply(std::vector<event*> &events);
+		const std::vector<event*> reduce(const std::vector<event*> &events) const;
 		double efficiency() const;
 		double efficiency(unsigned int p, unsigned int t) const;
 		void clear();
