@@ -6,7 +6,7 @@ project(mcanalysis)
 
 ## Set CMake search paths for user defined modules
 ## These are in the project's source dir
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 ## Compiler settings
 if(CMAKE_COMPILER_IS_GNUCXX)
