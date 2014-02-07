@@ -58,6 +58,38 @@ namespace analysis
 	{
 		return p1->pt() > p2->pt();		
 	}
+	
+	std::string ptype_to_string(unsigned int type)
+	{
+		// basic types
+		if (type == ptype_none)
+			return "none";
+		if (type == ptype_all)
+			return "all";
+		
+		// other types might be concatenated 
+		std::string stype = "";
+		
+		if (type & ptype_lepton)
+		{
+			stype += stype.size() > 0 ? "|l" : "l";
+		}
+		else
+		{
+			if (type & ptype_electron)
+				stype += stype.size() > 0 ? "|e" : "e";
+			if (type & ptype_muon)
+				stype += stype.size() > 0 ? "|mu" : "mu";
+		}		
+		if (type & ptype_tau)
+			stype += stype.size() > 0 ? "|tau" : "tau";
+		if (type & ptype_jet)
+			stype += stype.size() > 0 ? "|jet" : "jet";
+		if (type & ptype_met)
+			stype += stype.size() > 0 ? "|met" : "met";	
+		
+		return stype;
+	}
 
 /* NAMESPACE */
 }

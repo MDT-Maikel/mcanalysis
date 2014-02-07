@@ -114,6 +114,7 @@ namespace analysis
 	/* utility functions */
 	
 	bool compare_pt(particle *p1, particle *p2);
+	std::string ptype_to_string(unsigned int type);
 
 /* NAMESPACE */
 }
