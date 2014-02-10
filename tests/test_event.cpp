@@ -126,6 +126,10 @@ int main(int argc, const char* argv[])
 	cout << "Event function checks between lhco and lhe classes have " << (test_event_passed ? "passed!" : "failed!") << endl;
 	cout << "=====================================================================" << endl;
 	
+	// clear remaining event pointers
+	delete ev_lhco;
+	delete ev_lhe;
+	
 	// return whether tests passed
 	if (test_lhco_lhe_passed && test_event_passed)
 		return EXIT_SUCCESS;

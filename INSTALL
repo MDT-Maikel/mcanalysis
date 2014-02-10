@@ -4,6 +4,8 @@
 The MCAnalysis framework can be installed using CMake (version 2.6 or higher) which can 
 be obtained here:
 	http://www.cmake.org/cmake/resources/software.html
+and a C++ compiler which supports the C++0x standard. This framework has only been tested
+with GCC 4.6 and higher.
 
 It will automatically control if the dependencies (see below) are set up correctly and 
 will produce C++ compile files depending on the compiler on your machine. As usual it
@@ -16,7 +18,6 @@ CMake comes with a lot of options, the ones relevant for this project are:
 	-DCMAKE_CXX_COMPILER=<different C++ compiler> "specifies the C++ compiler"
 	-DCMAKE_C_COMPILER=<different C compiler>     "specifies the C compiler"
 	-DINCLUDE_GRES=<false/true>                   "whether to include the gres module"
-
 
 
 ######################

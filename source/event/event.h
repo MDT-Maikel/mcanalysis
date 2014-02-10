@@ -71,6 +71,7 @@ namespace analysis
 	
 	/* utility functions */
 	double mass(std::vector<particle*> particles);
+	void delete_events(std::vector<event*> & events);
 
 /* NAMESPACE */
 }

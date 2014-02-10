@@ -86,6 +86,10 @@ int main(int argc, const char* argv[])
 	delete ht;
 	delete veto;
 	
+	// clear remaining event pointers
+	delete_events(events_lhco);
+	delete_events(events_lhe);
+	
 	// return whether tests passed
 	if (test_cuts_passed)
 		return EXIT_SUCCESS;

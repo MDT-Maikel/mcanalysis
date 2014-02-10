@@ -95,6 +95,9 @@ int main(int argc, const char* argv[])
 	cout << "LHCO momentum balance has " << (test_momentum_passed ? "succeeded!" : "failed!") << endl;
 	cout << "=====================================================================" << endl;
 	
+	// clear remaining event pointers
+	delete_events(events);
+	
 	// return whether tests passed
 	if (test_reading_passed && test_writing_passed && test_momentum_passed)
 		return EXIT_SUCCESS;
