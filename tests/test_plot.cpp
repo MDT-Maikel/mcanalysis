@@ -87,6 +87,10 @@ int main(int argc, const char* argv[])
 	cout << "Check: previous distributions combined in 2D." << endl;
 	cout << "=====================================================================" << endl;
 	
+	// clear remaining event pointers
+	delete_events(events_lhco);
+	delete_events(events_lhe);
+	
 	// return whether tests passed
 	if (test_plot_ht_passed && test_plot_met_passed && test_plot_lhco_2d_passed && test_plot_lhe_2d_passed)
 		return EXIT_SUCCESS;

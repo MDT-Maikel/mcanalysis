@@ -59,6 +59,9 @@ int main(int argc, char* argv[])
 	// plot general event variables
 	plot_event_met(events, output_dir);
 	
+	// clear remaining event pointers
+	delete_events(events);
+	
 	// finished the plotting
 	return EXIT_SUCCESS;
 }

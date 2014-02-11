@@ -148,5 +148,12 @@ int main(int argc, const char* argv[])
 	cout << "=====================================================================" << endl;
 	cout << "Tag program completed in " << duration << " seconds." << endl;
 	cout << "=====================================================================" << endl;
+	
+	// clear remaining event pointers
+	delete_events(ttag_lhe);
+	delete_events(ttag_lhco);
+	
+	// finished the program
+	return EXIT_SUCCESS;
 }
 
