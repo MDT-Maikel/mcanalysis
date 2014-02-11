@@ -18,7 +18,7 @@ find_path(HEPMC_INCLUDE_DIRS HepMC/GenEvent.h
 ## Find the HepMC library
 find_library(HEPMC_LIBRARIES NAMES HepMC PATHS
 	$ENV{HEPMC_DIR}/lib
-	DOC "Specify the Pythia8 library here."
+	DOC "Specify the HepMC library here."
 )
 
 ## Log whether the libraries where found

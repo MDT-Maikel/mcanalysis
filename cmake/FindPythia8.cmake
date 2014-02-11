@@ -2,7 +2,7 @@
 ### CMake find Pythia 8 library ###
 ###################################
 # This module defines
-# PYTHIA8_INCLUDE_DIR  where to locate Pythia.h file
+# PYTHIA8_INCLUDE_DIRS where to locate Pythia.h file
 # PYTHIA8_LIBRARIES    the libraries 
 # PYTHIA8_FOUND        whether Pythia8 was found
 

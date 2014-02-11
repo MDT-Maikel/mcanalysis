@@ -29,9 +29,12 @@ endif()
 find_package(Boost 1.40.0 COMPONENTS system filesystem python REQUIRED)
 
 ## Library: Python
-find_package(PythonLibs REQUIRED)
-if (PYTHON_INCLUDE_DIRS AND PYTHON_LIBRARIES)
-	set(PYTHON_FOUND true)
+find_package(Python)
+if (NOT PYTHON_FOUND)
+	find_package(PythonLibs REQUIRED)
+	if (PYTHON_INCLUDE_DIRS AND PYTHON_LIBRARIES)
+		set(PYTHON_FOUND true)
+	endif()
 endif()
 
 ## Library: Root
