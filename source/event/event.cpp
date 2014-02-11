@@ -218,7 +218,12 @@ namespace analysis
 	// sorts the current particles in the event by its pt, highest pt first
 	void event::sort_pt()
 	{
-		std::sort(particles.begin(), particles.end(), compare_pt);		
+		std::sort(particles.begin(), particles.end(), compare_pt);
+	}
+	
+	void event::sort_type()
+	{
+		std::sort(particles.begin(), particles.end(), compare_type);
 	}
 
 	/* input & output */

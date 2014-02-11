@@ -55,6 +55,7 @@ namespace analysis
 		
 		/* utility */
 		void sort_pt();
+		void sort_type();
 
 		/* input & output */
 		void write(std::ostream& os) const;

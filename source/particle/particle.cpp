@@ -59,6 +59,11 @@ namespace analysis
 		return p1->pt() > p2->pt();		
 	}
 	
+	bool compare_type(particle *p1, particle *p2)
+	{
+		return p1->type() < p2->type();		
+	}
+	
 	std::string ptype_to_string(unsigned int type)
 	{
 		// basic types

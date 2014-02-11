@@ -136,12 +136,15 @@ namespace analysis
 		// loop over all events
 		for (unsigned int index = 0; index < events.size(); index++)
 		{
+			// get the event and sort the particles
 			event *ev = events[index];
+			ev->sort_pt();
+			ev->sort_type();
 			
 			// print the event header
 			file_ogz << 0 << "\t" << index + 1 << "\t" << 0 << std::endl;
 			
-			// loop over all particles
+			// loop over all particles and write them to file
 			for (unsigned int i = 0; i < ev->size(); i++)
 			{
 				file_ogz << i + 1 << "\t";
