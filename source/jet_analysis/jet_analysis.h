@@ -47,6 +47,7 @@ namespace analysis
 		bool firstEvent;
 		bool printTopTagDetails;
 		bool printBDRSDetails;
+		bool fast_showering;
 		bool importedLHCO;
 
 		// Detector range and Isolation parameters
@@ -73,9 +74,11 @@ namespace analysis
 		std::string MergingProcess;
 
 		// Jet clustering parameters
+		fastjet::JetAlgorithm algorithm_fat;
 		double Rsize_fat;
+		fastjet::JetAlgorithm algorithm_skinny;
 		double Rsize_skinny;
-
+		
 		// JHTopTagger parameters
 		bool DoTopTagger;
 		double JHTopTagger_delta_p; 
@@ -98,11 +101,13 @@ namespace analysis
 
 		//=== Settings and input ===//
 		void add_lhe(const std::string & name);
+		void set_fast_showering();
 		void import_lhco(const std::string & name);
 		void set_nEvents(const int & events);
 		void set_Isolation(const std::string & type, const double & eta, const double & pt, const double & Rcone, const double & EtCone = 1.8);
 		void set_Rsize_fat(const double & R);
 		void set_Rsize_skinny(const double & R);
+		void set_skinnyjet_algorithm(const std::string & type);
 		void set_JHTopTagger(const double & delta_p, const double & delta_r);
 		void set_BDRS_w_range(const double & w_min, const double & w_max);
 		void set_BDRS_higgs_range(const double & higgs_min, const double & higgs_max);

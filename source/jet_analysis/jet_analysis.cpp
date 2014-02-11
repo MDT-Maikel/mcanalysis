@@ -21,6 +21,7 @@ namespace analysis
 		firstEvent = true;
 		printTopTagDetails = true;
 		printBDRSDetails = true;
+		fast_showering = false;
 		importedLHCO = false;
 
 		// Detector range and Isolation parameters
@@ -44,7 +45,9 @@ namespace analysis
 		DoMerging = false;
 
 		// Jet clustering parameters
+		algorithm_fat = fastjet::cambridge_algorithm;
 		Rsize_fat = 1.4;
+		algorithm_skinny = fastjet::antikt_algorithm;
 		Rsize_skinny = 0.4;
 
 		// JHTopTagger parameters

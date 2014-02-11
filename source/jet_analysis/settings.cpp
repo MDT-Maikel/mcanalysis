@@ -19,6 +19,11 @@ namespace analysis
 		lhe_input.push_back(name);
 	}
 
+	void jet_analysis::set_fast_showering()
+	{
+		fast_showering = true;
+	}
+
 	void jet_analysis::import_lhco(const std::string & name)
 	{
 		importedLHCO = true;
@@ -65,6 +70,16 @@ namespace analysis
 	void jet_analysis::set_Rsize_skinny(const double & R)
 	{
 		Rsize_skinny = R;
+	}
+
+	void jet_analysis::set_skinnyjet_algorithm(const std::string & type)
+	{
+		if (type == "cambridge")
+			algorithm_skinny = fastjet::cambridge_algorithm;
+		else if (type == "antikt")
+			algorithm_skinny = fastjet::antikt_algorithm;
+		else
+			std::cout << "Wrong algorithm assignment. Using default anti-kt algorithm." << std::endl;
 	}
 
 	void jet_analysis::set_JHTopTagger(const double & delta_p, const double & delta_r)

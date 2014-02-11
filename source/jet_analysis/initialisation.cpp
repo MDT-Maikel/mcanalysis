@@ -19,10 +19,13 @@ namespace analysis
 		//============= Initialisation =============//
 		Pythia8::Pythia pythia;
 		pythia.readString("Print:quiet=ON");
-		pythia.readString("PartonLevel:MPI=OFF");
-		pythia.readString("PartonLevel:Remnants=OFF");
-		pythia.readString("Check:Event=OFF");
-		pythia.readString("HadronLevel:all=OFF");
+		if (fast_showering)
+		{
+			pythia.readString("PartonLevel:MPI=OFF");
+			pythia.readString("PartonLevel:Remnants=OFF");
+			pythia.readString("Check:Event=OFF");
+			pythia.readString("HadronLevel:all=OFF");
+		}
 
 		// Set the merging procedure if required
 		if (DoMerging)
@@ -54,12 +57,10 @@ namespace analysis
 		fastjet::Strategy                 strategy = fastjet::Best;
 
 		fastjet::JetDefinition            *fatJetDef;
-		fastjet::JetAlgorithm             cambridge = fastjet::cambridge_algorithm;
-		fatJetDef = new fastjet::JetDefinition(cambridge, Rsize_fat, recombScheme, strategy);
+		fatJetDef = new fastjet::JetDefinition(algorithm_fat, Rsize_fat, recombScheme, strategy);
 
 		fastjet::JetDefinition            *skinnyJetDef;
-		fastjet::JetAlgorithm             antikt = fastjet::antikt_algorithm;
-		skinnyJetDef = new fastjet::JetDefinition(antikt, Rsize_skinny, recombScheme, strategy);
+		skinnyJetDef = new fastjet::JetDefinition(algorithm_skinny, Rsize_skinny, recombScheme, strategy);
 
 
 		//============= Event loop =============//
