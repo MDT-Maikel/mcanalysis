@@ -56,6 +56,46 @@ private:
 	double eta_max;
 };
 
+// four lepton mass cut 
+class cut_4lepton_mass : public cut
+{
+public:
+	cut_4lepton_mass(double mass, double eta) : mass_range(mass), eta_max(eta) {}
+
+	// event passes if two pairs of opposite sign leptons are found
+	bool operator() (const event *ev) 
+	{
+		double mz = 91.1876;
+		std::vector<particle*> lepplus;
+		std::vector<particle*> lepminus;
+		for (unsigned int i = 1; i <= 4; i++)
+		{
+			particle *p = ev->get(ptype_lepton, i, eta_max);
+			if (p->charge() == 1.0)
+				lepplus.push_back(p);
+			else
+				lepminus.push_back(p);
+		}
+		// test first combination
+		double mass1 = mass({lepplus[0], lepminus[0]});
+		double mass2 = mass({lepplus[1], lepminus[1]});
+		if (mass1 > mz - mass_range && mass1 < mz + mass_range &&
+			mass2 > mz - mass_range && mass2 < mz + mass_range)
+			return true;
+		// test second combination	
+		mass1 = mass({lepplus[0], lepminus[1]});
+		mass2 = mass({lepplus[1], lepminus[0]});
+		if (mass1 > mz - mass_range && mass1 < mz + mass_range &&
+			mass2 > mz - mass_range && mass2 < mz + mass_range)
+			return true;
+		// not passed
+		return false;
+	}
+private:
+	double mass_range;
+	double eta_max;
+};
+
 // four lepton mass plot
 class plot_leptonmass : public plot_default
 {
@@ -88,22 +128,19 @@ int main(int argc, const char* argv[])
 	clock_t clock_old = clock();
 	double duration;
 
-	// initialise jet_analysis class
+	// initialise jet_analysis class and do settings
 	jet_analysis ttag;
-	int nEvents = 2000;
+	int nEvents = 5000;
 	ttag.set_nEvents(nEvents);
 	ttag.undo_BDRSTagging();
-	
+	ttag.set_Rsize_fat(1.5);
+	ttag.set_fast_showering();
+		
 	// load, shower and cluster the events
-	ttag.add_lhe("../../files/tools/input/thth_tztz/mass_1000.lhe");
+	ttag.add_lhe("../../files/tools/input_ttag/input_ttag.lhe");
 	fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &) = &jet_analysis::HEPTopTagging;
+	//ttag.import_lhco("../../files/tools/input_ttag/input_ttag.lhco.gz");
 	ttag.initialise(TopTagger);
-	
-	// load the lhco and lhe events
-	vector<event*> ttag_lhe;
-	vector<event*> ttag_lhco;
-	read_lhe(ttag_lhe, "../../files/tools/input/thth_tztz/mass_1000.lhe.gz");
-	read_lhco(ttag_lhco, "../../files/tools/input/thth_tztz/mass_1000.lhco.gz");
 	
 	// initiate general cut class and specific cuts
 	cuts ttag_cuts;
@@ -115,43 +152,33 @@ int main(int argc, const char* argv[])
 	ttag.reduce_sample(ttag_cuts);
 	double eff = 0;
 	int ntops = 2;
-	//eff = btag.require_top_tagged(ntops);
+	eff = ttag.require_top_tagged(ntops);
 	cout << setprecision(2);
-	cout << endl << "Efficiency of tagging requirement: " << eff << endl;
+	cout << endl << "Efficiency of tagging requirement: " << 100 * eff << " %" << endl;
 	cout << "size: " << ttag.map_lhco_taggedJets.size() << endl;
 	
 	// get event sample from ttag
 	std::vector<event*> ttag_tagged = ttag.events();
 	
-	// run the cuts both samples
-	ttag_cuts.apply(ttag_lhe);
-	ttag_cuts.write(cout);
-	double eff_lhco = ttag_cuts.efficiency();
-	ttag_cuts.clear();
-	ttag_cuts.apply(ttag_lhco);
-	ttag_cuts.write(cout);
-	double eff_lhe = ttag_cuts.efficiency();
-	ttag_cuts.clear();
-	
 	// plot lepton masses
-	plot lmass("test_plot_leptonmass", "../../files/tools/output/");
-	lmass.add_sample(ttag_lhe, new plot_leptonmass, "LHE");
-	lmass.add_sample(ttag_lhco, new plot_leptonmass, "LHCO");
+	plot lmass("test_plot_leptonmass", "../../files/tools/output_ttag/");
 	lmass.add_sample(ttag_tagged, new plot_leptonmass, "Tagged");
 	lmass.run();
 	
+	// add four lepton mass cut and apply to sample
+	cut_4lepton_mass *fourleptonmass = new cut_4lepton_mass(10, 5.0);
+	ttag_cuts.add_cut(fourleptonmass, "4 lepton mass");
+	ttag.reduce_sample(ttag_cuts);
+	
 	// clear remaining pointers
 	delete fourlepton;
+	delete fourleptonmass;
 	
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	cout << "=====================================================================" << endl;
 	cout << "Tag program completed in " << duration << " seconds." << endl;
 	cout << "=====================================================================" << endl;
-	
-	// clear remaining event pointers
-	delete_events(ttag_lhe);
-	delete_events(ttag_lhco);
 	
 	// finished the program
 	return EXIT_SUCCESS;
