@@ -115,6 +115,7 @@ namespace analysis
 		void undo_BDRSTagging();
 		void set_merging(const double & ms, const int & njmax, const std::string & process);
 		std::vector< event* > events();
+		std::vector< std::vector<fastjet::PseudoJet> > fatjets();
 
 		//=== Isolation functions ===//
 		bool isolatedElectron(const int & j, const Pythia8::Event & particles);

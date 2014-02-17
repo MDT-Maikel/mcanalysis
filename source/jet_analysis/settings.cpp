@@ -142,6 +142,19 @@ namespace analysis
 			
 		return events;
 	}
+	
+	std::vector< std::vector<fastjet::PseudoJet> > jet_analysis::fatjets()
+	{
+		// map_lhco_taggedJets iterator definition
+		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
+
+		// extract vector of event pointers "events"
+		std::vector< std::vector<fastjet::PseudoJet> > fatjets;
+		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
+			fatjets.push_back(it->second);
+			
+		return fatjets;
+	}
 
 
 /* NAMESPACE */
