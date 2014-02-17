@@ -30,7 +30,7 @@ target_link_libraries(
 	${Boost_LIBRARIES}
 )
 
-## Executable: mergemc
+## Executable: plotmc
 add_executable(plotmc plotmc.cpp)
 target_link_libraries(
 	plotmc
@@ -40,6 +40,17 @@ target_link_libraries(
 	${PYTHON_LIBRARIES}
 	${Boost_LIBRARIES}
 	${ROOT_LIBRARIES}
+)
+
+## Executable: cutmc
+add_executable(cutmc cutmc.cpp)
+target_link_libraries(
+	cutmc
+	${MCANALYSIS_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${PYTHON_LIBRARIES}
+	${Boost_LIBRARIES}
 )
 
 ## Executable: gen_hepmc
