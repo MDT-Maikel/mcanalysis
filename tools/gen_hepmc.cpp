@@ -43,7 +43,11 @@ int main(int argc, char* argv[])
 		return EXIT_SUCCESS;
 		
 	// make sure the output file's directory exists
-	// TODO
+	string output_dir = output_file;
+	while (output_dir.back() != '/' && output_dir.back() != '\\' && output_dir.size() > 0)
+		output_dir.erase(output_dir.end() - 1);
+	if (!is_directory(output_dir))
+		create_directory(output_dir);
 	
 	// initialize Pythia with speed-up settings
 	Pythia pythia;
@@ -121,7 +125,7 @@ void read_options(int &argc, char* argv[], bool &exit_program, bool &pythia_fast
 	int arg = 0;
 	while (arg != -1)
 	{
-		arg = getopt_long(argc, argv, "hvf", longopts, &index);
+		arg = getopt_long(argc, argv, "hvfm:", longopts, &index);
 
 		switch (arg)
 		{
