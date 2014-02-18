@@ -10,6 +10,7 @@
 
 #include <getopt.h>
 
+#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "Pythia8/Pythia.h"
@@ -19,6 +20,7 @@
 
 using namespace std;
 using namespace boost;
+using namespace boost::filesystem;
 using namespace Pythia8; 
 
 

@@ -16,11 +16,10 @@
 #include "utility/utility.h"
 #include "event/event.h"
 
-
 using namespace std;
-using namespace analysis;
 using namespace boost;
 using namespace boost::filesystem;
+using namespace analysis;
 
 
 // utility functions

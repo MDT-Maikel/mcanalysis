@@ -61,6 +61,7 @@ if(HEPMC_FOUND AND PYTHIA8_HEPMC_FOUND)
 		gen_hepmc
 		${HEPMC_LIBRARIES}
 		${PYTHIA8_LIBRARIES}
+		${Boost_LIBRARIES}
 	)
 endif()
 
