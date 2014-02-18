@@ -65,10 +65,10 @@ if(HEPMC_FOUND AND PYTHIA8_HEPMC_FOUND)
 	)
 endif()
 
-## Executable: ttag
-add_executable(ttag ttag.cpp)
+## Executable: tztag
+add_executable(tztag tztag.cpp)
 target_link_libraries(
-	ttag
+	tztag
 	${MCANALYSIS_LIBRARIES}
 	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}

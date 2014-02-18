@@ -1,0 +1,29 @@
+#################
+### TODO LIST ###
+#################
+A list of things which need to be fixed or implemented possibly assigned 
+to one of the contributors of this code.
+
+[Maikel] Check for memory leaks in
+			* test_histogram
+			* test_plot
+			* test_bumphunter
+			* test_jets
+			* cutmc
+			* plotmc
+			* tztag
+			* thtag
+			
+[Maikel] Fix LHE writing formatting
+
+[Maikel] Create plotmc which produces a set of standard plots for a monte carlo file
+
+[Maikel] Create cutmc which takes a config file and implements those cuts on a monte carlo file
+
+[Maikel] Make mcanalysis compile on DESY cluster machines
+
+[Marco] Implement thtag: for the tthh final state
+
+[Marco] Generate the two major backgrounds for both ttzz and tthh samples
+
+[Marco & Maikel] Clean up the jet analysis code a bit
