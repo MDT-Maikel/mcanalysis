@@ -146,6 +146,14 @@ add_subdirectory(tests)
 ## Executables: tools
 add_subdirectory(tools)
 
+## Executables: private
+## this directory is for the users private programs
+## a CMakeLists.txt must be included by the user
+## only add to compilation if both are present
+if(EXISTS "${PROJECT_SOURCE_DIR}/private/CMakeLists.txt")
+	add_subdirectory(private)
+endif()
+
 ## Executables: gres
 if(INCLUDE_GRES)
 	add_subdirectory(gres)
