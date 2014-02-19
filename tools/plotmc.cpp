@@ -4,6 +4,7 @@
  * 
 */
 
+#include <algorithm>
 #include <iostream>
 
 #include <boost/filesystem.hpp>
@@ -25,6 +26,7 @@ void read_events(vector<event*> & events, const string & input_file);
 void plot_particle_pt(const vector<event*> & events, const string & output_dir, unsigned int type, unsigned int number);
 void plot_particle_eta(const vector<event*> & events, const string & output_dir, unsigned int type, unsigned int number);
 void plot_particle_phi(const vector<event*> & events, const string & output_dir, unsigned int type, unsigned int number);
+void plot_particle_mass(const vector<event*> & events, const string & output_dir, unsigned int type, const std::vector<int> & comb);
 void plot_event_met(const vector<event*> & events, const string & output_dir);
 
 
@@ -55,6 +57,9 @@ int main(int argc, char* argv[])
 	plot_particle_pt(events, output_dir, ptype_jet, 2);
 	plot_particle_eta(events, output_dir, ptype_jet, 3);
 	plot_particle_phi(events, output_dir, ptype_electron | ptype_muon | ptype_tau, 1);
+	
+	// plot particle invariant mass combinations
+	plot_particle_mass(events, output_dir, ptype_jet, {1,2});
 	
 	// plot general event variables
 	plot_event_met(events, output_dir);
@@ -145,6 +150,25 @@ void plot_particle_phi(const vector<event*> & events, const string & output_dir,
 	plot phi(plot_name, output_dir);
 	phi.add_sample(red_events, ft_phi, "sample");
 	phi.run();
+}
+
+void plot_particle_mass(const vector<event*> & events, const string & output_dir, unsigned int type, const std::vector<int> & comb)
+{
+	// cut away events that do not have that specific particle
+	cuts cp;	
+	cut_particle *ft_p = new cut_particle(type, *max_element(comb.begin(), comb.end()));
+	cp.add_cut(ft_p);
+	const vector<event*> red_events(cp.reduce(events));
+	
+	// log details of what is being plotted
+	cout << "plotting invariant mass of particle: " << ptype_to_string(type) << " and comb: " << "TODO" << " for " << red_events.size() << " events" << endl;
+	
+	// plot the invariant mass of the combination
+	plot_mass *ft_mass = new plot_mass(type, comb);
+	string plot_name = "mass_" + ptype_to_string(type) + "_" + boost::lexical_cast<std::string>("{1,2}");
+	plot mass(plot_name, output_dir);
+	mass.add_sample(red_events, ft_mass, "sample");
+	mass.run();	
 }
 
 void plot_event_met(const vector<event*> & events, const string & output_dir)

@@ -71,11 +71,11 @@ public:
 	bool operator() (const event *ev) 
 	{
 		double mz = 91.1876;
-		std::vector<particle*> lepplus;
-		std::vector<particle*> lepminus;
+		std::vector<const particle*> lepplus;
+		std::vector<const particle*> lepminus;
 		for (unsigned int i = 1; i <= 4; i++)
 		{
-			particle *p = ev->get(ptype_lepton, i, eta_max);
+			const particle *p = ev->get(ptype_lepton, i, eta_max);
 			if (p->charge() == 1.0)
 				lepplus.push_back(p);
 			else
@@ -111,11 +111,11 @@ public:
 	{
 		// we know that there are four leading leptons with charge sum zero
 		// combine the oppositely charged ones into a mass and sum the two mass pairs
-		std::vector<particle*> lepplus;
-		std::vector<particle*> lepminus;
+		std::vector<const particle*> lepplus;
+		std::vector<const particle*> lepminus;
 		for (unsigned int i = 1; i <= 4; i++)
 		{
-			particle *p = ev->get(ptype_lepton, i, 2.5);
+			const particle *p = ev->get(ptype_lepton, i, 2.5);
 			if (p->charge() == 1.0)
 				lepplus.push_back(p);
 			else
@@ -138,18 +138,18 @@ public:
 		double mass_range = 10;
 		// we know that there are four leading leptons with charge sum zero
 		// combine the oppositely charged ones into a mass and sum the two mass pairs
-		std::vector<particle*> lepplus;
-		std::vector<particle*> lepminus;
+		std::vector<const particle*> lepplus;
+		std::vector<const particle*> lepminus;
 		for (unsigned int i = 1; i <= 4; i++)
 		{
-			particle *p = ev->get(ptype_lepton, i, 2.5);
+			const particle *p = ev->get(ptype_lepton, i, 2.5);
 			if (p->charge() == 1.0)
 				lepplus.push_back(p);
 			else
 				lepminus.push_back(p);
 		}
-		vector<particle*> pair1;
-		vector<particle*> pair2;		
+		vector<const particle*> pair1;
+		vector<const particle*> pair2;		
 		
 		double mass1 = mass({lepplus[0], lepminus[0]});
 		double mass2 = mass({lepplus[1], lepminus[1]});

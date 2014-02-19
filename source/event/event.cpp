@@ -262,12 +262,12 @@ namespace analysis
 	
 	/* utility functions */
 	
-	double mass(std::vector<particle*> particles)
+	double mass(std::vector<const particle*> particles)
 	{
 		double pe = 0.0; double px = 0.0; double py = 0.0; double pz = 0.0;		
 		for (unsigned int index = 0; index < particles.size(); index++)
 		{
-			particle *p = particles[index];
+			const particle *p = particles[index];
 			pe += p->pe();
 			px += p->px();
 			py += p->py();
