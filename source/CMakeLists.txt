@@ -56,7 +56,6 @@ endif()
 ## Include directories
 include_directories(
 	"${Boost_INCLUDE_DIRS}"
-	"${PYTHON_INCLUDE_DIRS}"
 	"${ROOT_INCLUDE_DIRS}"
 	"${PYTHIA8_INCLUDE_DIRS}"
 	"${FASTJET_INCLUDE_DIRS}"

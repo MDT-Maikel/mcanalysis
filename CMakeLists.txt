@@ -26,16 +26,7 @@ if (GZSTREAM_INCLUDE_DIRS AND GZSTREAM_LIBRARIES)
 endif()
 
 ## Library: Boost
-find_package(Boost 1.40.0 COMPONENTS system filesystem python REQUIRED)
-
-## Library: Python
-find_package(Python)
-if (NOT PYTHON_FOUND)
-	find_package(PythonLibs REQUIRED)
-	if (PYTHON_INCLUDE_DIRS AND PYTHON_LIBRARIES)
-		set(PYTHON_FOUND true)
-	endif()
-endif()
+find_package(Boost 1.40.0 COMPONENTS system filesystem REQUIRED)
 
 ## Library: Root
 find_package(ROOT REQUIRED)
@@ -82,14 +73,6 @@ else()
 endif()
 message("inc: " "${GZSTREAM_INCLUDE_DIRS}")
 message("lib: " "${GZSTREAM_LIBRARIES}")
-message("=======================================================")
-if(PYTHON_FOUND)
-	message("python: FOUND")
-else() 
-	message("python: NOT FOUND")
-endif()
-message("inc: " "${PYTHON_INCLUDE_DIRS}")
-message("lib: " "${PYTHON_LIBRARIES}")
 message("=======================================================")
 if(Boost_FOUND)
 	message("boost: FOUND")

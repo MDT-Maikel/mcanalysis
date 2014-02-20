@@ -107,7 +107,7 @@ namespace analysis
 	
 	double histogram2D::Interpolate2D(const std::list< std::list<double> > & values, const std::list<double> & xy)
 	{
-		try
+		/*try
     	{
 			Py_Initialize();
 
@@ -146,7 +146,8 @@ namespace analysis
 	   	{
 	        PyErr_Print();
 	        return 1.0;
-	   	}
+	   	}*/
+	   	return 1.0;
 	}
 
 	/* histogram drawing */

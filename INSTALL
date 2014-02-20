@@ -47,23 +47,22 @@ not proceed.
 [C++ Compiler]
 notes:    a C++ compiler which works at least with the C++0x standard
 
-[Python]
-notes:    Python 2.7 is needed as well
-
 [Gzstream]
 download: http://www.cs.unc.edu/Research/compgeom/gzstream/
 notes:    install under /deps/gzstream
 
 [Boost]
 download: http://www.boost.org/users/download/
+install: sh bootstrap.sh --prefix=<install dir> 
+         ./b2 install
 
 [ROOT]
 download: http://root.cern.ch/drupal/content/installing-root-source
-install: ./configure --prefix=<install dir> --etcdir=<install dir>/etc/root --enable-gsl-shared --enable-python --enable-roofit --enable-minuit2
+install: ./configure --prefix=<install dir> --etcdir=<install dir>/etc/root --enable-gsl-shared --enable-roofit --enable-minuit2
 
 [Pythia8]
 download: http://home.thep.lu.se/~torbjorn/Pythia.html
-install:  ./configure --prefix=<install dir> --with-hepmc=<HepMC dir> --with-hepmcversion=<HepMC version>  --enable-gzip --with-boost=<Boost_dir> --with-zlib=/data/btag/programs/zlib-1.2.8
+install:  ./configure --prefix=<install dir> --with-hepmc=<HepMC dir> --with-hepmcversion=<HepMC version>  --enable-gzip --with-boost=<Boost dir> --with-zlib=<zlib dir>
 notes:    set environment variable PYTHIA8_DIR=<install dir>, compilation with HepMC is optional 
 
 [FastJet]

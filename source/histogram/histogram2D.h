@@ -14,8 +14,6 @@
 #include <map>
 #include <list>
 
-#include <boost/python.hpp>
-
 #include <TCanvas.h> 
 #include <TStyle.h>
 #include <TLegend.h>
