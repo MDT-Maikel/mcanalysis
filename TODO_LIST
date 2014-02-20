@@ -20,8 +20,6 @@ to one of the contributors of this code.
 
 [Maikel] Create cutmc which takes a config file and implements those cuts on a monte carlo file
 
-[Maikel] Make mcanalysis compile on DESY cluster machines
-
 [Marco] Implement thtag: for the tthh final state
 
 [Marco] Generate the two major backgrounds for both ttzz and tthh samples

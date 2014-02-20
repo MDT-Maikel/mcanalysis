@@ -148,12 +148,11 @@ namespace analysis
   		double ymax;
 	
   		// construction of histogram collection
-  		const int nsamples = sample_list.size();
-	    TH1D* hist[nsamples];
+	    std::vector<TH1D*> hist;
 
-	    for (int iprc = 0; iprc < nsamples; ++iprc)
+	    for (int i = 0; i < sample_list.size(); ++i)
 	    {
-			std::vector<double> list = sample_list[iprc];
+			std::vector<double> list = sample_list[i];
 
 	    	// find max and min entry for auto range option.
 			if (auto_range && !list.empty())
@@ -166,23 +165,24 @@ namespace analysis
 			}
 
 			// construct one histogram per sample
-			hist[iprc] = new TH1D("", labels.c_str(), nbins, hmin, hmax);
+			hist.push_back(new TH1D("", labels.c_str(), nbins, hmin, hmax));
 
 			// read the sample and fill the histogram
-			for (unsigned int i = 0; i < list.size(); i++)
-				hist[iprc]->Fill(list[i], sample_weights[iprc]);
+			for (unsigned int j = 0; j < list.size(); j++)
+				hist[i]->Fill(list[j], sample_weights[i]);
 
 			if (is_normalised)
 			{
-				Double_t norm = sample_weights[iprc];
-				Double_t scale = norm / hist[iprc]->Integral();
-				hist[iprc]->Scale(scale);
+				Double_t norm = sample_weights[i];
+				Double_t scale = norm / hist[i]->Integral();
+				hist[i]->Scale(scale);
 			}
 
-	    	hist[iprc]->SetLineColor(colors[iprc]);
-    		hist[iprc]->SetLineWidth(2);
-    		ymax = hist[iprc]->GetMaximum();
-    		if(ymax > max) max = ymax;
+	    	hist[i]->SetLineColor(colors[i]);
+    		hist[i]->SetLineWidth(2);
+    		ymax = hist[i]->GetMaximum();
+    		if (ymax > max) 
+				max = ymax;
 	    }
 
 	    // set the y-axis scale
@@ -199,8 +199,8 @@ namespace analysis
 		double y2 = 0.64;
 		TLegend *legend = new TLegend(x1, y1, x2, y2, leg_title.c_str());
 
-		for (int iprc = 0; iprc < nsamples; iprc++)
-    		legend->AddEntry(hist[iprc], sample_names[iprc].c_str());
+		for (int i = 0; i < sample_list.size(); ++i)
+    		legend->AddEntry(hist[i], sample_names[i].c_str());
 
   		// set legend cosmetics 
 		legend->SetBorderSize(0);
@@ -212,12 +212,12 @@ namespace analysis
 
 		// draw histograms: stacked or not
 		THStack stack(boost::lexical_cast<std::string>(rd()).c_str(), labels.c_str());
-  		for (int iprc = 0; iprc < nsamples; ++iprc)
+		for (int i = 0; i < sample_list.size(); ++i)
   		{
 			if (is_stacked)
-				hist[iprc]->SetFillColor(colors_trans[iprc]);
+				hist[i]->SetFillColor(colors_trans[i]);
 
-			stack.Add(hist[iprc]);
+			stack.Add(hist[i]);
   		}
 		if (is_stacked)
 			stack.Draw();
@@ -231,9 +231,9 @@ namespace analysis
 		canvas->Print((ps_title + ".png").c_str());
 
 		// delete pointers to canvas, histograms and legend
-		for (int iprc = 0; iprc < nsamples; ++iprc)
+		for (int i = 0; i < hist.size(); ++i)
   		{
-			delete hist[iprc];
+			delete hist[i];
   		}
 		delete legend;
 		delete canvas;

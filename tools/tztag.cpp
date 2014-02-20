@@ -181,7 +181,7 @@ int main(int argc, const char* argv[])
 
 	// initialise jet_analysis class and do settings
 	jet_analysis ttag;
-	int nEvents = 50000;
+	int nEvents = 100;
 	ttag.set_nEvents(nEvents);
 	ttag.undo_BDRSTagging();
 	ttag.set_Rsize_fat(1.5);
@@ -261,12 +261,17 @@ int main(int argc, const char* argv[])
 	
 	// plot lepton masses
 	plot pmass("test_plot_partnermass", "../../files/tools/output_ttag/");
-	pmass.add_sample(ttag_events, new plot_partnermass, "Tagged");
+	plot_partnermass *partnermass = new plot_partnermass();
+	pmass.add_sample(ttag_events, partnermass, "Tagged");
 	pmass.run();	
 	
 	// clear remaining pointers
 	delete fourlepton;
 	delete fourleptonmass;
+	delete partnermass;
+	
+	// clear remaining event pointers
+	delete_events(ttag_events);
 	
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
