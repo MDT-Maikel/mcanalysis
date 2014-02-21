@@ -21,22 +21,21 @@
 double calc_value1();
 double calc_value2();
 
-
 // main program
 int main(int argc, const char* argv[])
 {
 	// make sure there is at least one argument
 	if (argc <= 1) 
 	{
-		cout << "specify at least one argument: <id> <par1> <par2> ... <parN>" << endl;
+		std::cout << "specify at least one argument: <id> <par1> <par2> ... <parN>" << std::endl;
 		return EXIT_FAILURE;
   	}
 	
 	// get the identifier
-	string id = argv[1];
+	std::string id = argv[1];
 	
 	// store the parameters in a vector
-	vector<double> pars;
+	std::vector<double> pars;
 	for (unsigned int i = 2; i < argc; ++i)
 		pars.push_back(boost::lexical_cast<double>(argv[i]));
 	
@@ -49,8 +48,8 @@ int main(int argc, const char* argv[])
 		value = calc_value2();
 
 	// output the value in scientific form
-	cout << setprecision(6) << scientific;
-	cout << new_val << endl;
+	std::cout << setprecision(6) << std::scientific;
+	std::cout << value << std::endl;
 
 	return EXIT_SUCCESS;
 }
