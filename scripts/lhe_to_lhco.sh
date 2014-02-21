@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# generates lhco data from lhe data using pythia and delphes
+
 
 ##### initialisation #####
 
@@ -9,8 +12,8 @@ if [[ $1 == "" || $2 == "" || $3 == "" ]]; then
 fi
 
 # set the directories
-tools_dir=`pwd`
-mcanalysis_dir=$tools_dir/..
+script_dir=`pwd`
+mcanalysis_dir=$script_dir/..
 build_dir=$mcanalysis_dir/build
 delphes_dir=$SOFTDIR/Delphes-3.0.12
 tmp_dir=$4

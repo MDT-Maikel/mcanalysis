@@ -1,6 +1,7 @@
+#!/bin/sh
+#
 # script to read the cross section from a madgraph file
 
-#!/bin/sh
 
 # print usage, if no argument is specified
 if [ $# -eq 0 ] 
@@ -21,4 +22,5 @@ xsec=$( awk '/^#  Integrated weight/ { $1=""; print $0; exit}' $xsec_file )
 printf -v xsec '%s' $xsec
 echo "$xsec" | tr -d [:alpha:] | tr -d '(' | tr -d ')' | tr -d ':'
 
+#succeeded
 exit
