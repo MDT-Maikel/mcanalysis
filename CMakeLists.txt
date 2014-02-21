@@ -141,3 +141,6 @@ endif()
 if(INCLUDE_GRES)
 	add_subdirectory(gres)
 endif()
+
+## Scripts: scripts
+add_subdirectory(scripts)
