@@ -17,8 +17,15 @@ new_val=$3
 
 # replace the parameter and store in tmp_file
 tmp=`sed -n "/"$par"/p" $param_card  | cut -d"#" -f1`
-old_val=`echo $tmp | cut -d" " -f2`
-sed "s/"$old_val" # "$par"/"$new_val" # "$par"/g" $param_card > tmp0
+decay=`echo $tmp | cut -d" " -f1`
+# different identifier for width or normal param
+if [ $decay = "DECAY" ]
+then
+	old_val=`echo $tmp | cut -d" " -f3`
+else
+	old_val=`echo $tmp | cut -d" " -f2`
+fi
+sed "s/\<"$old_val" # "$par"\>/"$new_val" # "$par"/" $param_card > tmp0
 
 # replace original card with tmp_file
 cp tmp0 $param_card
