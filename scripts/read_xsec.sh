@@ -17,10 +17,9 @@ if [ ! -e $xsec_file ]; then
 	exit 2
 fi   
 
-# get the cross section using the identifier and strip useless characters.
-xsec=$( awk '/^#  Integrated weight/ { $1=""; print $0; exit}' $xsec_file )
-printf -v xsec '%s' $xsec
-echo "$xsec" | tr -d [:alpha:] | tr -d '(' | tr -d ')' | tr -d ':'
+# get the cross section using the identifier and then take second argument after ':'
+xsec=`sed -n "/\<Integrated weight\>/p" $xsec_file  | cut -d":" -f2`
+echo $xsec
 
 #succeeded
 exit
