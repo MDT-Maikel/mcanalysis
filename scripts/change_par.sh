@@ -4,13 +4,13 @@
 
 
 # print usage, if no argument is specified
-if [ $# -eq 0 ] 
+if [ $# -lt 3 ] 
 then
     echo "Usage: $0 <param card> <param> <new value>"
     exit 1
 fi
 
-# get the program parameters
+# get the script parameters
 param_card=$1
 par=$2
 new_val=$3
