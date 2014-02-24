@@ -16,7 +16,7 @@ par=$2
 new_val=$3
 
 # replace the parameter and store in tmp_file
-tmp=`sed -n "/"$par"/p" $param_card  | cut -d"#" -f1`
+tmp=`sed -n "/\<"$par"\>/p" $param_card  | cut -d"#" -f1`
 old_val=`echo $tmp | cut -d" " -f3`
 if [ -z $old_val ]
 then
