@@ -36,5 +36,6 @@
 #Build folder 
 /build
 
-#Private folder 
+#Private folders
 /private
+/scripts/private
