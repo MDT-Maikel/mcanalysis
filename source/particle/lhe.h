@@ -30,7 +30,7 @@ namespace analysis
 
 		/* con & destructor */
 		lhe() = default;
-		lhe(double px, double py, double pz, double pe, double mass);
+		lhe(double px, double py, double pz, double pe, double mass = 0);
 		//virtual ~lhe() = default;	
 
 		/* copy & assignment */

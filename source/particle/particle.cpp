@@ -95,6 +95,23 @@ namespace analysis
 		
 		return stype;
 	}
+	
+	double delta_eta(const particle *p1, const particle *p2)
+	{
+		return std::abs(p1->eta() - p2->eta());
+	}
+	
+	double delta_phi(const particle *p1, const particle *p2)
+	{
+		double dphi = std::abs(p1->phi() - p2->phi());
+		double twopi = 8 * std::atan(1);
+		return std::min(dphi, twopi - dphi);
+	}
+	
+	double delta_r(const particle *p1, const particle *p2)
+	{
+		return std::sqrt(pow(delta_eta(p1, p2), 2.0) + pow(delta_phi(p1, p2), 2.0));
+	}
 
 /* NAMESPACE */
 }

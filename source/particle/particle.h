@@ -116,6 +116,10 @@ namespace analysis
 	bool compare_pt(particle *p1, particle *p2);
 	bool compare_type(particle *p1, particle *p2);
 	std::string ptype_to_string(unsigned int type);
+	
+	double delta_eta(const particle *p1, const particle *p2);
+	double delta_phi(const particle *p1, const particle *p2);
+	double delta_r(const particle *p1, const particle *p2);
 
 /* NAMESPACE */
 }
