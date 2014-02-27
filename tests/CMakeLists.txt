@@ -104,6 +104,19 @@ target_link_libraries(
 	${FASTJET_LIBRARIES}
 )
 
+## Executable: test_jets_merging
+add_executable(test_jets_merging test_jets_merging.cpp)
+target_link_libraries(
+	test_jets_merging
+	${MCANALYSIS_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${Boost_LIBRARIES}
+	${ROOT_LIBRARIES}
+	${PYTHIA8_LIBRARIES}
+	${FASTJET_LIBRARIES}
+)
+
 ## Executable: test_heptop
 add_executable(test_heptop test_heptop.cpp)
 target_link_libraries(

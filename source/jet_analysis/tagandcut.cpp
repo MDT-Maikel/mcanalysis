@@ -23,8 +23,8 @@ namespace analysis
 		fastjet::PseudoJet tagged = top_tagger(jet);
 
 		// Print Top-tagging details
-		if (printTopTagDetails)
-			cout << "\nRan the following top tagger:\n" << top_tagger.description() << endl;
+		if ( printTopTagDetails )
+			std::cout << "\nRan the following top tagger:\n" << top_tagger.description() << std::endl;
 
 		// Set TagInfo
 		if ( tagged!=0 ) // return top-tagged jet
@@ -48,13 +48,13 @@ namespace analysis
 		top_tagger.run_tagger();		
 
 		// Print Top-tagging details
-		if (printTopTagDetails)
+		if ( printTopTagDetails )
 		{
 			std::cout << "\nRan HEPTopTagger with the following parameters:" << std::endl; 
 			top_tagger.get_setting();
 			std::cout << std::endl;
 			// top_tagger.get_info();
-			// cout << endl;
+			// std::cout << std::endl;
 		}
 
 		// Set TagInfo
@@ -88,8 +88,8 @@ namespace analysis
 		fastjet::PseudoJet tagged = md_tagger(jet);
 
 		// Print BDRS-tagging details
-		if (printBDRSDetails)
-			cout << "\nRan the following BDRS tagger:\n" << md_tagger.description() << endl << endl;
+		if ( printBDRSDetails )
+			std::cout << "\nRan the following BDRS tagger:\n" << md_tagger.description() << std::endl << std::endl;
 
 		if ( tagged!=0 )
 		{
@@ -148,7 +148,7 @@ namespace analysis
 	double jet_analysis::reduce_sample(cuts cut_list)
 	{	
 		// map_lhco_taggedJets iterator definition
-		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
+		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
 
 		// extract vector of event pointers "events"
 		std::vector< event * > events;
@@ -161,7 +161,7 @@ namespace analysis
 		double eff = cut_list.efficiency();
 
 		// retrieve from map_lhco_taggedJets only the elements which passed the cuts
-		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
+		std::map< event *, std::vector< fastjet::PseudoJet > > reduced_map;
 		for (unsigned int i = 0; i < events.size(); ++i)
 		{
 			it = map_lhco_taggedJets.find(events[i]);
@@ -181,8 +181,8 @@ namespace analysis
 
 	double jet_analysis::require_fatjet_pt(const double & ptcut, const int & n)
 	{
-		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
-		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
+		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
+		std::map< event *, std::vector< fastjet::PseudoJet > > reduced_map;
 		int map_size = 0, passed = 0;
 		double eff;
 
@@ -224,8 +224,8 @@ namespace analysis
 
 	double jet_analysis::require_top_tagged(const int & n)
 	{
-		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
-		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
+		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
+		std::map< event *, std::vector< fastjet::PseudoJet > > reduced_map;
 		int map_size = 0, passed = 0;
 		double eff;
 
@@ -243,13 +243,13 @@ namespace analysis
 
 					if (tagged.user_info<TagInfo>().top_tag())
 					{
-						// cout << "Found tagged top" << endl;
-						// cout << "top candidate:     " << tagged << endl;
-						// cout << "|_ W   candidate:  " << tagged.structure_of<fastjet::JHTopTagger>().W() << endl;
-						// cout << "|  |_  W subjet 1: " << tagged.structure_of<fastjet::JHTopTagger>().W1() << endl;
-						// cout << "|  |_  W subjet 2: " << tagged.structure_of<fastjet::JHTopTagger>().W2() << endl;
-						// cout << "|  cos(theta_W) =  " << tagged.structure_of<fastjet::JHTopTagger>().cos_theta_W() << endl;
-						// cout << "|_ non-W subjet:   " << tagged.structure_of<fastjet::JHTopTagger>().non_W() << endl;
+						// std::cout << "Found tagged top" << std::endl;
+						// std::cout << "top candidate:     " << tagged << std::endl;
+						// std::cout << "|_ W   candidate:  " << tagged.structure_of<fastjet::JHTopTagger>().W() << std::endl;
+						// std::cout << "|  |_  W subjet 1: " << tagged.structure_of<fastjet::JHTopTagger>().W1() << std::endl;
+						// std::cout << "|  |_  W subjet 2: " << tagged.structure_of<fastjet::JHTopTagger>().W2() << std::endl;
+						// std::cout << "|  cos(theta_W) =  " << tagged.structure_of<fastjet::JHTopTagger>().cos_theta_W() << std::endl;
+						// std::cout << "|_ non-W subjet:   " << tagged.structure_of<fastjet::JHTopTagger>().non_W() << std::endl;
 						toptag++;
 					}
 
@@ -276,8 +276,8 @@ namespace analysis
 
 	double jet_analysis::require_higgs_tagged(const int & n)
 	{
-		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
-		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
+		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
+		std::map< event *, std::vector< fastjet::PseudoJet > > reduced_map;
 		int map_size = 0, passed = 0;
 		double eff;
 
@@ -295,20 +295,20 @@ namespace analysis
 
 					if (tagged.user_info<TagInfo>().h_tag())
 					{
-						// cout << "Found tagged higgs" << endl;
-						// std::vector< fastjet::PseudoJet > tagged_pieces = tagged.pieces();
+						// std::cout << "Found tagged higgs" << std::endl;
+						// std::vector<f astjet::PseudoJet > tagged_pieces = tagged.pieces();
 						// fastjet::PseudoJet candidate;
 						// candidate = join(tagged_pieces[0], tagged_pieces[1]);
 						// double invMass = candidate.m();
 
-						// cout << "Filtered pieces are " << endl;
+						// std::cout << "Filtered pieces are " << std::endl;
 						// for (unsigned i = 0; i < 3 && i < tagged_pieces.size(); i++) 
 						// {
-						// cout << " " << tagged_pieces[i] << endl;
+						// std::cout << " " << tagged_pieces[i] << std::endl;
 						// }
-						// cout << "Filtered total is " << endl;
-						// cout << " " << tagged << endl;
-						// cout << "Invariant mass of the two leading pieces: " << invMass << endl;
+						// std::cout << "Filtered total is " << std::endl;
+						// std::cout << " " << tagged << std::endl;
+						// std::cout << "Invariant mass of the two leading pieces: " << invMass << std::endl;
 						higgstag++;
 					}
 
@@ -335,8 +335,8 @@ namespace analysis
 
 	double jet_analysis::require_w_tagged(const int & n)
 	{
-		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
-		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
+		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
+		std::map< event *, std::vector< fastjet::PseudoJet > > reduced_map;
 		int map_size = 0, passed = 0;
 		double eff;
 
@@ -354,20 +354,20 @@ namespace analysis
 
 					if (tagged.user_info<TagInfo>().w_tag())
 					{
-						// cout << "Found tagged W" << endl;
+						// std::cout << "Found tagged W" << std::endl;
 						// std::vector< fastjet::PseudoJet > tagged_pieces = tagged.pieces();
 						// fastjet::PseudoJet candidate;
 						// candidate = join(tagged_pieces[0], tagged_pieces[1]);
 						// double invMass = candidate.m();
 
-						// cout << "Filtered pieces are " << endl;
+						// std::cout << "Filtered pieces are " << std::endl;
 						// for (unsigned i = 0; i < 3 && i < tagged_pieces.size(); i++) 
 						// {
-						// cout << " " << tagged_pieces[i] << endl;
+						// std::cout << " " << tagged_pieces[i] << std::endl;
 						// }
-						// cout << "Filtered total is " << endl;
-						// cout << " " << tagged << endl;
-						// cout << "Invariant mass of the two leading pieces: " << invMass << endl;
+						// std::cout << "Filtered total is " << std::endl;
+						// std::cout << " " << tagged << std::endl;
+						// std::cout << "Invariant mass of the two leading pieces: " << invMass << std::endl;
 						wtag++;
 					}
 
@@ -394,8 +394,8 @@ namespace analysis
 
 	double jet_analysis::require_t_or_w_tagged(const int & n)
 	{
-		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
-		std::map< event *, std::vector <fastjet::PseudoJet> > reduced_map;
+		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
+		std::map< event *, std::vector< fastjet::PseudoJet > > reduced_map;
 		int map_size = 0, passed = 0;
 		double eff;
 

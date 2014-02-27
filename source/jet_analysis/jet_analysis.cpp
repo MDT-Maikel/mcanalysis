@@ -16,33 +16,34 @@ namespace analysis
 
 	jet_analysis::jet_analysis() 
 	{
-		// Basic settings and input
+		// Basic settings and flags
 		nEvent = 1000;
 		firstEvent = true;
 		printTopTagDetails = true;
 		printBDRSDetails = true;
 		fast_showering = false;
+		importedLHE = false;
 		importedLHCO = false;
 
 		// Detector range and Isolation parameters
 		MaxEta = 4.9;
-
 		jetMinPt = 20.;
-
 		electronMaxEta = 2.47;
 		electronMinPt = 20.;
 		muonMaxEta = 2.4;
 		muonMinPt = 10.;
 		deltaR_IsolatedLepton = 0.2; 
 		sumEtInCone_IsolatedMuon = 1.8; 
-
 		photonMaxEta = 2.37;
 		photonMinPt = 20.;
 		deltaR_IsolatedPhoton = 0.2; 
 		sumEtInCone_IsolatedPhoton = 2.6;
 
-		// Merging procedure
+		// Merging procedure flags
 		DoMerging = false;
+		Process = false;
+		NJetMax = false;
+		Scale = false;
 
 		// Jet clustering parameters
 		algorithm_fat = fastjet::cambridge_algorithm;

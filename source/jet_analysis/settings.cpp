@@ -14,9 +14,10 @@ namespace analysis
 	//	      Set parameters and input files  	  //
 	// ========================================== //
 
-	void jet_analysis::add_lhe(const std::string & name)
+	void jet_analysis::import_lhe(const std::string & name)
 	{
-		lhe_input.push_back(name);
+		importedLHE = true;
+		lhe_input = name;
 	}
 
 	void jet_analysis::set_fast_showering()
@@ -118,22 +119,50 @@ namespace analysis
 	//	            Merging settings	 	   	  //
 	// ========================================== //
 
-	void jet_analysis::set_merging(const double & ms, const int & njmax, const std::string & process)
+	void jet_analysis::set_merging_process(const std::string & process)
 	{
 		DoMerging = true;
-		MergingTMS = ms;
-		MergingNJetMax = njmax;
+		Process = true;
 		MergingProcess = process;
+	}
+
+	void jet_analysis::set_merging_njmax(const int & njet)
+	{
+		DoMerging = true;
+		NJetMax = true;
+		MergingNJetMax = njet;
+		MergingAdditionalJets = njet;
+	}
+
+	void jet_analysis::set_merging_njadditional(const int & njet)
+	{
+		DoMerging = true;
+		MergingAdditionalJets = njet;
+	}
+
+	void jet_analysis::set_merging_scale(const double & scale)
+	{
+		DoMerging = true;
+		Scale = true;
+		MergingScale = scale;
+	}
+
+	bool jet_analysis::MergingSettings()
+	{
+		if ( Process && NJetMax && Scale )
+			return true;
+		else
+			return false;
 	}
 
 
 	// ========================================== // 
-	//	         Extract lhco from map 		   	  //
+	//	  	Extract lhco or fatjets from map  	  //
 	// ========================================== //
 	std::vector< event * > jet_analysis::events()
 	{
 		// map_lhco_taggedJets iterator definition
-		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
+		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
 
 		// extract vector of event pointers "events"
 		std::vector< event * > events;
@@ -143,13 +172,13 @@ namespace analysis
 		return events;
 	}
 	
-	std::vector< std::vector<fastjet::PseudoJet> > jet_analysis::fatjets()
+	std::vector< std::vector< fastjet::PseudoJet > > jet_analysis::fatjets()
 	{
 		// map_lhco_taggedJets iterator definition
-		std::map< event *, std::vector <fastjet::PseudoJet> >::iterator it;
+		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
 
 		// extract vector of event pointers "events"
-		std::vector< std::vector<fastjet::PseudoJet> > fatjets;
+		std::vector< std::vector< fastjet::PseudoJet > > fatjets;
 		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
 			fatjets.push_back(it->second);
 			

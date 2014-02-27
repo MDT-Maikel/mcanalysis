@@ -188,7 +188,7 @@ int main(int argc, const char* argv[])
 	ttag.set_fast_showering();
 		
 	// load, shower and cluster the events
-	ttag.add_lhe("../../files/tools/input_ttag/input_ttag.lhe");
+	ttag.import_lhe("../../files/tools/input_ttag/input_ttag.lhe");
 	fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &) = &jet_analysis::HEPTopTagging;
 	ttag.import_lhco("../../files/tools/input_ttag/input_ttag.lhco.gz");
 	ttag.initialise(TopTagger);

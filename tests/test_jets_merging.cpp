@@ -1,6 +1,6 @@
-/* FastJet Tests
+/* FastJet Merging Tests
  *
- * Tests our jet analysis suite based on FastJet
+ * Tests our jet analysis suite and merging procedure based on FastJet and Pythia8
  * 
 */
 
@@ -33,28 +33,25 @@ int main(int argc, const char* argv[])
 
 	// initialise jet_analysis class
 	jet_analysis test;
-	int nr_events = 100;
-	test.set_nEvents(nr_events);
+	test.set_nEvents(1000);
+	test.undo_TopTagging();
 	test.undo_BDRSTagging();
+	test.set_fast_showering();
 
-	// Set lhe input files
-	test.import_lhe("../../files/tests/input/test_fastjet_events.lhe");
+	// Set lhe input file and merging (njets merged)
+	test.import_lhe("../../files/tests/input/w_production");
+	test.set_merging_process("pp>LEPTONS,NEUTRINOS");
+	test.set_merging_njmax(2);
+	test.set_merging_scale(15);
 
-	// initialisation (possibly specifying the TopTagger)
-	// test.initialise(); // notice: default TopTagger is JHTopTagging, not needed to be specified
-	fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &) = &jet_analysis::HEPTopTagging;
-	test.initialise(TopTagger);
+	// initialisation (without TopTagger specification)
+	test.initialise();
 
 	// apply jet pt cut
 	cuts cut_list;
-	cut_pt *pt; pt = new cut_pt(200, ptype_jet, 1, 5.0);
-	cut_list.add_cut(pt, "pt(j) > 200 GeV");
+	cut_pt *pt; pt = new cut_pt(20, ptype_jet, 1, 5.0);
+	cut_list.add_cut(pt, "pt(j) > 20 GeV");
 	test.reduce_sample(cut_list);
-
-	// extract tagging information
-	int ntops = 1;
-	double eff = test.require_top_tagged(ntops);
-	cout << setprecision(2) << endl << "Efficiency of tagging requirement: " << 100 * eff << "%" << endl;
 
 	// determine success
 	bool test_jets_passed = true;
@@ -62,8 +59,8 @@ int main(int argc, const char* argv[])
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	cout << "=====================================================================" << endl;
-	cout << "Jet analysis test: completed in " << duration << " seconds." << endl;
-	cout << "Jet tests have " << (test_jets_passed ? "passed!" : "failed!") << endl;
+	cout << "Merging test: completed in " << duration << " seconds." << endl;
+	cout << "Merging test have " << (test_jets_passed ? "passed!" : "failed!") << endl;
 	cout << "=====================================================================" << endl;
 	
 	// clear remaining pointers

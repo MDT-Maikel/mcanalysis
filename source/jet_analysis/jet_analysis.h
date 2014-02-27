@@ -6,6 +6,7 @@
 #ifndef INC_JET_ANALYSIS
 #define INC_JET_ANALYSIS
 
+#include <cstdlib>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -40,38 +41,40 @@ namespace analysis
 	{
 	// ===== TODO: private? ===== //
 	public:
-		// Basic settings and input
-		std::vector< std::string > lhe_input;
+		// Basic settings, input and flags
+		std::string lhe_input;
 		std::string lhco_input;
 		int nEvent;
 		bool firstEvent;
 		bool printTopTagDetails;
 		bool printBDRSDetails;
 		bool fast_showering;
+		bool importedLHE;
 		bool importedLHCO;
 
 		// Detector range and Isolation parameters
 		double MaxEta;
-
 		double jetMinPt;
-
 		double electronMaxEta;
 		double electronMinPt;
 		double muonMaxEta;
 		double muonMinPt;
 		double deltaR_IsolatedLepton; 
 		double sumEtInCone_IsolatedMuon;
-
 		double photonMaxEta;
 		double photonMinPt;
 		double deltaR_IsolatedPhoton; 
 		double sumEtInCone_IsolatedPhoton; 
 
-		// Merging procedure
+		// Merging flags and parameters
 		bool DoMerging;
-		double MergingTMS;
-		int MergingNJetMax;
+		bool Process;
+		bool NJetMax;
+		bool Scale;
 		std::string MergingProcess;
+		int MergingNJetMax;
+		int MergingAdditionalJets;
+		double MergingScale;
 
 		// Jet clustering parameters
 		fastjet::JetAlgorithm algorithm_fat;
@@ -92,15 +95,15 @@ namespace analysis
 		double BDRS_higgs_max;
 
 		// map (lhco, taggedJets)
-		std::map< event *, std::vector <fastjet::PseudoJet> > map_lhco_taggedJets;
+		std::map< event *, std::vector< fastjet::PseudoJet > > map_lhco_taggedJets;
 
 	public:
 		//=== Class con- & destructor ===//
 		jet_analysis();
 		~jet_analysis();
 
-		//=== Settings and input ===//
-		void add_lhe(const std::string & name);
+		//=== Set parameters and input files ===//
+		void import_lhe(const std::string & name);
 		void set_fast_showering();
 		void import_lhco(const std::string & name);
 		void set_nEvents(const int & events);
@@ -113,9 +116,17 @@ namespace analysis
 		void set_BDRS_higgs_range(const double & higgs_min, const double & higgs_max);
 		void undo_TopTagging();
 		void undo_BDRSTagging();
-		void set_merging(const double & ms, const int & njmax, const std::string & process);
+
+		//=== Merging settings ===//
+		void set_merging_process(const std::string & process);
+		void set_merging_njmax(const int & njet);
+		void set_merging_njadditional(const int & njet);
+		void set_merging_scale(const double & scale);
+		bool MergingSettings();
+
+		//=== Extract lhco or fatjets from map ===//
 		std::vector< event* > events();
-		std::vector< std::vector<fastjet::PseudoJet> > fatjets();
+		std::vector< std::vector< fastjet::PseudoJet > > fatjets();
 
 		//=== Isolation functions ===//
 		bool isolatedElectron(const int & j, const Pythia8::Event & particles);
