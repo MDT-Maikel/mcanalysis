@@ -1,0 +1,22 @@
+! gen_hepmc.cmnd
+! This file contains commands to be read in for a Pythia8 run.
+! Lines not beginning with a letter or digit are comments.
+
+// Number of events generated
+Main:numberOfEvents	= 1000
+
+// Jet-separation merging
+Merging:doKTMerging	= on
+// Merging:doPTLundMerging	= off
+
+// Core process for merging
+Merging:Process	= pp>LEPTONS,NEUTRINOS
+
+// Maximal number of additional jets
+Merging:nJetMax	= 2
+
+// Merging scale value
+Merging:TMS	= 15
+
+// Allow Pythia to decay particles
+// Merging:mayRemoveDecayProducts = on

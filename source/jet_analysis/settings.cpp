@@ -131,13 +131,6 @@ namespace analysis
 		DoMerging = true;
 		NJetMax = true;
 		MergingNJetMax = njet;
-		MergingAdditionalJets = njet;
-	}
-
-	void jet_analysis::set_merging_njadditional(const int & njet)
-	{
-		DoMerging = true;
-		MergingAdditionalJets = njet;
 	}
 
 	void jet_analysis::set_merging_scale(const double & scale)
@@ -153,6 +146,11 @@ namespace analysis
 			return true;
 		else
 			return false;
+	}
+
+	void jet_analysis::AllowPythiaDecay()
+	{
+		PythiaDecay = true;
 	}
 
 

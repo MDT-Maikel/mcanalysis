@@ -26,8 +26,7 @@ using namespace Pythia8;
 
 
 // utility functions
-void read_options(int &argc, char* argv[], bool &exit_program, bool &pythia_fast, unsigned int &max_events, 
-	bool &merging, string &process, int &njmax, int &njadd, double &scale, string &input_file, string &output_file);
+void read_options(int &argc, char* argv[], bool &exit_program, Pythia &pythia, bool &pythia_fast, bool &merging, string &input_file, string &output_file);
 void print_help();
 void print_version();
 
@@ -37,19 +36,12 @@ int main(int argc, char* argv[])
 	//============= Read command line options =============//
 	bool exit_program = false;
 	bool pythia_fast = false;
-
-	unsigned int max_events = 1000000;
-
 	bool merging = false;
-	string merge_process;
-	int merge_njmax;
-	int merge_njadd;
-	double merge_scale;
-
+	Pythia pythia;
 	string input_file;
 	string output_file;
 
-	read_options(argc, argv, exit_program, pythia_fast, max_events, merging, merge_process, merge_njmax, merge_njadd, merge_scale, input_file, output_file);
+	read_options(argc, argv, exit_program, pythia, pythia_fast, merging, input_file, output_file);
 	
 	// exit program if requested
 	if (exit_program)
@@ -58,9 +50,9 @@ int main(int argc, char* argv[])
 	//============= Basic setup =============//
 	// Make sure the output file's directory exists
 	string output_dir = output_file;
-	while (output_dir.back() != '/' && output_dir.back() != '\\' && output_dir.size() > 0)
+	while ( output_dir.back() != '/' && output_dir.back() != '\\' && output_dir.size() > 0 )
 		output_dir.erase(output_dir.end() - 1);
-	if (!is_directory(output_dir))
+	if ( !is_directory(output_dir) )
 		create_directory(output_dir);
 
 	// Interface for conversion from Pythia8::Event to HepMC event
@@ -69,9 +61,9 @@ int main(int argc, char* argv[])
 	// Specify file where HepMC events will be stored
 	HepMC::IO_GenEvent output_hepmc(output_file, std::ios::out);
 	
-	// Pythia settings and merging variables
-	Pythia pythia;
+	// Pythia basic settings
 	pythia.settings.flag("Print:quiet", true);
+  	unsigned int max_events = pythia.mode("Main:numberOfEvents");
 	if ( pythia_fast )
 	{
 		pythia.settings.flag("PartonLevel:MPI", false);
@@ -79,26 +71,31 @@ int main(int argc, char* argv[])
 		pythia.settings.flag("Check:Event", false);
 		pythia.settings.flag("HadronLevel:all", false);
 	}
-	int njetmerged, njetcounterLO;
 
 	// Merging setup
+	int njetcounterLO, MergingNJetMax;
+	double MergingScale; 
+	string MergingProcess; 
 	if ( merging )
 	{
+		MergingProcess = pythia.word("Merging:Process");
+		MergingNJetMax = pythia.mode("Merging:nJetMax");
+		MergingScale = pythia.parm("Merging:TMS");
+
 		// Check merging settings
-		if ( (merge_process == "") || (merge_njmax == 0) || (merge_scale == 0.) )
+		if ( (MergingProcess == "") || (MergingNJetMax == 0) || (MergingScale == 0.) )
 		{
 			cout << "Error while initialising Pythia (Merging settings)" << endl;
 			exit (EXIT_FAILURE);
 		}
-		pythia.settings.flag("Merging:doKTMerging", true);
-		pythia.settings.word("Merging:Process", merge_process);
-		pythia.settings.mode("Merging:nJetMax", merge_njmax);
-		pythia.settings.parm("Merging:TMS", merge_scale);
-		njetmerged = merge_njmax;
-		njetcounterLO = merge_njadd;
+
+		njetcounterLO = MergingNJetMax;		
 	}
 	else
+	{
+		pythia.settings.flag("Merging:doKTMerging", false); // just to be sure
 		njetcounterLO = 0; // only 0-jet sample
+	}
 
 	//============= Cross section estimation procedure =============//
 	// Save estimates in vectors
@@ -132,7 +129,7 @@ int main(int argc, char* argv[])
 				lhe_file = input_file + "_j" + lexical_cast<string>(njetcounterLO) + ".lhe";
 
 			// LHE initialisation
-			pythia.settings.mode("Merging:nRequested", njetmerged);
+			pythia.settings.mode("Merging:nRequested", njetcounterLO);
 			pythia.settings.word("Beams:LHEF", lhe_file);
 			if ( !pythia.init(lhe_file) )
 			{
@@ -159,18 +156,14 @@ int main(int argc, char* argv[])
 
 			// Restart with ME of a reduced the number of jets
 			if( njetcounterLO > 0 )
-			{
 				njetcounterLO--;
-				njetmerged--;
-			}
 			else
 				break;
 
 		} // End while( njetcounterLO>=0 )
 
 		// Reset values
-		njetmerged = merge_njmax;
-		njetcounterLO = merge_njadd;
+		njetcounterLO = MergingNJetMax;
 	}
 
 
@@ -202,7 +195,7 @@ int main(int argc, char* argv[])
   				pythia.settings.flag("PartonLevel:MPI", mpi);
   				pythia.settings.flag("HadronLevel:all", had);
 
-				pythia.settings.mode("Merging:nRequested", njetmerged);
+				pythia.settings.mode("Merging:nRequested", njetcounterLO);
     			pythia.settings.word("Beams:LHEF", lhe_file);
     			iNow = sizeLO-1-njetcounterLO;
     			cout << "\n\nStart analysis of " << njetcounterLO << " jets sample" << endl;
@@ -242,7 +235,7 @@ int main(int argc, char* argv[])
 					continue;
 
 				// Increase the event counter and log progress
-				if ( (iEvent+1)%100 == 0 && njetcounterLO == 0 )
+				if ( (iEvent+1)%100 == 0 )
 					cout << "processed " << iEvent+1 << " events" << "\r" << flush;
 
 				// Construct new empty HepMC event and fill it
@@ -280,22 +273,26 @@ int main(int argc, char* argv[])
 
 		//============= Restart with ME of a reduced the number of jets =============//
 		if( njetcounterLO > 0 )
-		{
 			njetcounterLO--;
-			njetmerged--;
-		}
 		else
 			break;
 
 	} // End while( njetcounterLO>=0 )
+
+	if ( merging )
+	{		
+		sigmaTotal *= 1e9;
+		double sigmaErr = sqrt(errorTotal)*1e9;
+		cout << endl << endl << "#  Integrated weight (pb)  :       " << sigmaTotal << endl;
+		cout << "#  Uncertainty (pb)        :       " << sigmaErr << endl;
+	}
 	
 	// succeeded with the generation and storage
 	return EXIT_SUCCESS;
 }
 
 // reads in the command line options
-void read_options(int &argc, char* argv[], bool &exit_program, bool &pythia_fast, unsigned int &max_events, 
-	bool &merging, string &process, int &njmax, int &njadd, double &scale, string &input_file, string &output_file)
+void read_options(int &argc, char* argv[], bool &exit_program, Pythia &pythia, bool &pythia_fast, bool &merging, string &input_file, string &output_file)
 {
 	// values will be set by getopt
 	extern char *optarg; 
@@ -306,12 +303,8 @@ void read_options(int &argc, char* argv[], bool &exit_program, bool &pythia_fast
 	{
 		{"help",        	no_argument,       0, 'h'},
 		{"version",     	no_argument,       0, 'v'},
-		{"fast",        	no_argument,       0, 'f'},
-		{"maxevents",   	required_argument, 0, 'm'},
-		{"merge_process", 	required_argument, 0, 'n'},
-		{"merge_njmax", 	required_argument, 0, 'o'},
-		{"merge_njadd",  	required_argument, 0, 'p'},
-		{"merge_scale", 	required_argument, 0, 'q'},
+		{"fast",        	required_argument, 0, 'f'},
+		{"merging",        	required_argument, 0, 'm'},
 		{0,             	0,                 0, 0  },
 	};
 	
@@ -320,7 +313,7 @@ void read_options(int &argc, char* argv[], bool &exit_program, bool &pythia_fast
 	int arg = 0;
 	while (arg != -1)
 	{
-		arg = getopt_long(argc, argv, "hvfm:n:o:p:q:", longopts, &index);
+		arg = getopt_long(argc, argv, "hvf:m:", longopts, &index);
 
 		switch (arg)
 		{
@@ -336,37 +329,15 @@ void read_options(int &argc, char* argv[], bool &exit_program, bool &pythia_fast
 			exit_program = true;
 			return;
 
-		// check for --fast (-f)
+		// check for --fast=XXX (-f XXX)
 		case 'f':
-			pythia_fast = true;
+			pythia_fast = lexical_cast<bool>(optarg);
 			break;
 
-		// check for --maxevents=XXX (-m XXX)
+		// check for --merging=XXX (-m XXX)
 		case 'm':
-			max_events = lexical_cast<unsigned int>(optarg);
+			merging = lexical_cast<bool>(optarg);
 			break;
-
-		// check for --merge_process=XXX (-n XXX)
-		case 'n':
-			process = optarg;
-			merging = true;
-			break;
-
-		// check for --merge_njmax=XXX (-o XXX)
-		case 'o':
-			njmax = lexical_cast<int>(optarg);
-			njadd = njmax;
-			break;
-
-		// check for --merge_njadd=XXX (-p XXX)
-		case 'p':
-			njadd = lexical_cast<int>(optarg);
-			break;	
-
-		// check for --merge_scale=XXX (-q XXX)
-		case 'q':
-			scale = lexical_cast<double>(optarg);
-			break;	
 
 		// default
 		default:
@@ -375,42 +346,39 @@ void read_options(int &argc, char* argv[], bool &exit_program, bool &pythia_fast
 	}
 	
 	// retrieve the input & output file strings, otherwise print warnings
-	if (argc - optind < 2)
+	if (argc - optind < 3)
 	{
-		cout << "Warning: did not specify either input or output file." << endl;
+		cout << "Warning: did not specify either Pythia Settings file or input/output file." << endl;
 		print_help();
 		exit_program = true;	
 	}
-	else if (argc - optind > 2)
+	else if (argc - optind > 3)
 	{
-		cout << "Warning: specified to many arguments." << endl;
+		cout << "Warning: specified too many arguments." << endl;
 		print_help();
 		exit_program = true;	
 	}
 	else
 	{	
-		input_file = argv[optind];
-		output_file = argv[optind + 1];
+		pythia.readFile(argv[optind]);
+		input_file = argv[optind + 1];
+		output_file = argv[optind + 2];
 	}	
 }
 
 // prints the help output to the screen
 void print_help()
 {
-	cout << "Usage: gen_hepmc [OPTION]... [INPUT FILE] [OUTPUT_FILE]" << endl;
+	cout << "Usage: gen_hepmc [OPTION]... [PYTHIA SETTINGS] [INPUT FILE] [OUTPUT_FILE]" << endl;
 	cout << "Runs Pythia8 on the INPUT FILE which must be in .lhe format and" << endl;
 	cout << "writes the results to OUTPUT FILE in the .hepmc format." << endl;
 	cout << endl;
 	cout << "The following options are available:" << endl;
 	cout << "  -h, --help         	display this help and exit" << endl;
 	cout << "  -v, --version      	output version information and exit" << endl;
-	cout << "  -f, --fast         	turn off Pythia8 advanced options like" << endl;
+	cout << "  -f, --fast         	turn on/off Pythia8 advanced options like" << endl;
 	cout << "                       MPI, remnants, hadronlevel, event check" << endl;
-	cout << "  -m, --maxevents    	specify a maximum number of events to process" << endl;
-	cout << "  -n, --merge_process  specify the merging hard process" << endl;
-	cout << "  -o, --merge_njmax  	specify the max number of jets to be merged" << endl;
-	cout << "  -p, --merge_njadd  	specify the additional number of jets besides the hard process" << endl;
-	cout << "  -q, --merge_scale   	specify the merging scale" << endl;
+	cout << "  -m, --merging      	turn on/off merging procedure" << endl;
 }
 
 // prints the version output to the screen

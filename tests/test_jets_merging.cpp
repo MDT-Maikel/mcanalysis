@@ -36,7 +36,7 @@ int main(int argc, const char* argv[])
 	test.set_nEvents(1000);
 	test.undo_TopTagging();
 	test.undo_BDRSTagging();
-	test.set_fast_showering();
+	// test.set_fast_showering();
 
 	// Set lhe input file and merging (njets merged)
 	test.import_lhe("../../files/tests/input/w_production");

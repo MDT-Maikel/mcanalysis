@@ -71,9 +71,9 @@ namespace analysis
 		bool Process;
 		bool NJetMax;
 		bool Scale;
+		bool PythiaDecay;
 		std::string MergingProcess;
 		int MergingNJetMax;
-		int MergingAdditionalJets;
 		double MergingScale;
 
 		// Jet clustering parameters
@@ -123,6 +123,7 @@ namespace analysis
 		void set_merging_njadditional(const int & njet);
 		void set_merging_scale(const double & scale);
 		bool MergingSettings();
+		void AllowPythiaDecay();
 
 		//=== Extract lhco or fatjets from map ===//
 		std::vector< event* > events();

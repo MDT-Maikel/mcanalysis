@@ -6,8 +6,8 @@
 ##### initialisation #####
 
 # print warnings
-if [[ $3 == "" ]]; then
-    echo [lhe input] [lhco output] [delphes card] [optional: --fast]"\n"[optional: tmp folder] [optional: merge process] [optional: merge njmax] [optional: merge scale] [optional: merge njadd]
+if [[ $4 == "" ]]; then
+    echo [lhe input] [lhco output] [delphes card] [tmp folder] "\n"[optional: --fast=0/1] [optional: --merging=0/1] [optional: pythia settings file]
     exit
 fi
 
@@ -16,11 +16,6 @@ script_dir=`pwd`
 mcanalysis_dir=$script_dir/..
 build_dir=$mcanalysis_dir/build
 delphes_dir=$SOFTDIR/Delphes-3.0.12
-tmp_dir=$5
-if [[ $5 == "" ]]; then
-    tmp_dir=$mcanalysis_dir/tmp
-fi
-mkdir $tmp_dir
 
 # set .lhe input
 lhe_input=$1
@@ -31,31 +26,26 @@ lhco_output=$2.lhco.gz
 # set Delphes card
 delphes_card=$3
 
-# fast showering options
+# set tmp folder
+tmp_dir=$4
+mkdir $tmp_dir
+
+# fast showering option
 opt_fast=""
-if [[ $4 != "" ]]; then
-	opt_fast="--fast"
+if [[ $5 != "" ]]; then
+	opt_fast=$5
 fi
 
-# merging options
-opt_proc=""
+# merging option
+opt_merging=""
 if [[ $6 != "" ]]; then
-	opt_proc="--merge_process="$6
+	opt_merging=$6
 fi
 
-opt_njmax=""
+# pythia settings file
+pythia=""
 if [[ $7 != "" ]]; then
-	opt_njmax="--merge_njmax="$7
-fi
-
-opt_scale=""
-if [[ $8 != "" ]]; then
-	opt_scale="--merge_scale="$8
-fi
-
-opt_add=""
-if [[ $9 != "" ]]; then
-	opt_add="--merge_njadd="$9
+	pythia=$7
 fi
 
 # compile gen_hepmc
@@ -67,7 +57,7 @@ cd $mcanalysis_dir/scripts
 ##### core processes #####
 
 # run gen_hepmc to create .hepmc file from input .lhe
-$build_dir/tools/gen_hepmc $opt_fast $opt_proc $opt_njmax $opt_scale $opt_njadd $lhe_input $tmp_dir/hepmc_output.hepmc
+$build_dir/tools/gen_hepmc $opt_fast $opt_merging $pythia $lhe_input $tmp_dir/hepmc_output.hepmc
 echo "\n===== hepmc file created =====\n"
 
 # run Delphes to create .root file from input .hepmc

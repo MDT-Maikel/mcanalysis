@@ -44,6 +44,7 @@ namespace analysis
 		Process = false;
 		NJetMax = false;
 		Scale = false;
+		PythiaDecay = false;
 
 		// Jet clustering parameters
 		algorithm_fat = fastjet::cambridge_algorithm;

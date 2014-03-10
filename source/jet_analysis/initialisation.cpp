@@ -71,8 +71,7 @@ namespace analysis
 			pythia.settings.word("Merging:Process", MergingProcess);
 			pythia.settings.mode("Merging:nJetMax", MergingNJetMax);
 			pythia.settings.parm("Merging:TMS", MergingScale);
-			njetmerged = MergingNJetMax;
-			njetcounterLO = MergingAdditionalJets;
+			njetcounterLO = MergingNJetMax;
 		}
 		else
 			njetcounterLO = 0; // only 0-jet sample
@@ -99,6 +98,7 @@ namespace analysis
   			pythia.settings.flag("HadronLevel:all", false);
 
   			pythia.settings.flag("Merging:doXSectionEstimate", true);
+  			pythia.settings.flag("Merging:mayRemoveDecayProducts", PythiaDecay);
 
 			while(njetcounterLO >= 0) 
 			{
@@ -110,7 +110,7 @@ namespace analysis
 					input_file = lhe_input + "_j" + boost::lexical_cast<std::string>(njetcounterLO) + ".lhe";
 
 				// LHE initialisation
-				pythia.settings.mode("Merging:nRequested", njetmerged);
+				pythia.settings.mode("Merging:nRequested", njetcounterLO);
 				pythia.settings.word("Beams:LHEF", input_file);
 				if ( !pythia.init(input_file) )
 				{
@@ -137,18 +137,14 @@ namespace analysis
 
 				// Restart with ME of a reduced the number of jets
 				if( njetcounterLO > 0 )
-				{
 					njetcounterLO--;
-					njetmerged--;
-				}
 				else
 					break;
 
 			} // End while( njetcounterLO>=0 )
 
 			// Reset values
-			njetmerged = MergingNJetMax;
-			njetcounterLO = MergingAdditionalJets;
+			njetcounterLO = MergingNJetMax;
 		}
 
 
@@ -175,12 +171,13 @@ namespace analysis
 			{
 				// Possibly switch showering and multiple interaction back on
 				pythia.settings.flag("Merging:doXSectionEstimate", false);
+				pythia.settings.flag("Merging:mayRemoveDecayProducts", PythiaDecay);
 				pythia.settings.flag("PartonLevel:FSR", fsr);
   				pythia.settings.flag("PartonLevel:ISR", isr);
   				pythia.settings.flag("PartonLevel:MPI", mpi);
   				pythia.settings.flag("HadronLevel:all", had);
 
-				pythia.settings.mode("Merging:nRequested", njetmerged);
+				pythia.settings.mode("Merging:nRequested", njetcounterLO);
     			pythia.settings.word("Beams:LHEF", input_file);
     			iNow = sizeLO-1-njetcounterLO;
     			std::cout << "\n\nStart analysis of " << njetcounterLO << " jets sample" << std::endl;
@@ -511,7 +508,7 @@ namespace analysis
 				map_lhco_taggedJets.insert(std::make_pair(ev,taggedJets));
 
 				// Print evolution
-				if ( (iEvent+1)%100 == 0 && njetcounterLO == 0 )
+				if ( (iEvent+1)%100 == 0 )
 					std::cout << "Event no.: " << iEvent+1 << "\r" << std::flush;
 
 				// Exit First event loop
@@ -526,10 +523,7 @@ namespace analysis
 
 			//============= Restart with ME of a reduced the number of jets =============//
 			if( njetcounterLO > 0 )
-			{
 				njetcounterLO--;
-				njetmerged--;
-			}
 			else
 				break;
 
