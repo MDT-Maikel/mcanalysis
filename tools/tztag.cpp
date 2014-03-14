@@ -23,260 +23,294 @@
 #include "jet_analysis/jet_analysis.h"
 
 using namespace std;
+using namespace boost;
 using namespace boost::filesystem;
 using namespace Pythia8;
 using namespace fastjet;
 using namespace analysis;
 
 
-// four lepton cut 
-class cut_4lepton : public cut
+// ====================================================== // 
+//	          Auxiliary functions and classes 		   	  //
+// ====================================================== //
+
+// identify lepton candidates to reconstruct the Z boson
+vector< const particle* > identify_candidate_leptons(const vector< const particle* > & leptons)
+{
+	// identify leading-pT lepton
+	const particle *leading_l = leptons[0];
+	unsigned int leading_index = 0;
+	for (unsigned int i = 0; i < leptons.size(); ++i)
+	{
+		if ( leptons[i]->pt() > leading_l->pt() )
+		{
+			leading_l = leptons[i];
+			leading_index = i;
+		}	
+	}
+
+	// identify lepton closest in delta_r
+	const particle *closest_l = new particle;
+	double delta_r_min = 10000;
+	for (unsigned int i = 0; i < leptons.size(); ++i)
+	{
+		if ( i!=leading_index && delta_r(leptons[leading_index],leptons[i]) < delta_r_min )
+		{
+			delta_r_min = delta_r(leptons[leading_index],leptons[i]);
+			closest_l = leptons[i];
+		}
+	}
+
+	vector< const particle* > test_leptons;
+	test_leptons.push_back(leading_l);
+	test_leptons.push_back(closest_l);
+
+	// return lepton candidates
+	return test_leptons;
+};
+
+
+// identify top candidate in the same emisphere of lepton candidates
+PseudoJet identify_candidate_top(const vector< PseudoJet > & fatjets, vector< const particle* > & leptons)
+{
+	// identify top-tagged jets
+	vector< PseudoJet > topjets;
+	for (unsigned int i = 0; i < fatjets.size(); ++i)
+	{
+		if ( fatjets[i].user_info<TagInfo>().top_tag() )
+			topjets.push_back(fatjets[i]);
+	}
+
+	// identify top candidate closest in delta_r wrt lepton candidates
+	PseudoJet top_candidate;
+	double delta_r_min = 10000;
+	for (unsigned int i = 0; i < topjets.size(); ++i)
+	{
+		double deltaEta1 = topjets[i].eta() - leptons[0]->eta();
+		double deltaPhi1 = topjets[i].phi() - leptons[0]->phi();
+		double deltaR1   = sqrt( pow(deltaEta1,2.0) + pow(deltaPhi1,2.0) );
+
+		double deltaEta2 = topjets[i].eta() - leptons[1]->eta();
+		double deltaPhi2 = topjets[i].phi() - leptons[1]->phi();
+		double deltaR2   = sqrt( pow(deltaEta2,2.0) + pow(deltaPhi2,2.0) );
+
+		double deltaRtest = (deltaR1+deltaR2)/2;
+
+		if ( deltaRtest < delta_r_min )
+		{
+			delta_r_min = deltaRtest;
+			top_candidate = topjets[i];
+		}
+	}
+
+	// return top candidate
+	return top_candidate;
+};
+
+
+// basic cut: at least two opposite sign leptons need to be present, with invariant mass near the Z boson
+class cut_2osl : public cut
 {
 public:
-	cut_4lepton(double pt, double eta) : pt_cut(pt), eta_max(eta) {}
+	cut_2osl(double pt, double eta) : pt_min(pt), eta_max(eta) {}
 
-	// event passes if two pairs of opposite sign leptons are found
 	bool operator() (const event *ev) 
 	{ 
-		// get the four leptons with highest pt
-		const particle *p = ev->get(ptype_lepton, 4, eta_max);
-		if (!p || p->pt() < pt_cut)
+		// extract all visible leptons
+		vector< const particle* > leptons;
+		for (unsigned int i = 0; i < ev->size(); ++i)
+		{
+			if ( (*ev)[i]->type() & ptype_lepton && (*ev)[i]->pt() > pt_min && abs((*ev)[i]->eta()) < eta_max )
+				leptons.push_back((*ev)[i]);
+		}
+
+		// check whether at least two visible leptons are present
+		if( leptons.size() < 2 )
+			return false;
+
+		// identify lepton candidates
+		vector< const particle* > test_leptons = identify_candidate_leptons(leptons);
+		const particle *leading_l = new particle;
+		const particle *closest_l = new particle;
+		leading_l = test_leptons[0];
+		closest_l = test_leptons[1];
+		
+		// check whether they are opposite sign leptons
+		double charge = 0.;
+		charge += leading_l->charge();
+		charge += closest_l->charge();
+		if ( charge != 0. )
+			return false;
+
+		// check whether their invariant mass is close to the Z boson mass
+		double mz = 91.1876;
+		double mass_range = 10.;
+		double inv_mass = mass({leading_l, closest_l});
+		if ( !(inv_mass > mz - mass_range && inv_mass < mz + mass_range) )
 			return false;
 		
-		// check whether they are two pairs of opposite sign
-		double charge = 0;
-		for (unsigned int i = 1; i <= 4; i++)
-		{
-			particle *p = ev->get(ptype_lepton, i, eta_max);
-			charge += p->charge();			
-		}
-		if (charge == 0) // PRECISION??
-			return true;
-		
-		// not passed
-		return false;
+		// cut passed
+		return true;
 	}
 private:
-	double pt_cut;
+	double pt_min;
 	double eta_max;
 };
 
-// four lepton mass cut 
-class cut_4lepton_mass : public cut
-{
+// basic cut: upper bound on missing transverse energy of the event
+class cut_no_met : public cut
+{		
 public:
-	cut_4lepton_mass(double mass, double eta) : mass_range(mass), eta_max(eta) {}
-
-	// event passes if two pairs of opposite sign leptons are found
+	cut_no_met(double met) : met_cut(met) {};
+	
 	bool operator() (const event *ev) 
-	{
-		double mz = 91.1876;
-		std::vector<const particle*> lepplus;
-		std::vector<const particle*> lepminus;
-		for (unsigned int i = 1; i <= 4; i++)
-		{
-			const particle *p = ev->get(ptype_lepton, i, eta_max);
-			if (p->charge() == 1.0)
-				lepplus.push_back(p);
-			else
-				lepminus.push_back(p);
-		}
-		// test first combination
-		double mass1 = mass({lepplus[0], lepminus[0]});
-		double mass2 = mass({lepplus[1], lepminus[1]});
-		if (mass1 > mz - mass_range && mass1 < mz + mass_range &&
-			mass2 > mz - mass_range && mass2 < mz + mass_range)
-			return true;
-		// test second combination	
-		mass1 = mass({lepplus[0], lepminus[1]});
-		mass2 = mass({lepplus[1], lepminus[0]});
-		if (mass1 > mz - mass_range && mass1 < mz + mass_range &&
-			mass2 > mz - mass_range && mass2 < mz + mass_range)
-			return true;
-		// not passed
-		return false;
-	}
+	{ 
+		return ev->met() < met_cut;
+	};		
 private:
-	double mass_range;
-	double eta_max;
+	double met_cut;		
 };
 
-// four lepton mass plot
-class plot_leptonmass : public plot_default
+
+// Top partner mass plot
+class plot_THmass : public plot_default
 {
 public:
-	plot_leptonmass() {}
+	plot_THmass() {}
 
 	double operator() (const event *ev)
 	{
-		// we know that there are four leading leptons with charge sum zero
-		// combine the oppositely charged ones into a mass and sum the two mass pairs
-		std::vector<const particle*> lepplus;
-		std::vector<const particle*> lepminus;
-		for (unsigned int i = 1; i <= 4; i++)
-		{
-			const particle *p = ev->get(ptype_lepton, i, 2.5);
-			if (p->charge() == 1.0)
-				lepplus.push_back(p);
-			else
-				lepminus.push_back(p);
-		}
-		
-		return mass({lepplus[0], lepminus[0]}) + mass({lepplus[1], lepminus[1]});
+		vector<const particle*> constituents;
+		constituents.push_back( ev->get(ptype_lepton, 1) );
+		constituents.push_back( ev->get(ptype_lepton, 2) );
+		constituents.push_back( ev->get(ptype_jet, 1) );
+
+		return mass(constituents);
 	}
 };
 
-// four lepton mass plot
-class plot_partnermass : public plot_default
-{
-public:
-	plot_partnermass() {}
 
-	double operator() (const event *ev)
-	{
-		double mz = 91.1876;
-		double mass_range = 10;
-		// we know that there are four leading leptons with charge sum zero
-		// combine the oppositely charged ones into a mass and sum the two mass pairs
-		std::vector<const particle*> lepplus;
-		std::vector<const particle*> lepminus;
-		for (unsigned int i = 1; i <= 4; i++)
-		{
-			const particle *p = ev->get(ptype_lepton, i, 2.5);
-			if (p->charge() == 1.0)
-				lepplus.push_back(p);
-			else
-				lepminus.push_back(p);
-		}
-		vector<const particle*> pair1;
-		vector<const particle*> pair2;		
-		
-		double mass1 = mass({lepplus[0], lepminus[0]});
-		double mass2 = mass({lepplus[1], lepminus[1]});
-		if (mass1 > mz - mass_range && mass1 < mz + mass_range &&
-			mass2 > mz - mass_range && mass2 < mz + mass_range)
-		{
-			pair1 = {lepplus[0], lepminus[0]};
-			pair2 = {lepplus[1], lepminus[1]};				
-		}
-		else
-		{
-			pair1 = {lepplus[0], lepminus[1]};
-			pair2 = {lepplus[1], lepminus[0]};	
-		}
-				
-		pair1.push_back(ev->get(ptype_jet, 1));
-		pair2.push_back(ev->get(ptype_jet, 2));
-		
-		return (mass(pair1) + mass(pair2)) / 2;
-	}
-};
-
-// main program
+// ================================== // 
+//	          Main program 		   	  //
+// ================================== //
 int main(int argc, const char* argv[])
 {
+	//===== initialisation =====//
 	// initiate timing procedure
 	clock_t clock_old = clock();
 	double duration;
 
-	// initialise jet_analysis class and do settings
-	jet_analysis ttag;
-	int nEvents = 100;
-	ttag.set_nEvents(nEvents);
-	ttag.undo_BDRSTagging();
-	ttag.set_Rsize_fat(1.5);
-	ttag.set_fast_showering();
-		
-	// load, shower and cluster the events
-	ttag.import_lhe("../../files/tools/input_ttag/input_ttag.lhe");
-	fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &) = &jet_analysis::HEPTopTagging;
-	ttag.import_lhco("../../files/tools/input_ttag/input_ttag.lhco.gz");
-	ttag.initialise(TopTagger);
+	// folder definitions
+	// string mc_folder = "/data/btag/mc/";
+	// string event_folder = "/data/btag/events/";
+	// string plot_folder = "/data/btag/plots/";
+	string mc_folder = "/Users/marco/Documents/University/PhD/Works/MC_data/MadGraph/lht_ttag/";
+	string event_folder = "/Users/marco/Documents/University/PhD/Works/LHT_tagged_top/events/";
+	string plot_folder = "/Users/marco/Documents/University/PhD/Works/LHT_tagged_top/plots/";
+
+	//===== basic cuts definition =====//
+	cuts basic_cuts;
+	cut_2osl *osl = new cut_2osl(10, 2.5);
+	basic_cuts.add_cut(osl, "2 opposite sign leptons");
+	// cut_no_met *met = new cut_no_met(30);
+	// basic_cuts.add_cut(met, "missing energy veto (>30 GeV)");
+	// cut_ht *ht = new cut_ht(300,ptype_jet);
+	// basic_cuts.add_cut(ht, "ht>300 GeV");
+
+	//===== signal analysis =====//
+	// signal info
+	int partner_mass = 1000;
+	string signal_proc = "thth_tztz_2l";
+
+	// jet_analysis settings
+	jet_analysis thth_tztz;
+	thth_tztz.set_nEvents(50000);
+	thth_tztz.undo_BDRSTagging();
+	thth_tztz.set_Rsize_fat(1.5);
+
+	// load files, shower and cluster the events
+	thth_tztz.import_lhe(mc_folder + "signal/" + signal_proc + "/Events/run_mass" + lexical_cast<string>(partner_mass));
+	thth_tztz.import_lhco(event_folder + "signal/" + signal_proc + "/run_mass" + lexical_cast<string>(partner_mass) + ".lhco.gz");
+	// thth_tztz.import_lhe("../../files/tools/input/thth_tztz/mass_1000");
+	// thth_tztz.import_lhco("../../files/tools/input/thth_tztz/mass_1000.lhco.gz");
+	PseudoJet (jet_analysis::*TopTagger)(const PseudoJet &) = &jet_analysis::HEPTopTagging;
+	thth_tztz.initialise(TopTagger);
+
+	// apply cuts and extract efficiencies
+	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, met>30 GeV veto, ht>300 GeV
+	double eff_fatjpt_signal = thth_tztz.require_fatjet_pt(200,2); // require at least 2 fatjets with pT>200 GeV
+	double eff_ttag_signal = thth_tztz.require_top_tagged(2); // require 2 fatjets to be HEP Top-Tagged
+
+	unsigned int remaining_events = thth_tztz.map_lhco_taggedJets.size();
+	cout << "\n2 Fatjet pT>200 GeV Efficiency: " << setprecision(4) << 100 * eff_fatjpt_signal << " %" << endl;
+	cout << "\nTop Tagging Efficiency: " << setprecision(4) << 100 * eff_ttag_signal << " %" << endl;
+	cout << "\nRemaining events: " << remaining_events << endl;
+	cout << "\nSignal Efficiency: " << setprecision(4) << 100 * eff_basic_signal * eff_fatjpt_signal * eff_ttag_signal << " %" << endl;
 	
-	// initiate general cut class and specific cuts
-	cuts ttag_cuts;
-	cut_4lepton *fourlepton = new cut_4lepton(10, 2.5);
-	ttag_cuts.add_cut(fourlepton, "4 leptons");
-	
-	// reduce the ttag sample requiring four leptons 
-	// and 2 tops to be HEP top tagged
-	ttag.reduce_sample(ttag_cuts);
-	double eff = 0;
-	int ntops = 2;
-	eff = ttag.require_top_tagged(ntops);
-	cout << setprecision(2);
-	cout << endl << "Efficiency of tagging requirement: " << 100 * eff << " %" << endl;
-	cout << "size: " << ttag.map_lhco_taggedJets.size() << endl;
-	
-	// get event sample from ttag
-	//std::vector<event*> ttag_tagged = ttag.events();
-	
-	// plot lepton masses
-	//plot lmass("test_plot_leptonmass", "../../files/tools/output_ttag/");
-	//lmass.add_sample(ttag_tagged, new plot_leptonmass, "Tagged");
-	//lmass.run();
-	
-	// add four lepton mass cut and apply to sample
-	cut_4lepton_mass *fourleptonmass = new cut_4lepton_mass(10, 2.5);
-	ttag_cuts.add_cut(fourleptonmass, "4 lepton mass");
-	ttag.reduce_sample(ttag_cuts);
-	
-	// combine fat tops with the leptons
-	vector<event*> ttag_lep = ttag.events();
-	vector< vector<PseudoJet> > ttag_fatjets = ttag.fatjets();
-	vector<event*> ttag_events;
-	for (unsigned int i = 0; i < ttag_lep.size(); ++i)
+	// identify Top partner constituents
+	vector< event* > signal_lhco = thth_tztz.events();
+	vector< vector< PseudoJet > > signal_fatjets = thth_tztz.fatjets();
+	vector< event* > signal_reconstructed;
+	for (unsigned int i = 0; i < signal_lhco.size(); ++i) // loop over events
 	{
 		event *newev = new event();
-		// push back leptons TODO, break after four leptons.
-		event *ev = ttag_lep[i];
+
+		// extract lepton candidates
+		event *ev = signal_lhco[i];
+		vector< const particle* > leptons;
 		for (unsigned int j = 0; j < ev->size(); ++j)
 		{
-			if ((*ev)[j]->type() & ptype_lepton)
-			{
-				int p_type = ptype_lepton;
-				double	p_eta 	= (*ev)[j]->eta(), 
-						p_phi 	= (*ev)[j]->phi(), 
-						p_pt 	= (*ev)[j]->pt(), 
-						p_m 	= (*ev)[j]->mass(),
-						p_charge = (*ev)[j]->charge();
-				lhco *p = new lhco(p_type, p_eta, p_phi, p_pt, p_m, p_charge);
-				newev->push_back(p);		
-			}
+			if ( (*ev)[j]->type() & ptype_lepton && (*ev)[j]->pt() > 10. && abs((*ev)[j]->eta()) < 2.5 )
+				leptons.push_back((*ev)[j]);
 		}		
-		// push back tops		
-		vector<PseudoJet> fatjets = ttag_fatjets[i];
-		for (unsigned int j = 0; j < 2; ++j)
+		vector< const particle* > test_leptons = identify_candidate_leptons(leptons);
+		for (unsigned int j = 0; j < test_leptons.size(); ++j)
 		{
-			int p_type = ptype_jet;
-			double	p_eta 	= fatjets[j].eta(), 
-					p_phi 	= fatjets[j].phi(), 
-					p_pt 	= fatjets[j].pt(), 
-					p_m 	= fatjets[j].m();
-			lhco *p = new lhco(p_type, p_eta, p_phi, p_pt, p_m);
+			int p_type = ptype_lepton;
+			double	p_eta 	 = test_leptons[j]->eta(), 
+					p_phi 	 = test_leptons[j]->phi(), 
+					p_pt 	 = test_leptons[j]->pt(), 
+					p_m 	 = test_leptons[j]->mass(),
+					p_charge = test_leptons[j]->charge();
+			lhco *p = new lhco(p_type, p_eta, p_phi, p_pt, p_m, p_charge);
 			newev->push_back(p);
 		}
-		ttag_events.push_back(newev);
+
+		// extract top candidate		
+		vector< PseudoJet > fatjets = signal_fatjets[i];
+		PseudoJet top_candidate = identify_candidate_top(fatjets, test_leptons);
+		int p_type = ptype_jet;
+		double	p_eta 	= top_candidate.eta(), 
+				p_phi 	= top_candidate.phi(), 
+				p_pt 	= top_candidate.pt(), 
+				p_m 	= top_candidate.m();
+		lhco *p = new lhco(p_type, p_eta, p_phi, p_pt, p_m);
+		newev->push_back(p);
+
+		// merge leptons and tagged top into a single event pointer
+		signal_reconstructed.push_back(newev);
 	}
 	
-	// plot lepton masses
-	plot pmass("test_plot_partnermass", "../../files/tools/output_ttag/");
-	plot_partnermass *partnermass = new plot_partnermass();
-	pmass.add_sample(ttag_events, partnermass, "Tagged");
-	pmass.run();	
+	//===== plot top partner mass =====//
+	plot mass("plot_THmass" + lexical_cast<string>(partner_mass), plot_folder);
+	plot_THmass *THmass = new plot_THmass();
+	mass.add_sample(signal_reconstructed, THmass, "Signal");
+	mass.run();	
 	
+	//===== finalise program =====//
 	// clear remaining pointers
-	delete fourlepton;
-	delete fourleptonmass;
-	delete partnermass;
+	delete osl;
+	// delete met;
+	// delete ht;
+	delete THmass;
 	
 	// clear remaining event pointers
-	delete_events(ttag_events);
+	delete_events(signal_reconstructed);
 	
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	cout << "=====================================================================" << endl;
-	cout << "Tag program completed in " << duration << " seconds." << endl;
+	cout << "Program completed in " << duration << " seconds." << endl;
 	cout << "=====================================================================" << endl;
 	
 	// finished the program

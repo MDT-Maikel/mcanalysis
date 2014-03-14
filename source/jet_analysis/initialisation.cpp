@@ -453,7 +453,7 @@ namespace analysis
 
 	  			}
 	  			else
-	  				ev = events_lhco[lhcoEvent];
+	  				ev = events_lhco[lhcoEvent-1];
 
 	  			// Print details of first event
 				if ( firstEvent )
