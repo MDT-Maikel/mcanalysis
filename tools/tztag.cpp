@@ -42,7 +42,7 @@ vector< const particle* > identify_candidate_leptons(const vector< const particl
 	unsigned int leading_index = 0;
 	for (unsigned int i = 0; i < leptons.size(); ++i)
 	{
-		if ( leptons[i]->pt() > leading_l->pt() )
+		if (leptons[i]->pt() > leading_l->pt())
 		{
 			leading_l = leptons[i];
 			leading_index = i;
@@ -50,18 +50,27 @@ vector< const particle* > identify_candidate_leptons(const vector< const particl
 	}
 
 	// identify lepton closest in delta_r
-	const particle *closest_l = new particle;
+	const particle *closest_l;
 	double delta_r_min = 10000;
 	for (unsigned int i = 0; i < leptons.size(); ++i)
 	{
-		if ( i!=leading_index && delta_r(leptons[leading_index],leptons[i]) < delta_r_min )
+		if (i == leading_index)
+			continue;
+
+		if (leptons[i]->type() != leading_l->type())
+			continue;
+			
+		if (leptons[i]->charge() + leading_l->charge() != 0)
+			continue;		
+		
+		if (delta_r(leptons[leading_index], leptons[i]) < delta_r_min)
 		{
-			delta_r_min = delta_r(leptons[leading_index],leptons[i]);
+			delta_r_min = delta_r(leptons[leading_index], leptons[i]);
 			closest_l = leptons[i];
 		}
 	}
 
-	vector< const particle* > test_leptons;
+	vector<const particle*> test_leptons;
 	test_leptons.push_back(leading_l);
 	test_leptons.push_back(closest_l);
 
@@ -71,7 +80,7 @@ vector< const particle* > identify_candidate_leptons(const vector< const particl
 
 
 // identify top candidate in the same emisphere of lepton candidates
-PseudoJet identify_candidate_top(const vector< PseudoJet > & fatjets, vector< const particle* > & leptons)
+PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const particle*> & leptons)
 {
 	// identify top-tagged jets
 	vector< PseudoJet > topjets;
@@ -87,11 +96,13 @@ PseudoJet identify_candidate_top(const vector< PseudoJet > & fatjets, vector< co
 	for (unsigned int i = 0; i < topjets.size(); ++i)
 	{
 		double deltaEta1 = topjets[i].eta() - leptons[0]->eta();
-		double deltaPhi1 = topjets[i].phi() - leptons[0]->phi();
+		double deltaPhi1 = abs(topjets[i].phi() - leptons[0]->phi());
+		deltaPhi1 = min(deltaPhi1, 8 * atan(1) - deltaPhi1);
 		double deltaR1   = sqrt( pow(deltaEta1,2.0) + pow(deltaPhi1,2.0) );
 
 		double deltaEta2 = topjets[i].eta() - leptons[1]->eta();
-		double deltaPhi2 = topjets[i].phi() - leptons[1]->phi();
+		double deltaPhi2 = abs(topjets[i].phi() - leptons[1]->phi());
+		deltaPhi2 = min(deltaPhi2, 8 * atan(1) - deltaPhi2);
 		double deltaR2   = sqrt( pow(deltaEta2,2.0) + pow(deltaPhi2,2.0) );
 
 		double deltaRtest = (deltaR1+deltaR2)/2;
@@ -130,17 +141,20 @@ public:
 
 		// identify lepton candidates
 		vector< const particle* > test_leptons = identify_candidate_leptons(leptons);
-		const particle *leading_l = new particle;
-		const particle *closest_l = new particle;
+		const particle *leading_l;
+		const particle *closest_l;
 		leading_l = test_leptons[0];
 		closest_l = test_leptons[1];
 		
+		if (!closest_l)
+			return false;
+		
 		// check whether they are opposite sign leptons
-		double charge = 0.;
+		/*double charge = 0.;
 		charge += leading_l->charge();
 		charge += closest_l->charge();
 		if ( charge != 0. )
-			return false;
+			return false;*/
 
 		// check whether their invariant mass is close to the Z boson mass
 		double mz = 91.1876;

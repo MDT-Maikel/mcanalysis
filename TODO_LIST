@@ -24,4 +24,12 @@ to one of the contributors of this code.
 
 [Marco] Generate the two major backgrounds for both ttzz and tthh samples
 
-[Marco & Maikel] Clean up the jet analysis code a bit
+[All] Clean up the jet analysis code a bit
+
+[All] Mismatch between Pythia8 and Pythia6 leptons
+
+[All] Effect of parton level cuts in combination with hathor cross sections
+
+[All] Generate events on the cluster
+
+[All] Optimize procedures by removing double showering (jet_analysis & gen_hepmc)
