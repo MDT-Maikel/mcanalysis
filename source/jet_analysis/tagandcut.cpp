@@ -10,9 +10,7 @@
 namespace analysis 
 {
 
-	// ========================================== // 
-	//	       	 Tagging functions	 		   	  //
-	// ========================================== //
+	/* tag and cut functions */
 
 	fastjet::PseudoJet jet_analysis::JHTopTagging(const fastjet::PseudoJet & jet)
 	{
@@ -141,9 +139,7 @@ namespace analysis
 	}
 
 
-	// ========================================== // 
-	//	          Apply cut function 		   	  //
-	// ========================================== //
+	/* apply cut function */
 
 	double jet_analysis::reduce_sample(cuts cut_list)
 	{	
@@ -201,7 +197,7 @@ namespace analysis
 					if (fatjet.pt() > ptcut)
 						jetcount++;
 
-				} // for (it->second).size() -> calculates how many FatJets satisfy pT requirement within the event
+				} 
 
 				if (jetcount >= n)
 				{
@@ -209,9 +205,9 @@ namespace analysis
 					reduced_map.insert( std::make_pair(it->first,it->second) );
 				}
 
-			} // if ((it->second).size()!=0) -> look among events with reconstructed FatJets
+			} 
 
-		} // for (map_lhco_taggedJets)
+		} 
 
 		// calculate efficiency
 		eff = (double) passed/map_size;
@@ -253,7 +249,7 @@ namespace analysis
 						toptag++;
 					}
 
-				} // for (it->second).size() -> calculates how many tops are tagged within the event
+				} 
 
 				if (toptag >= n)
 				{
@@ -261,9 +257,9 @@ namespace analysis
 					reduced_map.insert( std::make_pair(it->first,it->second) );
 				}
 
-			} // if ((it->second).size()!=0) -> look among events with tagged jets
+			} 
 
-		} // for (map_lhco_taggedJets)
+		} 
 
 		// calculate efficiency
 		eff = (double) passed/map_size;
@@ -312,7 +308,7 @@ namespace analysis
 						higgstag++;
 					}
 
-				} // for (it->second).size() -> calculates how many Higgses are tagged within the event
+				} 
 
 				if (higgstag >= n)
 				{
@@ -320,9 +316,9 @@ namespace analysis
 					reduced_map.insert( std::make_pair(it->first,it->second) );
 				}
 
-			} // if ((it->second).size()!=0) -> look among events with tagged jets
+			} 
 
-		} // for (map_lhco_taggedJets)
+		} 
 
 		// calculate efficiency
 		eff = (double) passed/map_size;
@@ -371,7 +367,7 @@ namespace analysis
 						wtag++;
 					}
 
-				} // for (it->second).size() -> calculates how many W are tagged within the event
+				} 
 
 				if (wtag >= n)
 				{
@@ -379,9 +375,9 @@ namespace analysis
 					reduced_map.insert( std::make_pair(it->first,it->second) );
 				}
 
-			} // if ((it->second).size()!=0) -> look among events with tagged jets
+			} 
 
-		} // for (map_lhco_taggedJets)
+		}
 
 		// calculate efficiency
 		eff = (double) passed/map_size;
@@ -404,7 +400,7 @@ namespace analysis
 			map_size++;
 			int twtag = 0;
 
-			if ((it->second).size()!=0)
+			if ((it->second).size() != 0)
 			{
 				for (unsigned int i = 0; i < (it->second).size(); ++i)
 				{
@@ -414,7 +410,7 @@ namespace analysis
 					if ( tagged.user_info<TagInfo>().top_tag() || tagged.user_info<TagInfo>().w_tag() )
 						twtag++;
 
-				} // for (it->second).size() -> calculates how many W are tagged within the event
+				} 
 
 				if (twtag >= n)
 				{
@@ -422,9 +418,9 @@ namespace analysis
 					reduced_map.insert( std::make_pair(it->first,it->second) );
 				}
 
-			} // if ((it->second).size()!=0) -> look among events with tagged jets
+			} 
 
-		} // for (map_lhco_taggedJets)
+		} 
 
 		// calculate efficiency
 		eff = (double) passed/map_size;
@@ -433,6 +429,34 @@ namespace analysis
 		map_lhco_taggedJets = reduced_map;
 
 		return eff;
+	}
+	
+	/* extract lhco or fatjets from map */
+
+	std::vector< event * > jet_analysis::events()
+	{
+		// map_lhco_taggedJets iterator definition
+		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
+
+		// extract vector of event pointers "events"
+		std::vector< event * > events;
+		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
+			events.push_back(it->first);
+			
+		return events;
+	}
+	
+	std::vector< std::vector< fastjet::PseudoJet > > jet_analysis::fatjets()
+	{
+		// map_lhco_taggedJets iterator definition
+		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
+
+		// extract vector of event pointers "events"
+		std::vector< std::vector< fastjet::PseudoJet > > fatjets;
+		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
+			fatjets.push_back(it->second);
+			
+		return fatjets;
 	}
 
 

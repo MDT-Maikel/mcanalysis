@@ -3,18 +3,16 @@
 # generates lhco data from lhe data using pythia and delphes
 
 
-##### initialisation #####
-
-# print warnings
-if [[ $4 == "" ]]; then
-    echo [lhe input] [lhco output] [delphes card] [tmp folder] "\n"[optional: --fast=0/1] [optional: --merging=0/1] [optional: pythia settings file]
-    exit
+# print usage, if no argument is specified
+if [[ $4 == "" ]]
+then
+    echo -e "Usage: $0 <lhe input> <lhco output> <delphes card> <tmp folder> " "\n" " <optional: --fast> <optional: --merging> <optional: pythia settings file>"
+    exit 1
 fi
 
 # set the directories
 script_dir=`pwd`
-mcanalysis_dir=$script_dir/..
-build_dir=$mcanalysis_dir/build
+build_dir=$script_dir/..
 delphes_dir=$SOFTDIR/Delphes-3.0.12
 
 # set .lhe input
@@ -48,14 +46,6 @@ if [[ $7 != "" ]]; then
 	pythia=$7
 fi
 
-# compile gen_hepmc
-cd $build_dir
-make gen_hepmc -j4
-cd $mcanalysis_dir/scripts
-
-
-##### core processes #####
-
 # run gen_hepmc to create .hepmc file from input .lhe
 $build_dir/tools/gen_hepmc $opt_fast $opt_merging $pythia $lhe_input $tmp_dir/hepmc_output.hepmc
 echo "\n===== hepmc file created =====\n"
@@ -80,4 +70,5 @@ cp $tmp_dir/lhco_output.lhco.gz $lhco_output
 rm -rf $tmp_dir
 echo "===== end of script ====="
 
+#succeeded
 exit

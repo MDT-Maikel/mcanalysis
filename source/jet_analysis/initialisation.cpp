@@ -10,13 +10,12 @@
 namespace analysis 
 {
 
-	// ========================================== // 
-	//	         Initialisation function 	   	  //
-	// ========================================== //
+	/* initialisation function */
 
 	void jet_analysis::initialise(fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &))
 	{
-		//============= Basic setup =============//
+		/* basic setup */
+		
 		// LHE warning
 		if ( !importedLHE )
 		{
@@ -148,7 +147,7 @@ namespace analysis
 		}
 
 
-		//============= Event generation and matching =============//
+		/* Event generation and matching */
 		std::cout << "\n\n ================ Start Event analysis ================" << std::endl;
 
   		// Cross section and error variables
@@ -191,7 +190,7 @@ namespace analysis
 			}
 
 
-			//============= Event loop =============//
+			// event loop 
 			for (int iEvent = 0; iEvent < nEvent; ++iEvent)
 			{
 				// Generate event

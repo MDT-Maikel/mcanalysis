@@ -37,72 +37,16 @@
 namespace analysis
 {
 
+	/* jet analysis */
 	class jet_analysis
 	{
-	// ===== TODO: private? ===== //
-	public:
-		// Basic settings, input and flags
-		std::string lhe_input;
-		std::string lhco_input;
-		int nEvent;
-		bool firstEvent;
-		bool printTopTagDetails;
-		bool printBDRSDetails;
-		bool fast_showering;
-		bool importedLHE;
-		bool importedLHCO;
-
-		// Detector range and Isolation parameters
-		double MaxEta;
-		double jetMinPt;
-		double electronMaxEta;
-		double electronMinPt;
-		double muonMaxEta;
-		double muonMinPt;
-		double deltaR_IsolatedLepton; 
-		double sumEtInCone_IsolatedMuon;
-		double photonMaxEta;
-		double photonMinPt;
-		double deltaR_IsolatedPhoton; 
-		double sumEtInCone_IsolatedPhoton; 
-
-		// Merging flags and parameters
-		bool DoMerging;
-		bool Process;
-		bool NJetMax;
-		bool Scale;
-		bool PythiaDecay;
-		std::string MergingProcess;
-		int MergingNJetMax;
-		double MergingScale;
-
-		// Jet clustering parameters
-		fastjet::JetAlgorithm algorithm_fat;
-		double Rsize_fat;
-		fastjet::JetAlgorithm algorithm_skinny;
-		double Rsize_skinny;
-		
-		// JHTopTagger parameters
-		bool DoTopTagger;
-		double JHTopTagger_delta_p; 
-		double JHTopTagger_delta_r;
-
-		// BDRS parameters
-		bool DoBDRS;
-		double BDRS_w_min;
-		double BDRS_w_max;
-		double BDRS_higgs_min;
-		double BDRS_higgs_max;
-
-		// map (lhco, taggedJets)
-		std::map< event *, std::vector< fastjet::PseudoJet > > map_lhco_taggedJets;
 
 	public:
-		//=== Class con- & destructor ===//
+		/* class con- & destructor: jet_analysis.cpp */
 		jet_analysis();
 		~jet_analysis();
 
-		//=== Set parameters and input files ===//
+		/* set parameters and input files: settings.cpp */
 		void import_lhe(const std::string & name);
 		void set_fast_showering();
 		void import_lhco(const std::string & name);
@@ -117,7 +61,7 @@ namespace analysis
 		void undo_TopTagging();
 		void undo_BDRSTagging();
 
-		//=== Merging settings ===//
+		/* merging settings: settings.cpp */
 		void set_merging_process(const std::string & process);
 		void set_merging_njmax(const int & njet);
 		void set_merging_njadditional(const int & njet);
@@ -125,17 +69,13 @@ namespace analysis
 		bool MergingSettings();
 		void AllowPythiaDecay();
 
-		//=== Extract lhco or fatjets from map ===//
-		std::vector< event* > events();
-		std::vector< std::vector< fastjet::PseudoJet > > fatjets();
-
-		//=== Isolation functions ===//
+		/* isolation functions: isolation.cpp */
 		bool isolatedElectron(const int & j, const Pythia8::Event & particles);
 		bool isolatedMuon(const int & j, const Pythia8::Event & particles);
 		bool isolatedPhoton(const int & j, const Pythia8::Event & particles);
 		bool JetElectronOverlapping(const fastjet::PseudoJet & jet, const std::vector< fastjet::PseudoJet > & leptons);
 
-		//=== Tag and cut functions ===//
+		/* tag and cut functions: tagandcut.cpp */
 		fastjet::PseudoJet JHTopTagging(const fastjet::PseudoJet & jet);
 		fastjet::PseudoJet HEPTopTagging(const fastjet::PseudoJet & jet);
 		fastjet::PseudoJet BDRSTagging(const fastjet::PseudoJet & jet);
@@ -145,23 +85,80 @@ namespace analysis
 		double require_higgs_tagged(const int & n);
 		double require_w_tagged(const int & n);
 		double require_t_or_w_tagged(const int & n);
+		
+		/* extract lhco or fatjets from map: tagandcut.cpp */
+		std::vector< event* > events();
+		std::vector< std::vector< fastjet::PseudoJet > > fatjets();
 
-		//=== Initialisation function ===//
+		/* initialisation function: initialisation.cpp */
 		void initialise(fastjet::PseudoJet (jet_analysis::*TopTagger)(const fastjet::PseudoJet &) = &jet_analysis::JHTopTagging);
+	
+	public: // TODO: private
+		
+		/* basic settings, input and flags */
+		std::string lhe_input;
+		std::string lhco_input;
+		int nEvent;
+		bool firstEvent;
+		bool printTopTagDetails;
+		bool printBDRSDetails;
+		bool fast_showering;
+		bool importedLHE;
+		bool importedLHCO;
+
+		/* detector range and isolation parameters */
+		double MaxEta;
+		double jetMinPt;
+		double electronMaxEta;
+		double electronMinPt;
+		double muonMaxEta;
+		double muonMinPt;
+		double deltaR_IsolatedLepton; 
+		double sumEtInCone_IsolatedMuon;
+		double photonMaxEta;
+		double photonMinPt;
+		double deltaR_IsolatedPhoton; 
+		double sumEtInCone_IsolatedPhoton; 
+
+		/* merging flags and parameters */
+		bool DoMerging;
+		bool Process;
+		bool NJetMax;
+		bool Scale;
+		bool PythiaDecay;
+		std::string MergingProcess;
+		int MergingNJetMax;
+		double MergingScale;
+
+		/* jet clustering parameters */
+		fastjet::JetAlgorithm algorithm_fat;
+		double Rsize_fat;
+		fastjet::JetAlgorithm algorithm_skinny;
+		double Rsize_skinny;
+		
+		/* JHTopTagger parameters */
+		bool DoTopTagger;
+		double JHTopTagger_delta_p; 
+		double JHTopTagger_delta_r;
+
+		/* BDRS parameters */
+		bool DoBDRS;
+		double BDRS_w_min;
+		double BDRS_w_max;
+		double BDRS_higgs_min;
+		double BDRS_higgs_max;
+
+		/* map (lhco, taggedJets) */
+		std::map< event *, std::vector< fastjet::PseudoJet > > map_lhco_taggedJets;
 
 	};
 
-
-	//=== Tagging information ===//
+	/* tagging information */
 	class TagInfo : public fastjet::PseudoJet::UserInfoBase
 	{
-	protected:
-		bool _top_tag;	// top tagging information
-		bool _w_tag;	// w tagging information
-		bool _h_tag;	// higgs tagging information
 
 	public:
-		// default con- & destructor
+		/* default con- & destructor */
 		TagInfo(
 			const bool & top_tag = false, 
 			const bool & w_tag = false, 
@@ -169,33 +166,40 @@ namespace analysis
 			);
 		~TagInfo();
 
-		// access to tagging information
+		/* access to tagging information */
 		bool top_tag() const;
 		bool w_tag() const;
 		bool h_tag() const;
+		
+			
+	protected:
+		bool _top_tag; // top tagging information
+		bool _w_tag;   // w tagging information
+		bool _h_tag;   // higgs tagging information
 
 	};
 
-	//=== b-flavour information ===//
+	/* b-flavour information */
 	class FlavourInfo : public fastjet::PseudoJet::UserInfoBase
 	{
-	protected:
-		bool _b;	// b-quark/jet
 
 	public:
-		// default con- & destructor
+		/* default con- & destructor */
 		FlavourInfo( const bool & b = false );
 		~FlavourInfo();
 
-		// access to flavour information
+		/* access to flavour information */
 		bool b_type() const;
+		
+	protected:
+		bool _b; // b-quark jet
 
 	};
 
-	//=== b-hadron pdg identification ===//
+	/* b-hadron pdg identification */
 	bool isBHadron(int pdg);
 
-	//=== Jet << operator ===//
+	/* jet << operator */
 	ostream & operator<<(ostream &, const fastjet::PseudoJet &);
 
 /* NAMESPACE */

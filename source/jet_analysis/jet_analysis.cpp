@@ -10,13 +10,11 @@
 namespace analysis 
 {
 
-	// ========================================== // 
-	//	       	 Class con- & destructor 		  //
-	// ========================================== //
+	/* class con- & destructor */
 
 	jet_analysis::jet_analysis() 
 	{
-		// Basic settings and flags
+		// basic settings and flags
 		nEvent = 1000;
 		firstEvent = true;
 		printTopTagDetails = true;
@@ -25,7 +23,7 @@ namespace analysis
 		importedLHE = false;
 		importedLHCO = false;
 
-		// Detector range and Isolation parameters
+		// detector range and Isolation parameters
 		MaxEta = 4.9;
 		jetMinPt = 20.;
 		electronMaxEta = 2.47;
@@ -39,14 +37,14 @@ namespace analysis
 		deltaR_IsolatedPhoton = 0.2; 
 		sumEtInCone_IsolatedPhoton = 2.6;
 
-		// Merging procedure flags
+		// merging procedure flags
 		DoMerging = false;
 		Process = false;
 		NJetMax = false;
 		Scale = false;
 		PythiaDecay = false;
 
-		// Jet clustering parameters
+		// jet clustering parameters
 		algorithm_fat = fastjet::cambridge_algorithm;
 		Rsize_fat = 1.4;
 		algorithm_skinny = fastjet::antikt_algorithm;
@@ -57,7 +55,7 @@ namespace analysis
 		JHTopTagger_delta_p = 0.05; 
 		JHTopTagger_delta_r = 0.19;
 
-		//BDRS parameters
+		// BDRS parameters
 		DoBDRS = true;
 		BDRS_w_min = 65.;
 		BDRS_w_max = 95.;
@@ -69,10 +67,8 @@ namespace analysis
 	{
 	}
 
-
-	// ========================================== // 
-	//	          Tagging information 		   	  //
-	// ========================================== //
+	/* tagging information */
+	
 	// default con- & destructor
 	TagInfo::TagInfo(const bool & top_tag, const bool & w_tag, const bool & h_tag)
 	{
@@ -87,18 +83,22 @@ namespace analysis
 
 	// access to tagging information
 	bool TagInfo::top_tag() const
-		{ return _top_tag; }
+	{
+		return _top_tag; 
+	}
 
 	bool TagInfo::w_tag() const
-		{ return _w_tag; }
+	{
+		return _w_tag;
+	}
 
 	bool TagInfo::h_tag() const
-		{ return _h_tag; }
-		
-
-	// ========================================== // 
-	//	         b-flavour information 		   	  //
-	// ========================================== //
+	{ 
+		return _h_tag; 
+	}
+	
+	/* b-flavour information */
+	
 	// default con- & destructor
 	FlavourInfo::FlavourInfo(const bool & b)
 	{
@@ -111,29 +111,26 @@ namespace analysis
 
 	// access to flavour information
 	bool FlavourInfo::b_type() const
-		{ return _b; }
+	{
+		return _b;
+	}
 
-
-	// ========================================== // 
-	//	      b-hadron pdg identification 	   	  //
-	// ========================================== //
+	// b-hadron pdg identification
 	bool isBHadron(int pdg)
 	{
-		while (pdg!=0)
+		while (pdg != 0)
 		{
-			int tmp = pdg%10;
+			int tmp = pdg % 10;
 			if (tmp == 5)
 				return true;
 			else
-				pdg = int((pdg-tmp)/10);
+				pdg = int((pdg - tmp) / 10);
 		}
 
 		return false;
 	}
 
-	// ========================================== // 
-	//	            Jet << operator 		   	  //
-	// ========================================== //
+	// jet << operator
 	ostream & operator<<(ostream & ostr, const fastjet::PseudoJet & jet) 
 	{
 	  ostr << "pt, y, phi =" << setprecision(2)

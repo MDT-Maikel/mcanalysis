@@ -1,8 +1,10 @@
 #################
 ### TODO LIST ###
 #################
-A list of things which need to be fixed or implemented possibly assigned 
+A list of things which need to be fixed or implemented, possibly assigned 
 to one of the contributors of this code.
+
+[Maikel] Complete code clean up and complete code style guidelines
 
 [Maikel] Check for memory leaks in
 			* test_histogram
@@ -15,10 +17,6 @@ to one of the contributors of this code.
 			* thtag
 			
 [Maikel] Fix LHE writing formatting
-
-[Maikel] Create plotmc which produces a set of standard plots for a monte carlo file
-
-[Maikel] Create cutmc which takes a config file and implements those cuts on a monte carlo file
 
 [Marco] Implement thtag: for the tthh final state
 
@@ -33,3 +31,18 @@ to one of the contributors of this code.
 [All] Generate events on the cluster
 
 [All] Optimize procedures by removing double showering (jet_analysis & gen_hepmc)
+      cut away events based on lhco before showering in initialise()
+
+[Maikel] Check and clean up jet_analysis and gen_hepmc
+
+
+
+####################
+### FEATURE LIST ###
+####################
+A list of features which may be implemented, possibly assigned 
+to one of the contributors of this code.
+
+[Maikel] Create plotmc which produces a set of standard plots for a monte carlo file
+
+[Maikel] Create cutmc which takes a config file and implements those cuts on a monte carlo file

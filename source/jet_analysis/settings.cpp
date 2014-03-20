@@ -10,9 +10,7 @@
 namespace analysis 
 {
 
-	// ========================================== // 
-	//	      Set parameters and input files  	  //
-	// ========================================== //
+	/* set parameters and input files */
 
 	void jet_analysis::import_lhe(const std::string & name)
 	{
@@ -36,7 +34,7 @@ namespace analysis
 		nEvent = events;
 	}
 
-	// ===== TODO: update using p_type ===== //
+	// TODO: update using p_type
 	void jet_analysis::set_Isolation(const std::string & type, const double & eta, const double & pt, const double & Rcone, const double & EtCone)
 	{
 		if (type == "electron")
@@ -114,10 +112,7 @@ namespace analysis
 		DoBDRS = false;
 	}
 
-
-	// ========================================== // 
-	//	            Merging settings	 	   	  //
-	// ========================================== //
+	/* merging settings */
 
 	void jet_analysis::set_merging_process(const std::string & process)
 	{
@@ -152,37 +147,6 @@ namespace analysis
 	{
 		PythiaDecay = true;
 	}
-
-
-	// ========================================== // 
-	//	  	Extract lhco or fatjets from map  	  //
-	// ========================================== //
-	std::vector< event * > jet_analysis::events()
-	{
-		// map_lhco_taggedJets iterator definition
-		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
-
-		// extract vector of event pointers "events"
-		std::vector< event * > events;
-		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
-			events.push_back(it->first);
-			
-		return events;
-	}
 	
-	std::vector< std::vector< fastjet::PseudoJet > > jet_analysis::fatjets()
-	{
-		// map_lhco_taggedJets iterator definition
-		std::map< event *, std::vector< fastjet::PseudoJet > >::iterator it;
-
-		// extract vector of event pointers "events"
-		std::vector< std::vector< fastjet::PseudoJet > > fatjets;
-		for (it=map_lhco_taggedJets.begin(); it!=map_lhco_taggedJets.end(); ++it)
-			fatjets.push_back(it->second);
-			
-		return fatjets;
-	}
-
-
 /* NAMESPACE */
 }

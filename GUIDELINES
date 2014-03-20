@@ -1,0 +1,113 @@
+##############################################
+### Coding style guidelines for MCAnalysis ###
+##############################################
+
+[XX] The mcanalysis library source code is divided in header (.h) and implementation (.cpp)
+     files. These methods of this library are inside the analysis namespace. Other namespaces
+     are not to be used inside these files. Additionally all header files must have inclusion
+     guards.
+     
+[XX] Programs based on the library are typically written in a single .cpp file and may use
+     namespaces to simplify library access.
+
+[XX] Inclusion of headers is done in the .h source files if possible and then included in the
+     .cpp implementation files. The headers are grouped according to category and sorted 
+     alphabetically. The grouping is ordered like:
+		<std libraries>
+		<boost libraries>
+		<external libraries>
+		<mcanalysis libraries>
+     
+[XX] Comments are written in lower case text. // can be used for simple comments and /* */ can 
+     be used for denoting sections or longer comments. Each file starts with a larger comment
+     denoting its title and contents.
+          
+
+
+
+
+[XX] Operators come with spaces
+	2 + 3; a /= b; cout << "A";
+	
+[XX] conditional statements have a space behind them but the brackets don't
+[XX] curly brackets to gather statements are on new lines
+
+
+
+
+[XX] Example code showing correct style for header file (example.h):
+
+/* Example class
+ *
+ * Short description goes here.
+*/
+
+#ifndef INC_CUTS
+#define INC_CUTS
+
+#include <iostream>
+#include <vector>
+
+#include "../event/event.h"
+
+
+/* NAMESPACE */
+namespace analysis
+{
+
+	class example
+	{
+		
+	public:
+		/* constructor & destructor */
+		example() = default;
+		~example();
+		
+		/* member access */
+		void setmember(int to);
+		
+	private:
+		int member;
+		std::vector<*event> events;
+	
+	};
+
+/* NAMESPACE */
+}
+
+#endif
+
+	
+[XX] Example code showing correct style for source file (example.cpp):
+
+/* Example class
+ *
+ * Short description goes here.
+*/
+
+#include "example.h" 
+
+
+/* NAMESPACE */
+namespace analysis
+{
+	
+	/* constructor & destructor */
+	
+	example::~example()
+	{
+		// delete all event pointers in our vector
+		for (unsigned int i = 0; i < events.size(); ++i)
+			delete events[i];
+		events.clear();	
+	}
+
+	/* member access */
+
+	void example::setmember(int to)
+	{
+		member = to;	
+	}
+
+/* NAMESPACE */
+}

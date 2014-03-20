@@ -10,9 +10,7 @@
 namespace analysis 
 {
 
-	// ========================================== // 
-	//	            Isolation functions 	   	  //
-	// ========================================== //
+	/* isolation functions */
 
 	bool jet_analysis::isolatedElectron(const int & j, const Pythia8::Event & particles) 
 	{
