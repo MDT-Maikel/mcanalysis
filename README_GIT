@@ -1,3 +1,8 @@
+########################
+### Short git readme ###
+########################
+A short list of commands which are useful for basic repository management.
+
 command: git clone https://github.com/MDT-Maikel/mcanalysis.git <folder>
 purpose: clones the repository into the newly created directory <folder>
 
@@ -25,4 +30,3 @@ purpose: add commits to the server repository
 command: git stash
 command: git stash pop
 purpose: cleaning up the working directory before doing a pull
-

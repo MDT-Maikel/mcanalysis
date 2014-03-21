@@ -122,7 +122,7 @@ public:
 
 	double operator() (const event *ev)
 	{
-		return mass({ev->get(ptype_lepton, 1), ev->get(ptype_lepton, 1), ev->get(ptype_jet, 1)});
+		return mass({ev->get(ptype_lepton, 1), ev->get(ptype_lepton, 2), ev->get(ptype_jet, 1)});
 	}
 };
 
@@ -160,7 +160,7 @@ int main(int argc, const char* argv[])
 
 	// jet_analysis settings
 	jet_analysis thth_tztz;
-	thth_tztz.set_nEvents(2000);
+	thth_tztz.set_nEvents(5000);
 	thth_tztz.undo_BDRSTagging();
 	thth_tztz.set_Rsize_fat(1.5);
 
@@ -182,9 +182,9 @@ int main(int argc, const char* argv[])
 	cout << "\nSignal Efficiency: " << setprecision(4) << 100 * eff_basic_signal * eff_fatjpt_signal * eff_ttag_signal << " %" << endl;
 	
 	// identify top partner constituents
-	vector< event* > signal_lhco = thth_tztz.events();
-	vector< vector< PseudoJet > > signal_fatjets = thth_tztz.fatjets();
-	vector< event* > signal_reconstructed;
+	vector<event*> signal_lhco = thth_tztz.events();
+	vector<vector<PseudoJet> > signal_fatjets = thth_tztz.fatjets();
+	vector<event*> signal_reconstructed;
 	for (unsigned int i = 0; i < signal_lhco.size(); ++i) // loop over events
 	{
 		event *newev = new event();
@@ -194,7 +194,7 @@ int main(int argc, const char* argv[])
 		vector< const particle* > leptons;
 		for (unsigned int j = 0; j < ev->size(); ++j)
 		{
-			if ( (*ev)[j]->type() & ptype_lepton && (*ev)[j]->pt() > 10. && abs((*ev)[j]->eta()) < 2.5 )
+			if ((*ev)[j]->type() & ptype_lepton && (*ev)[j]->pt() > 10. && abs((*ev)[j]->eta()) < 2.5)
 				leptons.push_back((*ev)[j]);
 		}		
 		vector< const particle* > test_leptons = identify_candidate_leptons(leptons);
@@ -357,7 +357,7 @@ vector<const particle*> identify_candidate_leptons(const vector<const particle*>
 	test_leptons.push_back(leading_l);
 	test_leptons.push_back(closest_l);
 	return test_leptons;
-};
+}
 
 // identify top candidate in the same emisphere of lepton candidates
 PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const particle*> & leptons)
@@ -396,5 +396,4 @@ PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const
 
 	// return top candidate
 	return top_candidate;
-};
-
+}

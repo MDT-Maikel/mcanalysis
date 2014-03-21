@@ -34,7 +34,7 @@
 /files
 
 #Build folder 
-/build
+/build*
 
 #Private folders
 /private
