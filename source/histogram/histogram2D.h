@@ -1,28 +1,29 @@
 /* 2D Histogram class
  *
- * 
+ * Plots 2D histogram with options.
 */
 
 #ifndef INC_HISTOGRAM2D
 #define INC_HISTOGRAM2D
 
-#include <iostream> 
-#include <vector> 
-#include <string>
-#include <fstream>
 #include <cmath>
-#include <map>
+#include <iostream> 
+#include <fstream>
 #include <list>
+#include <map>
+#include <string>
+#include <vector> 
 
 #include <TCanvas.h> 
-#include <TStyle.h>
-#include <TLegend.h>
-#include <TH2F.h>
 #include <TColor.h>
+#include <TH2F.h>
+#include <TLegend.h>
+#include <TStyle.h>
 
 
- namespace analysis 
- {
+/* NAMESPACE */
+namespace analysis 
+{
 
 	class histogram2D
 	{

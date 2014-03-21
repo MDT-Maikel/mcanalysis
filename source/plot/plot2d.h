@@ -12,8 +12,8 @@
 #include "boost/lexical_cast.hpp"
 
 #include "../event/event.h"
-#include "../plot/plot.h"
 #include "../histogram/histogram2D.h"
+#include "../plot/plot.h"
 
 
 /* NAMESPACE */

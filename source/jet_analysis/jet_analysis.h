@@ -6,8 +6,8 @@
 #ifndef INC_JET_ANALYSIS
 #define INC_JET_ANALYSIS
 
-#include <cstdlib>
 #include <cmath>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -26,11 +26,11 @@
 #include "fastjet/tools/MassDropTagger.hh"
 #include "fastjet/tools/Filter.hh"
 
+#include "HEPTopTagger.h"
+#include "../cuts/cuts.h"
 #include "../particle/lhco.h"
 #include "../event/event.h"
 #include "../utility/utility.h"
-#include "../cuts/cuts.h"
-#include "HEPTopTagger.h"
 
 
 /* NAMESPACE */

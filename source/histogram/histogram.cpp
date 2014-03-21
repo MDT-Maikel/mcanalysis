@@ -1,11 +1,12 @@
 /* Histogram class
  *
- * 
+ * Plots a simple 1D histogram with options.
 */
 
 #include "histogram.h"
 
 
+/* NAMESPACE */
 namespace analysis 
 {
 

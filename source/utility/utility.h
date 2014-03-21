@@ -6,8 +6,8 @@
 #ifndef INC_UTILITY
 #define INC_UTILITY
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <regex>
 #include <sstream>
 #include <string>

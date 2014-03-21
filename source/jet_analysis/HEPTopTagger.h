@@ -10,10 +10,10 @@
 #include <iostream>
 #include <vector>
 
+#include "fastjet/ClusterSequence.hh"
 #include "fastjet/PseudoJet.hh"
-#include "fastjet/ClusterSequence.hh" // not stricly needed?
-#include "fastjet/Selector.hh" // not stricly needed?
-#include "fastjet/tools/Filter.hh" // not stricly needed?
+#include "fastjet/Selector.hh"
+#include "fastjet/tools/Filter.hh"
 
 
 /* NAMESPACE */

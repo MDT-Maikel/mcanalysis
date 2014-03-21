@@ -1,6 +1,6 @@
 /* Histogram class
  *
- * 
+ * Plots a simple 1D histogram with options.
 */
 
 #ifndef INC_HISTOGRAM
@@ -18,13 +18,14 @@
 
 #include <TCanvas.h>
 #include <TColor.h>
-#include <THStack.h>
 #include <TH1.h> 
+#include <THStack.h>
 #include <TLegend.h>
 #include <TROOT.h>
 #include <TStyle.h> 
 
 
+/* NAMESPACE */
 namespace analysis 
 {
 

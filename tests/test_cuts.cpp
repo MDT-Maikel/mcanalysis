@@ -4,17 +4,17 @@
  * 
 */
 
-#include <iostream>
 #include <cmath>
 #include <ctime>
+#include <iostream>
 #include <random>
 #include <vector>
 
 #include <boost/filesystem.hpp>
 
+#include "cuts/cuts.h"
 #include "event/event.h"
 #include "utility/utility.h"
-#include "cuts/cuts.h"
 
 using namespace std;
 using namespace boost::filesystem;

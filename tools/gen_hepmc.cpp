@@ -5,8 +5,8 @@
  * 
 */
 
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 #include <string>
 
 #include <getopt.h>
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
 
 		pythia.settings.flag("Merging:doXSectionEstimate", true);
 
-		while (njetcounterLO >= 0) 
+		for (; njetcounterLO >= 0; --njetcounterLO) 
 		{
 			// set appropriate LHE file name
 			string lhe_file = input_file;
@@ -149,13 +149,6 @@ int main(int argc, char* argv[])
 			// store cross section
 			xsecLO.push_back(pythia.info.sigmaGen());
 			nAcceptLO.push_back(pythia.info.nAccepted());
-
-			// restart with ME of a reduced the number of jets
-			if (njetcounterLO > 0)
-				njetcounterLO--;
-			else
-				break;
-
 		} 
 
 		// reset values
@@ -171,7 +164,7 @@ int main(int argc, char* argv[])
 	int sizeLO = static_cast<int>(xsecLO.size()), iNow;
 
 	// loop over different LHE files with additional external jets
-	while (njetcounterLO >= 0)
+	for (; njetcounterLO >= 0; --njetcounterLO)
 	{
 		// set appropriate LHE file name
 		string lhe_file = input_file;
@@ -227,7 +220,7 @@ int main(int argc, char* argv[])
 				continue;
 
 			// increase the event counter and log progress
-			if ((iEvent + 1)%100 == 0)
+			if ((iEvent + 1) % 100 == 0)
 				cout << "processed " << iEvent + 1 << " events" << "\r" << flush;
 
 			// construct new empty HepMC event and fill it
@@ -259,15 +252,7 @@ int main(int argc, char* argv[])
 			// write the HepMC event to file and delete
 			output_hepmc << hepmcevt;
 			delete hepmcevt;
-
 		}
-
-		// restart with ME of a reduced the number of jets
-		if (njetcounterLO > 0)
-			njetcounterLO--;
-		else
-			break;
-
 	}
 
 	if (merging)

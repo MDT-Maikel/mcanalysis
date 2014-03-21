@@ -15,19 +15,19 @@
 #include <sstream>
 #include <vector>
 
-#include <TH1D.h>
-#include <TMath.h>
-#include <Math/SpecFuncMathCore.h>
-#include <Math/ProbFuncMathCore.h>
-#include <TRandom3.h>
 #include <Math/GSLRndmEngines.h>
+#include <Math/ProbFuncMathCore.h>
+#include <Math/QuantFuncMathCore.h>
 #include <Math/Random.h>
-#include <TGraphAsymmErrors.h>
+#include <Math/SpecFuncMathCore.h>
 #include <TCanvas.h>
-#include <TList.h>
+#include <TGraphAsymmErrors.h>
+#include <TH1D.h>
 #include <TLatex.h>
 #include <TLine.h>
-#include <Math/QuantFuncMathCore.h>
+#include <TList.h>
+#include <TMath.h>
+#include <TRandom3.h>
 
 
 /* NAMESPACE */

@@ -1,11 +1,12 @@
 /* 2D Histogram class
  *
- * 
+ * Plots 2D histogram with options.
 */
 
 #include "histogram2D.h"
 
 
+/* NAMESPACE */
 namespace analysis 
 {
 

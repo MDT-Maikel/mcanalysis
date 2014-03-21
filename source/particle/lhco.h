@@ -8,8 +8,8 @@
 
 #include <cmath>
 #include <fstream>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 #include "../../deps/gzstream/gzstream.h"
 

@@ -10,10 +10,10 @@
 #include <cmath>
 #include <vector>
 
+#include "mt2_bisect.h"
 #include "../particle/particle.h"
 #include "../particle/lhco.h"
 #include "../particle/lhe.h"
-#include "mt2_bisect.h"
 
 
 /* NAMESPACE */

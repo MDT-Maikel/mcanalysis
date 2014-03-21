@@ -29,15 +29,14 @@
 
 #include <TH1.h> 
 
-#include "utility/utility.h"
-#include "event/event.h"
-#include "cuts/cuts.h"
-#include "plot/plot.h"
-#include "plot/plot2d.h"
 #include "bumphunter/bumphunter.h"
+#include "cuts/cuts.h"
+#include "event/event.h"
 #include "gres/gres_cuts.h"
 #include "gres/gres_hunter.h"
-
+#include "plot/plot.h"
+#include "plot/plot2d.h"
+#include "utility/utility.h"
 
 using namespace std;
 using namespace analysis;
@@ -48,15 +47,10 @@ using namespace boost::math;
 
 // function prototypes
 bool load_settings(vector<string> &input_files_bkg, vector<unsigned int> &input_count_bkg, vector<string> &output_files_bkg, vector<string> &names_bkg, vector<double> &sigmas_bkg, string &input_file_sig, string &output_file_sig, string &name_sig, double &sigma_sig, string &output_folder, string &output_txt, int &nr_jets, double &nr_jets_ptcut, double &nr_jets_etacut, vector<int> &topology, vector<double> &topology_cuts, double &luminosity);
-
 void load_events(vector< vector<event*> > &events_bkgs, vector<event*> &events_sig, const vector<string> &input_files_bkg, const vector<unsigned int> &input_count_bkg, const string &input_file_sig);
-
 void cut_basic(vector< vector<event*> > &events_bkgs, const vector<double> &sigmas_bkg, vector<double> &efficiencies_bkg, vector<event*> &events_sig, const double &sigma_sig, double &efficiency_sig, ofstream &ofs_txt, const double &luminosity, const int &nr_jets, const double &nr_jets_ptcut, const double &nr_jets_etacut, const vector<int> &topology, const vector<double> &topology_cuts);
-
 void plot_invmass(const vector< vector<event*> > &events_bkgs, const vector<string> &names_bkg, const vector<double> &sigmas_bkg, const vector<double> &efficiencies_bkg, const vector<event*> &events_sig, const string &name_sig, const double &sigma_sig, const double &efficiency_sig, const string &output_folder, const double &luminosity, const vector<int> &topology, const vector<double> &topology_cuts);
-
 void plot_more(const vector< vector<event*> > &events_bkgs, const vector<string> &names_bkg, const vector<double> &sigmas_bkg, const vector<double> &efficiencies_bkg, const vector<event*> &events_sig, const string &name_sig, const double &sigma_sig, const double &efficiency_sig, const string &output_folder, const double &luminosity, const vector<int> &topology, const vector<double> &topology_cuts);
-
 void bump_hunter(const vector< vector<event*> > &events_bkgs, const vector<string> &names_bkg, const vector<double> &sigmas_bkg, const vector<double> &efficiencies_bkg, const vector<event*> &events_sig, const string &name_sig, const double &sigma_sig, const double &efficiency_sig, const string &output_folder, const double &luminosity, const vector<int> &topology, const vector<double> &topology_cuts);
 
 // main program
@@ -113,7 +107,6 @@ int main(int argc, const char* argv[])
 	// close the write-to text stream
 	ofs_txt.close();
 }
-
 
 // loads the settings for the gres_basic from the gres_basic_card.txt
 bool load_settings(vector<string> &input_files_bkg, vector<unsigned int> &input_count_bkg, vector<string> &output_files_bkg, vector<string> &names_bkg, vector<double> &sigmas_bkg, string &input_file_sig, string &output_file_sig, string &name_sig, double &sigma_sig, string &output_folder, string &output_txt, int &nr_jets, double &nr_jets_ptcut, double &nr_jets_etacut, vector<int> &topology, vector<double> &topology_cuts, double &luminosity)
@@ -479,9 +472,7 @@ void bump_hunter(const vector< vector<event*> > &events_bkgs, const vector<strin
 	hunt.run();
 	
 	cout << "################################################################################" << endl;
-	
-	
-	
+		
 	/*
 	vector< vector<double> > mass_bkg;
 	vector<double> mass_sig;

@@ -35,6 +35,8 @@ to one of the contributors of this code.
 
 [Maikel] Check and clean up jet_analysis and gen_hepmc
 
+[Maikel] Make utility functions to read and write hepmc data
+
 
 
 ####################
