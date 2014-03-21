@@ -23,14 +23,14 @@
      denoting its title and contents.
           
 
+[XX] Variable and class names are lower case, where words or identifiers can be separated by underscores. 
 
 
-
-[XX] Operators come with spaces
-	2 + 3; a /= b; cout << "A";
+[XX] Operators come with spaces: 2 + 3; a /= b; cout << "A";
 	
-[XX] conditional statements have a space behind them but the brackets don't
-[XX] curly brackets to gather statements are on new lines
+[XX] conditional statements have a space behind them but the brackets don't.
+
+[XX] curly brackets to gather statements are on new lines.
 
 
 

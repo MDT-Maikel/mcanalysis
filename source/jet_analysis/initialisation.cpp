@@ -17,7 +17,7 @@ namespace analysis
 		/* basic setup */
 		
 		// LHE warning
-		if ( !importedLHE )
+		if (!importedLHE)
 		{
 			std::cout << "Error: no input LHE file specified." << std::endl;
 			exit (EXIT_FAILURE);
@@ -38,7 +38,7 @@ namespace analysis
 		// Initialise lhco input files
 		std::vector< event* > events_lhco;
 		int lhcoEvent;
-		if ( importedLHCO )
+		if (importedLHCO)
 			read_lhco(events_lhco, lhco_input);
 
 		// Select FastJet algorithm and parameters
@@ -58,10 +58,10 @@ namespace analysis
 
 		//============= Initialisation with possibly matching procedure =============//
 		// Merging setup
-		if ( DoMerging )
+		if (DoMerging)
 		{
 			// Check merging settings
-			if ( !MergingSettings() )
+			if (!MergingSettings())
 			{
 				std::cout << "Error while initialising Pythia (Merging settings)" << std::endl;
 				exit (EXIT_FAILURE);
@@ -82,7 +82,7 @@ namespace analysis
 		std::vector< double > nAcceptLO;
 		bool fsr, isr, mpi, had;
 
-		if ( DoMerging )
+		if (DoMerging)
 		{
 			std::cout << "\n\n ================ Start cross section estimation ================" << std::endl << std::endl;
 
@@ -103,15 +103,14 @@ namespace analysis
 			{
 				// Set appropriate LHE file name
 				std::string input_file;
-				if ( njetcounterLO == 0 )
-					input_file = lhe_input + ".lhe";
-				else
-					input_file = lhe_input + "_j" + boost::lexical_cast<std::string>(njetcounterLO) + ".lhe";
+				input_file = lhe_input;
+				if (njetcounterLO > 0)
+					input_file.insert(input_file.size() - 4, "_j" + boost::lexical_cast<std::string>(njetcounterLO)); // check me
 
 				// LHE initialisation
 				pythia.settings.mode("Merging:nRequested", njetcounterLO);
 				pythia.settings.word("Beams:LHEF", input_file);
-				if ( !pythia.init(input_file) )
+				if (!pythia.init(input_file))
 				{
 					std::cout << "Error while initialising Pythia (pythia.init)" << std::endl;
 					exit (EXIT_FAILURE);
@@ -160,10 +159,9 @@ namespace analysis
 		{
 			// Set appropriate LHE file name
 			std::string input_file;
-			if ( njetcounterLO == 0 )
-				input_file = lhe_input + ".lhe";
-			else
-				input_file = lhe_input + "_j" + boost::lexical_cast<std::string>(njetcounterLO) + ".lhe";
+			input_file = lhe_input;
+			if (njetcounterLO > 0)
+				input_file.insert(input_file.size() - 4, "_j" + boost::lexical_cast<std::string>(njetcounterLO)); // check me
 
 			// Additional merging settings: LHE input and total jet to be merged
 			if ( DoMerging )

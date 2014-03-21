@@ -59,6 +59,9 @@ if(HEPMC_FOUND AND PYTHIA8_HEPMC_FOUND)
 		${PYTHIA8_LIBRARIES}
 		${Boost_LIBRARIES}
 	)
+	## Copy the gen_hepmc.cmnd file as well
+	add_custom_target(copy_gen_hepmc ALL COMMENT "Copying gen_hepmc.cmnd")
+	add_custom_command(TARGET copy_gen_hepmc COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/tools/gen_hepmc.cmnd ${PROJECT_BINARY_DIR}/tools/gen_hepmc.cmnd)
 endif()
 
 ## Executable: tztag
@@ -73,3 +76,6 @@ target_link_libraries(
 	${PYTHIA8_LIBRARIES}
 	${FASTJET_LIBRARIES}
 )
+## Copy the tztag.cmnd file as well
+add_custom_target(copy_tztag ALL COMMENT "Copying tztag.cmnd")
+add_custom_command(TARGET copy_tztag COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/tools/tztag.cmnd ${PROJECT_BINARY_DIR}/tools/tztag.cmnd)

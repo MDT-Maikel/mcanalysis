@@ -28,7 +28,7 @@ to one of the contributors of this code.
 
 [All] Effect of parton level cuts in combination with hathor cross sections
 
-[All] Generate events on the cluster
+[All] Generate events on the cluster (tz bkg needs to be split up into tz and t~z)
 
 [All] Optimize procedures by removing double showering (jet_analysis & gen_hepmc)
       cut away events based on lhco before showering in initialise()

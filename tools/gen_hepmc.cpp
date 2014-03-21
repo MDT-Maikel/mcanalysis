@@ -26,7 +26,7 @@ using namespace Pythia8;
 
 
 // utility functions
-void read_options(int &argc, char* argv[], bool &exit_program, Pythia &pythia, bool &pythia_fast, bool &merging, string &input_file, string &output_file);
+void read_options(int &argc, char* argv[], bool &exit_program, bool &pythia_fast, bool &merging, string &settings_file, string &input_file, string &output_file);
 void print_help();
 void print_version();
 
@@ -37,10 +37,8 @@ int main(int argc, char* argv[])
 	bool exit_program = false;
 	bool pythia_fast = false;
 	bool merging = false;
-	Pythia pythia;
-	string input_file;
-	string output_file;
-	read_options(argc, argv, exit_program, pythia, pythia_fast, merging, input_file, output_file);
+	string settings_file, input_file, output_file;
+	read_options(argc, argv, exit_program, pythia_fast, merging, settings_file, input_file, output_file);
 	
 	// exit program if requested
 	if (exit_program)
@@ -62,6 +60,9 @@ int main(int argc, char* argv[])
 	HepMC::IO_GenEvent output_hepmc(output_file, std::ios::out);
 	
 	// pythia basic settings
+	Pythia pythia;
+	// read the Pythia8 settings which are passed
+	pythia.readFile(settings_file);
 	pythia.settings.flag("Print:quiet", true);
   	unsigned int max_events = pythia.mode("Main:numberOfEvents");
 	if (pythia_fast)
@@ -123,11 +124,9 @@ int main(int argc, char* argv[])
 		while (njetcounterLO >= 0) 
 		{
 			// set appropriate LHE file name
-			string lhe_file;
-			if ( njetcounterLO == 0 )
-				lhe_file = input_file + ".lhe";
-			else
-				lhe_file = input_file + "_j" + lexical_cast<string>(njetcounterLO) + ".lhe";
+			string lhe_file = input_file;
+			if (njetcounterLO > 0)
+				lhe_file.insert(lhe_file.size() - 4, "_j" + boost::lexical_cast<std::string>(njetcounterLO)); // check me
 
 			// LHE initialisation
 			pythia.settings.mode("Merging:nRequested", njetcounterLO);
@@ -175,11 +174,9 @@ int main(int argc, char* argv[])
 	while (njetcounterLO >= 0)
 	{
 		// set appropriate LHE file name
-		string lhe_file;
-		if ( njetcounterLO == 0 )
-			lhe_file = input_file + ".lhe";
-		else
-			lhe_file = input_file + "_j" + lexical_cast<string>(njetcounterLO) + ".lhe";
+		string lhe_file = input_file;
+		if (njetcounterLO > 0)
+			lhe_file.insert(lhe_file.size() - 4, "_j" + boost::lexical_cast<std::string>(njetcounterLO)); // check me
 
 		// additional merging settings: LHE input and total jet to be merged
 		if (merging)
@@ -286,7 +283,7 @@ int main(int argc, char* argv[])
 }
 
 // reads in the command line options
-void read_options(int &argc, char* argv[], bool &exit_program, Pythia &pythia, bool &pythia_fast, bool &merging, string &input_file, string &output_file)
+void read_options(int &argc, char* argv[], bool &exit_program, bool &pythia_fast, bool &merging, string &settings_file, string &input_file, string &output_file)
 {
 	// values will be set by getopt
 	extern char *optarg; 
@@ -353,7 +350,7 @@ void read_options(int &argc, char* argv[], bool &exit_program, Pythia &pythia, b
 	}
 	else
 	{	
-		pythia.readFile(argv[optind]);
+		settings_file = argv[optind];
 		input_file = argv[optind + 1];
 		output_file = argv[optind + 2];
 	}	
@@ -362,9 +359,10 @@ void read_options(int &argc, char* argv[], bool &exit_program, Pythia &pythia, b
 // prints the help output to the screen
 void print_help()
 {
-	cout << "Usage: gen_hepmc [OPTION]... [PYTHIA SETTINGS] [INPUT FILE] [OUTPUT_FILE]" << endl;
+	cout << "Usage: gen_hepmc [OPTION]... [PYTHIA SETTINGS] [INPUT FILE] [OUTPUT FILE]" << endl;
 	cout << "Runs Pythia8 on the INPUT FILE which must be in .lhe format and" << endl;
-	cout << "writes the results to OUTPUT FILE in the .hepmc format." << endl;
+	cout << "writes the results to OUTPUT FILE in the .hepmc format. Pythia" << endl;
+	cout << "merging settings must be passed through the PYTHIA SETTINGS file." << endl;
 	cout << endl;
 	cout << "The following options are available:" << endl;
 	cout << "  -h, --help         	display this help and exit" << endl;

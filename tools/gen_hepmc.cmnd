@@ -18,5 +18,5 @@ Merging:nJetMax	= 2
 // Merging scale value
 Merging:TMS	= 15
 
-// Allow Pythia to decay particles
+// Allow Pythia to remove decay products while merging
 // Merging:mayRemoveDecayProducts = on

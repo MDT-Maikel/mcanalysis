@@ -150,7 +150,7 @@ void read_options(int &argc, char* argv[], bool &exit_program, string &file_type
 // prints the help output to the screen
 void print_help()
 {
-	std::cout << "Usage: mergemc [OPTION]... [INPUT DIR] [OUTPUT_FILE]" << std::endl;
+	std::cout << "Usage: mergemc [OPTION]... [INPUT DIR] [OUTPUT FILE]" << std::endl;
 	std::cout << "Merges Monte Carlo event samples in LHCO and LHE format" << std::endl;
 	std::cout << "from INPUT DIR and writes the resulting file to OUTPUT FILE." << std::endl;
 	std::cout << std::endl;
