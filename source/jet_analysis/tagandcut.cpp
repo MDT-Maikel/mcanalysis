@@ -210,7 +210,7 @@ namespace analysis
 		} 
 
 		// calculate efficiency
-		eff = (double) passed/map_size;
+		eff = (map_size == 0 ? 0.0 : static_cast<double>(passed / map_size));
 
 		// resize the map_lhco_taggedJets
 		map_lhco_taggedJets = reduced_map;
@@ -262,7 +262,7 @@ namespace analysis
 		} 
 
 		// calculate efficiency
-		eff = (double) passed/map_size;
+		eff = (map_size == 0 ? 0.0 : static_cast<double>(passed / map_size));
 
 		// resize the map_lhco_taggedJets
 		map_lhco_taggedJets = reduced_map;
@@ -321,7 +321,7 @@ namespace analysis
 		} 
 
 		// calculate efficiency
-		eff = (double) passed/map_size;
+		eff = (map_size == 0 ? 0.0 : static_cast<double>(passed / map_size));
 		
 		// resize the map_lhco_taggedJets
 		map_lhco_taggedJets = reduced_map;
@@ -380,7 +380,7 @@ namespace analysis
 		}
 
 		// calculate efficiency
-		eff = (double) passed/map_size;
+		eff = (map_size == 0 ? 0.0 : static_cast<double>(passed / map_size));
 		
 		// resize the map_lhco_taggedJets
 		map_lhco_taggedJets = reduced_map;
@@ -423,7 +423,7 @@ namespace analysis
 		} 
 
 		// calculate efficiency
-		eff = (double) passed/map_size;
+		eff = (map_size == 0 ? 0.0 : static_cast<double>(passed / map_size));
 		
 		// resize the map_lhco_taggedJets
 		map_lhco_taggedJets = reduced_map;

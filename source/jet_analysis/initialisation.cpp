@@ -199,6 +199,10 @@ namespace analysis
 					else 
 						continue;
 				}
+				
+				// Print evolution
+				if ( (iEvent + 1) % 100 == 0 )
+					std::cout << "Event number: " << iEvent + 1 << "\r" << std::flush;
 
 				// Get event weight(s) of merging procedure
 				double weight = 1.0, evtweight;
@@ -503,10 +507,6 @@ namespace analysis
 
 	  			//============= Fill the (lhco, taggedJets) map =============//
 				map_lhco_taggedJets.insert(std::make_pair(ev,taggedJets));
-
-				// Print evolution
-				if ( (iEvent+1)%100 == 0 )
-					std::cout << "Event no.: " << iEvent+1 << "\r" << std::flush;
 
 				// Exit First event loop
 				if ( firstEvent )
