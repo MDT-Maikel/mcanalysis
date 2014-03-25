@@ -1,12 +1,12 @@
 ### INPUT ###
-INPUT_LHE = /home/maikel/mcdata/ttag/signal/thth_tztz/run_mass1000.lhe
-INPUT_LHCO = /home/maikel/mcdata/ttag/signal/thth_tztz/run_mass1000.lhco.gz
-INPUT_XSEC = 1
+INPUT_LHE = /data/btag/events/background/tt/lhe/run01.lhe
+INPUT_LHCO = /data/btag/events/background/tt/lhco/run01.lhco.gz
+INPUT_XSEC = 1.56
 NR_EVENTS = 50000
 
 ### OUTPUT ###
-OUTPUT_LHCO = /home/maikel/Physics/ttag/output/thth_tztz/bla.lhco.gz
-OUTPUT_XSEC = /home/maikel/Physics/ttag/output/thth_tztz/bla.txt
+OUTPUT_LHCO = /data/btag/results/test/tt.lhco.gz
+OUTPUT_XSEC = /data/btag/results/test/tt.txt
 
 ### PYTHIA & MERGING ###
 PYTHIA_FAST = 1

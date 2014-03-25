@@ -174,7 +174,8 @@ int main(int argc, const char* argv[])
 	{
 		thth_tztz.set_merging_process(merging_process);
 		thth_tztz.set_merging_njmax(merging_njets);
-		thth_tztz.set_merging_scale(merging_scale);		
+		thth_tztz.set_merging_scale(merging_scale);
+		thth_tztz.AllowPythiaDecay();
 	}	
 	PseudoJet (jet_analysis::*TopTagger)(const PseudoJet &) = &jet_analysis::HEPTopTagging;
 	thth_tztz.initialise(TopTagger);
@@ -226,9 +227,9 @@ bool load_settings_input(string &input_sig_lhe, string &input_sig_lhco, double &
 	string settings_file = "tztag.cmnd";
 	
 	// read signal settings
-	input_sig_lhe = read_settings<string>(settings_file, static_cast<string>("INPUT_SIGNAL_LHE"));
-	input_sig_lhco = read_settings<string>(settings_file, static_cast<string>("INPUT_SIGNAL_LHCO"));
-	sig_xsec = read_settings<double>(settings_file, static_cast<string>("SIGNAL_XSEC"));
+	input_sig_lhe = read_settings<string>(settings_file, static_cast<string>("INPUT_LHE"));
+	input_sig_lhco = read_settings<string>(settings_file, static_cast<string>("INPUT_LHCO"));
+	sig_xsec = read_settings<double>(settings_file, static_cast<string>("INPUT_XSEC"));
 	nr_events = read_settings<int>(settings_file, static_cast<string>("NR_EVENTS"));
 	
 	// display the loaded settings if no errors occur
