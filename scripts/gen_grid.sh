@@ -62,12 +62,12 @@ for pi in in `seq 0 10 100`; do
 		rm -rf $run_dir
 	
 		# read the cross section from the event sample
-		read cross_section <<< $(./read_xsec.sh $event_dir$run_name".txt")
+		read cross_section <<< $(sh read_xsec.sh $event_dir"/"$run_name".txt")
 
 		# possible run an C++ analysis on the produced event sample
 		# in this case ./analysis takes an lhco file and prints
 		# the efficiency to the screen
-		read analysis_result <<< $(./analysis $event_dir$run_name".lhco.gz")
+		read analysis_result <<< $(./analysis $event_dir$"/"run_name".lhco.gz")
 
 		# add the results to a file
 		echo $pi $pf $cross_section $analysis_result >> $results_txt

@@ -19,7 +19,7 @@ delphes_dir=$SOFTDIR/Delphes-3.0.12
 lhe_input=$1
 
 # set .lhco output
-lhco_output=$2.lhco.gz
+lhco_output=$2
 
 # set Delphes card
 delphes_card=$3
