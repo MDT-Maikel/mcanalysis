@@ -64,7 +64,6 @@ namespace analysis
 		/* merging settings: settings.cpp */
 		void set_merging_process(const std::string & process);
 		void set_merging_njmax(const int & njet);
-		void set_merging_njadditional(const int & njet);
 		void set_merging_scale(const double & scale);
 		bool MergingSettings();
 		void AllowPythiaDecay();

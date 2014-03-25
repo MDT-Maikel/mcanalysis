@@ -1,19 +1,16 @@
-### GENERAL ###
-OUTPUT_FOLDER = /home/maikel/Physics/ttag/output/thth_tztz/
+### INPUT ###
+INPUT_LHE = /home/maikel/mcdata/ttag/signal/thth_tztz/run_mass1000.lhe
+INPUT_LHCO = /home/maikel/mcdata/ttag/signal/thth_tztz/run_mass1000.lhco.gz
+INPUT_XSEC = 1
+NR_EVENTS = 50000
 
+### OUTPUT ###
+OUTPUT_LHCO = /home/maikel/Physics/ttag/output/thth_tztz/bla.lhco.gz
+OUTPUT_XSEC = /home/maikel/Physics/ttag/output/thth_tztz/bla.txt
 
-### BACKGROUND ###
-INPUT_BKG_LHE =
-INPUT_BKG_LHCO =
-BKG_XSEC = 
-
-
-### SIGNAL ###
-INPUT_SIGNAL_LHE = /home/maikel/mcdata/ttag/signal/thth_tztz/run_mass1000.lhe
-INPUT_SIGNAL_LHCO = /home/maikel/mcdata/ttag/signal/thth_tztz/run_mass1000.lhco.gz
-SIGNAL_XSEC = 1
-
-
-### ANALYSIS ###
-PARTNER_MASS = 1000
-PROCESS_NAME = thth_tztz
+### PYTHIA & MERGING ###
+PYTHIA_FAST = 1
+MERGING_ON = 1
+MERGING_PROCESS = pp>t~t
+MERGING_NJETS = 2
+MERGING_SCALE = 30

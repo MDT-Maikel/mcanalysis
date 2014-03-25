@@ -30,9 +30,9 @@ using namespace fastjet;
 using namespace analysis;
 
 // function prototypes
-bool load_settings_general(string &output_folder);
-bool load_settings_signal(string &input_sig_lhe, string &input_sig_lhco, double &sig_xsec);
-bool load_settings_analysis(int &partner_mass, string &process);
+bool load_settings_input(string &input_sig_lhe, string &input_sig_lhco, double &sig_xsec, int &nr_events);
+bool load_settings_output(string &output_lhco, string &output_xsec);
+bool load_settings_merging(bool &pythia_fast, bool &merging_on, string &merging_process, int &merging_njets, double &merging_scale);
 PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const particle*> & leptons);
 vector<const particle*> identify_candidate_leptons(const vector<const particle*> & leptons);
 void get_top_partner_constituents(const vector<event*> &signal_lhco, const vector<vector<PseudoJet> > &signal_fatjets, vector<event*> &signal_reconstructed);
@@ -134,46 +134,53 @@ int main(int argc, const char* argv[])
 	clock_t clock_old = clock();
 	double duration;
 
-	// read the general settings from tztag.cmnd file
-	string output_folder;
-	if (!load_settings_general(output_folder))
+	// read the input settings from tztag.cmnd file
+	string input_lhe, input_lhco;
+	double input_xsec = 0;
+	int nr_events = 10000;
+	if (!load_settings_input(input_lhe, input_lhco, input_xsec, nr_events))
 		return EXIT_FAILURE;
-	// read the background settings from tztag.cmnd file
-	// read the signal settings from tztag.cmnd file
-	string input_sig_lhe, input_sig_lhco;
-	double sig_xsec = 0;
-	if (!load_settings_signal(input_sig_lhe, input_sig_lhco, sig_xsec))
-		return EXIT_FAILURE;
-	// read the analysis settings from tztag.cmnd file
-	int partner_mass = 1000;
-	string signal_proc = "thth_tztz_2l";
-	if (!load_settings_analysis(partner_mass, signal_proc))
+	// read the output settings from tztag.cmnd file
+	string output_lhco, output_xsec;
+	if (!load_settings_output(output_lhco, output_xsec))
+		return EXIT_FAILURE;		
+	// read the merging settings from tztag.cmnd file
+	bool pythia_fast = false, merging_on = false;
+	string merging_process;
+	int merging_njets = 2;
+	double merging_scale = 0;
+	if (!load_settings_merging(pythia_fast, merging_on, merging_process, merging_njets, merging_scale))
 		return EXIT_FAILURE;
 
 	// basic cuts definition
 	cuts basic_cuts;
 	cut_2osl *osl = new cut_2osl(10, 2.5);
 	basic_cuts.add_cut(osl, "2 opposite sign leptons");
-	// cut_no_met *met = new cut_no_met(30);
-	// basic_cuts.add_cut(met, "missing energy veto (>30 GeV)");
 	// cut_ht *ht = new cut_ht(300,ptype_jet);
 	// basic_cuts.add_cut(ht, "ht>300 GeV");
 
 	// jet_analysis settings
 	jet_analysis thth_tztz;
-	thth_tztz.set_nEvents(5000);
+	thth_tztz.set_nEvents(nr_events);
 	thth_tztz.undo_BDRSTagging();
 	thth_tztz.set_Rsize_fat(1.5);
-	thth_tztz.set_fast_showering();
+	if (pythia_fast)
+		thth_tztz.set_fast_showering();
 
 	// load files, shower and cluster the events
-	thth_tztz.import_lhe(input_sig_lhe);
-	thth_tztz.import_lhco(input_sig_lhco);
+	thth_tztz.import_lhe(input_lhe);
+	thth_tztz.import_lhco(input_lhco);
+	if (merging_on)
+	{
+		thth_tztz.set_merging_process(merging_process);
+		thth_tztz.set_merging_njmax(merging_njets);
+		thth_tztz.set_merging_scale(merging_scale);		
+	}	
 	PseudoJet (jet_analysis::*TopTagger)(const PseudoJet &) = &jet_analysis::HEPTopTagging;
 	thth_tztz.initialise(TopTagger);
 
 	// apply cuts and extract efficiencies
-	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, met>30 GeV veto, ht>300 GeV
+	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, ht>300 GeV
 	double eff_fatjpt_signal = thth_tztz.require_fatjet_pt(200, 2); // require at least 2 fatjets with pT>200 GeV
 	double eff_ttag_signal = thth_tztz.require_top_tagged(2); // require 2 fatjets to be HEP Top-Tagged
 
@@ -187,24 +194,18 @@ int main(int argc, const char* argv[])
 	vector<event*> signal_reconstructed;
 	get_top_partner_constituents(thth_tztz.events(), thth_tztz.fatjets(), signal_reconstructed);
 	
-	// plot lepton pair mass
-	plot lmass("plot_leptonmass", output_folder);
-	plot_leptonmass *lepton_mass = new plot_leptonmass();
-	lmass.add_sample(signal_reconstructed, lepton_mass, "Signal");
-	lmass.run();	
+	// calculate cross section and store
+	ofstream ofs_txt;
+	ofs_txt.open(output_xsec.c_str());
+	ofs_txt << input_xsec * eff_basic_signal * eff_fatjpt_signal * eff_ttag_signal << endl;
+	ofs_txt.close();
 	
-	// plot top partner mass
-	plot pmass("plot_thmass" + lexical_cast<string>(partner_mass), output_folder);
-	plot_thmass *th_mass = new plot_thmass();
-	pmass.add_sample(signal_reconstructed, th_mass, "Signal");
-	pmass.run();	
+	// store lhco events
+	write_lhco(signal_reconstructed, output_lhco);
 	
 	// clear remaining pointers
 	delete osl;
-	// delete met;
 	// delete ht;
-	delete lepton_mass;
-	delete th_mass;
 	
 	// clear remaining event pointers
 	delete_events(signal_reconstructed);
@@ -219,28 +220,7 @@ int main(int argc, const char* argv[])
 	return EXIT_SUCCESS;
 }
 
-bool load_settings_general(string &output_folder)
-{
-	// load the settings from the tztag.cmnd, also initialize loading variables
-	string settings_file = "tztag.cmnd";
-	
-	// read general settings
-	output_folder = read_settings<string>(settings_file, static_cast<string>("OUTPUT_FOLDER"));
-	
-	
-	// create output directory if it does not exist yet
-	if (!is_directory(output_folder))
-		create_directory(output_folder);
-		
-	// display the loaded settings if no errors occur
-	cout << "################################################################################" << endl;
-	cout << "Loaded general settings from tztag.cmnd:" << endl;
-	cout << "Results output folder: " << output_folder << endl;
-	cout << "################################################################################" << endl;
-	return true;	
-}
-
-bool load_settings_signal(string &input_sig_lhe, string &input_sig_lhco, double &sig_xsec)
+bool load_settings_input(string &input_sig_lhe, string &input_sig_lhco, double &sig_xsec, int &nr_events)
 {
 	// load the settings from the tztag.cmnd, also initialize loading variables
 	string settings_file = "tztag.cmnd";
@@ -249,31 +229,52 @@ bool load_settings_signal(string &input_sig_lhe, string &input_sig_lhco, double 
 	input_sig_lhe = read_settings<string>(settings_file, static_cast<string>("INPUT_SIGNAL_LHE"));
 	input_sig_lhco = read_settings<string>(settings_file, static_cast<string>("INPUT_SIGNAL_LHCO"));
 	sig_xsec = read_settings<double>(settings_file, static_cast<string>("SIGNAL_XSEC"));
+	nr_events = read_settings<int>(settings_file, static_cast<string>("NR_EVENTS"));
 	
 	// display the loaded settings if no errors occur
 	cout << "################################################################################" << endl;
-	cout << "Loaded signal settings from tztag.cmnd:" << endl;
-	cout << "Signal input LHE file: " << input_sig_lhe << endl;
-	cout << "Signal input LHCO file: " << input_sig_lhco << endl;
-	cout << "Signal cross section: " << sig_xsec << endl;	
+	cout << "Loaded input settings from tztag.cmnd:" << endl;
+	cout << "Input input LHE file: " << input_sig_lhe << endl;
+	cout << "Input input LHCO file: " << input_sig_lhco << endl;
+	cout << "Input cross section: " << sig_xsec << endl;
+	cout << "Input nr of events: " << nr_events << endl;
 	cout << "################################################################################" << endl;
 	return true;
 }
 
-bool load_settings_analysis(int &partner_mass, string &process)
+bool load_settings_output(string &output_lhco, string &output_xsec)
 {
 	// load the settings from the tztag.cmnd, also initialize loading variables
 	string settings_file = "tztag.cmnd";
 	
-	// read analysis settings
-	partner_mass = read_settings<int>(settings_file, static_cast<string>("PARTNER_MASS"));
-	process = read_settings<string>(settings_file, static_cast<string>("PROCESS_NAME"));
+	// read general settings
+	output_lhco = read_settings<string>(settings_file, static_cast<string>("OUTPUT_LHCO"));
+	output_xsec = read_settings<string>(settings_file, static_cast<string>("OUTPUT_XSEC"));
+		
+	// display the loaded settings if no errors occur
+	cout << "################################################################################" << endl;
+	cout << "Loaded general settings from tztag.cmnd:" << endl;
+	cout << "Results output lhco: " << output_lhco << endl;
+	cout << "Results output xsec: " << output_xsec << endl;
+	cout << "################################################################################" << endl;
+	return true;	
+}
+
+bool load_settings_merging(bool &pythia_fast, bool &merging_on, string &merging_process, int &merging_njets, double &merging_scale)
+{
+	// load the settings from the tztag.cmnd, also initialize loading variables
+	string settings_file = "tztag.cmnd";
+	
+	// read signal settings
+	pythia_fast = read_settings<bool>(settings_file, static_cast<string>("PYTHIA_FAST"));
+	merging_on = read_settings<bool>(settings_file, static_cast<string>("MERGING_ON"));
+	merging_process = read_settings<string>(settings_file, static_cast<string>("MERGING_PROCESS"));
+	merging_njets = read_settings<int>(settings_file, static_cast<string>("MERGING_NJETS"));
+	merging_scale = read_settings<double>(settings_file, static_cast<string>("MERGING_SCALE"));
 	
 	// display the loaded settings if no errors occur
 	cout << "################################################################################" << endl;
-	cout << "Loaded analysis settings from tztag.cmnd:" << endl;
-	cout << "Partner mass (GeV): " << partner_mass << endl;
-	cout << "Process name: " << process << endl;
+
 	cout << "################################################################################" << endl;
 	return true;
 }
