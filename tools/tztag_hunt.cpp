@@ -78,6 +78,10 @@ int main(int argc, const char* argv[])
 	// read the output settings from command file
 	// TODO
 	string output_folder = "output/";
+	
+	// make sure the output file's directory exists
+	if (!is_directory(output_folder))
+		create_directory(output_folder);
 		
 	// load the events
 	vector<vector<event*> > bkg_evts;

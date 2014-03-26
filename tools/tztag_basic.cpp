@@ -382,7 +382,7 @@ void get_top_partner_constituents(const vector<event*> &signal_lhco, const vecto
 		vector<const particle*> test_leptons = identify_candidate_leptons(leptons);
 		for (unsigned int j = 0; j < test_leptons.size(); ++j)
 		{
-			int p_type = ptype_lepton;
+			int p_type = ptype_electron;
 			double	p_eta 	 = test_leptons[j]->eta(), 
 					p_phi 	 = test_leptons[j]->phi(), 
 					p_pt 	 = test_leptons[j]->pt(), 
@@ -402,6 +402,10 @@ void get_top_partner_constituents(const vector<event*> &signal_lhco, const vecto
 				p_m 	= top_candidate.m();
 		lhco *p = new lhco(p_type, p_eta, p_phi, p_pt, p_m);
 		newev->push_back(p);
+		
+		// add met to the event for lhco format sanity
+		lhco *met = new lhco(ptype_met, 0, 0, 0, 0);
+		newev->push_back(met);
 
 		// merge leptons and tagged top into a single event pointer
 		signal_reconstructed.push_back(newev);
