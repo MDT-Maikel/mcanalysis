@@ -76,9 +76,6 @@ target_link_libraries(
 	${PYTHIA8_LIBRARIES}
 	${FASTJET_LIBRARIES}
 )
-## Copy the tztag.cmnd file as well
-add_custom_target(copy_tztag ALL COMMENT "Copying tztag.cmnd")
-add_custom_command(TARGET copy_tztag COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/tools/tztag.cmnd ${PROJECT_BINARY_DIR}/tools/tztag.cmnd)
 
 ## Executable: tztag_basic
 add_executable(tztag_basic tztag_basic.cpp)
@@ -92,4 +89,7 @@ target_link_libraries(
 	${PYTHIA8_LIBRARIES}
 	${FASTJET_LIBRARIES}
 )
+## Copy the tztag_basic.cmnd file as well
+add_custom_target(copy_tztag ALL COMMENT "Copying tztag_basic.cmnd")
+add_custom_command(TARGET copy_tztag COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/tools/tztag_basic.cmnd ${PROJECT_BINARY_DIR}/tools/tztag_basic.cmnd)
 

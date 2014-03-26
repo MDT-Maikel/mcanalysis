@@ -30,9 +30,9 @@ using namespace fastjet;
 using namespace analysis;
 
 // function prototypes
-bool load_settings_input(string &input_sig_lhe, string &input_sig_lhco, double &sig_xsec, int &nr_events);
-bool load_settings_output(string &output_lhco, string &output_xsec);
-bool load_settings_merging(bool &pythia_fast, bool &merging_on, string &merging_process, int &merging_njets, double &merging_scale);
+bool load_settings_input(const string &settings_file, string &input_sig_lhe, string &input_sig_lhco, double &sig_xsec, int &nr_events);
+bool load_settings_output(const string &settings_file, string &output_lhco, string &output_xsec);
+bool load_settings_merging(const string &settings_file, bool &pythia_fast, bool &merging_on, string &merging_process, int &merging_njets, double &merging_scale);
 PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const particle*> & leptons);
 vector<const particle*> identify_candidate_leptons(const vector<const particle*> & leptons);
 void get_top_partner_constituents(const vector<event*> &signal_lhco, const vector<vector<PseudoJet> > &signal_fatjets, vector<event*> &signal_reconstructed);
@@ -127,30 +127,37 @@ public:
 	}
 };
 
-// main program 
+// main program: may have one argument
 int main(int argc, const char* argv[])
 {
 	// initiate timing procedure
 	clock_t clock_old = clock();
 	double duration;
+	
+	// take single argument specifying settings file if available
+	string settings_file = "tztag_basic.cmnd";
+	if (argc >= 2) 
+		settings_file = argv[1];
 
 	// read the input settings from tztag.cmnd file
 	string input_lhe, input_lhco;
 	double input_xsec = 0;
 	int nr_events = 10000;
-	if (!load_settings_input(input_lhe, input_lhco, input_xsec, nr_events))
+	if (!load_settings_input(settings_file, input_lhe, input_lhco, input_xsec, nr_events))
 		return EXIT_FAILURE;
 	// read the output settings from tztag.cmnd file
 	string output_lhco, output_xsec;
-	if (!load_settings_output(output_lhco, output_xsec))
+	if (!load_settings_output(settings_file, output_lhco, output_xsec))
 		return EXIT_FAILURE;		
 	// read the merging settings from tztag.cmnd file
 	bool pythia_fast = false, merging_on = false;
 	string merging_process;
 	int merging_njets = 2;
 	double merging_scale = 0;
-	if (!load_settings_merging(pythia_fast, merging_on, merging_process, merging_njets, merging_scale))
+	if (!load_settings_merging(settings_file, pythia_fast, merging_on, merging_process, merging_njets, merging_scale))
 		return EXIT_FAILURE;
+		
+	return 1;
 
 	// basic cuts definition
 	cuts basic_cuts;
@@ -221,12 +228,9 @@ int main(int argc, const char* argv[])
 	return EXIT_SUCCESS;
 }
 
-bool load_settings_input(string &input_sig_lhe, string &input_sig_lhco, double &sig_xsec, int &nr_events)
+bool load_settings_input(const string &settings_file, string &input_sig_lhe, string &input_sig_lhco, double &sig_xsec, int &nr_events)
 {
-	// load the settings from the tztag.cmnd, also initialize loading variables
-	string settings_file = "tztag.cmnd";
-	
-	// read signal settings
+	// read input settings
 	input_sig_lhe = read_settings<string>(settings_file, static_cast<string>("INPUT_LHE"));
 	input_sig_lhco = read_settings<string>(settings_file, static_cast<string>("INPUT_LHCO"));
 	sig_xsec = read_settings<double>(settings_file, static_cast<string>("INPUT_XSEC"));
@@ -234,7 +238,7 @@ bool load_settings_input(string &input_sig_lhe, string &input_sig_lhco, double &
 	
 	// display the loaded settings if no errors occur
 	cout << "################################################################################" << endl;
-	cout << "Loaded input settings from tztag.cmnd:" << endl;
+	cout << "Loaded input settings from " << settings_file << ":" << endl;
 	cout << "Input input LHE file: " << input_sig_lhe << endl;
 	cout << "Input input LHCO file: " << input_sig_lhco << endl;
 	cout << "Input cross section: " << sig_xsec << endl;
@@ -243,30 +247,24 @@ bool load_settings_input(string &input_sig_lhe, string &input_sig_lhco, double &
 	return true;
 }
 
-bool load_settings_output(string &output_lhco, string &output_xsec)
+bool load_settings_output(const string &settings_file, string &output_lhco, string &output_xsec)
 {
-	// load the settings from the tztag.cmnd, also initialize loading variables
-	string settings_file = "tztag.cmnd";
-	
-	// read general settings
+	// read output settings
 	output_lhco = read_settings<string>(settings_file, static_cast<string>("OUTPUT_LHCO"));
 	output_xsec = read_settings<string>(settings_file, static_cast<string>("OUTPUT_XSEC"));
 		
 	// display the loaded settings if no errors occur
 	cout << "################################################################################" << endl;
-	cout << "Loaded general settings from tztag.cmnd:" << endl;
+	cout << "Loaded output settings from " << settings_file << ":" << endl;
 	cout << "Results output lhco: " << output_lhco << endl;
 	cout << "Results output xsec: " << output_xsec << endl;
 	cout << "################################################################################" << endl;
 	return true;	
 }
 
-bool load_settings_merging(bool &pythia_fast, bool &merging_on, string &merging_process, int &merging_njets, double &merging_scale)
+bool load_settings_merging(const string &settings_file, bool &pythia_fast, bool &merging_on, string &merging_process, int &merging_njets, double &merging_scale)
 {
-	// load the settings from the tztag.cmnd, also initialize loading variables
-	string settings_file = "tztag.cmnd";
-	
-	// read signal settings
+	// read merging settings
 	pythia_fast = read_settings<bool>(settings_file, static_cast<string>("PYTHIA_FAST"));
 	merging_on = read_settings<bool>(settings_file, static_cast<string>("MERGING_ON"));
 	merging_process = read_settings<string>(settings_file, static_cast<string>("MERGING_PROCESS"));
@@ -275,7 +273,12 @@ bool load_settings_merging(bool &pythia_fast, bool &merging_on, string &merging_
 	
 	// display the loaded settings if no errors occur
 	cout << "################################################################################" << endl;
-
+	cout << "Loaded merging settings from " << settings_file << ":" << endl;
+	cout << "Pythia fast: " << pythia_fast << endl;
+	cout << "Merging on: " << merging_on << endl;
+	cout << "Merging process: " << merging_process << endl;
+	cout << "Merging nr. jets: " << merging_njets << endl;
+	cout << "Merging scale: " << merging_scale << endl;
 	cout << "################################################################################" << endl;
 	return true;
 }
