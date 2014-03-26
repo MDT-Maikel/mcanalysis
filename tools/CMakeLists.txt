@@ -64,19 +64,6 @@ if(HEPMC_FOUND AND PYTHIA8_HEPMC_FOUND)
 	add_custom_command(TARGET copy_gen_hepmc COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/tools/gen_hepmc.cmnd ${PROJECT_BINARY_DIR}/tools/gen_hepmc.cmnd)
 endif()
 
-## Executable: tztag
-add_executable(tztag tztag.cpp)
-target_link_libraries(
-	tztag
-	${MCANALYSIS_LIBRARIES}
-	${GZSTREAM_LIBRARIES}
-	${ZLIB_LIBRARIES}
-	${Boost_LIBRARIES}
-	${ROOT_LIBRARIES}
-	${PYTHIA8_LIBRARIES}
-	${FASTJET_LIBRARIES}
-)
-
 ## Executable: tztag_basic
 add_executable(tztag_basic tztag_basic.cpp)
 target_link_libraries(
@@ -90,6 +77,21 @@ target_link_libraries(
 	${FASTJET_LIBRARIES}
 )
 ## Copy the tztag_basic.cmnd file as well
-add_custom_target(copy_tztag ALL COMMENT "Copying tztag_basic.cmnd")
-add_custom_command(TARGET copy_tztag COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/tools/tztag_basic.cmnd ${PROJECT_BINARY_DIR}/tools/tztag_basic.cmnd)
+add_custom_target(copy_tztag_basic ALL COMMENT "Copying tztag_basic.cmnd")
+add_custom_command(TARGET copy_tztag_basic COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/tools/tztag_basic.cmnd ${PROJECT_BINARY_DIR}/tools/tztag_basic.cmnd)
 
+## Executable: tztag_hunt
+add_executable(tztag_hunt tztag_hunt.cpp)
+target_link_libraries(
+	tztag_hunt
+	${MCANALYSIS_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${Boost_LIBRARIES}
+	${ROOT_LIBRARIES}
+	${PYTHIA8_LIBRARIES}
+	${FASTJET_LIBRARIES}
+)
+## Copy the tztag_hunt.cmnd file as well
+add_custom_target(copy_tztag_hunt ALL COMMENT "Copying tztag_hunt.cmnd")
+add_custom_command(TARGET copy_tztag_hunt COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/tools/tztag_hunt.cmnd ${PROJECT_BINARY_DIR}/tools/tztag_hunt.cmnd)

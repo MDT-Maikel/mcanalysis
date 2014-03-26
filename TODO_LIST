@@ -37,6 +37,8 @@ to one of the contributors of this code.
 
 [Maikel] Make utility functions to read and write hepmc data
 
+[Maikel] Utility functions should check for existing files when reading
+
 
 
 ####################

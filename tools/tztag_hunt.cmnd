@@ -1,0 +1,6 @@
+### MC INPUT ###
+BKG_LHCO = {/data/btag/events/background/tt/tt_analyzed.lhco.gz}
+BKG_XSEC = {1}
+SIG_LHCO = /data/btag/events/signal/thth_tztz_2l/mass1000_analyzed.lhco.gz
+SIG_XSEC = 1
+

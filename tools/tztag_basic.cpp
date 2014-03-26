@@ -139,25 +139,23 @@ int main(int argc, const char* argv[])
 	if (argc >= 2) 
 		settings_file = argv[1];
 
-	// read the input settings from tztag.cmnd file
+	// read the input settings from command file
 	string input_lhe, input_lhco;
 	double input_xsec = 0;
 	int nr_events = 10000;
 	if (!load_settings_input(settings_file, input_lhe, input_lhco, input_xsec, nr_events))
 		return EXIT_FAILURE;
-	// read the output settings from tztag.cmnd file
+	// read the output settings from command file
 	string output_lhco, output_xsec;
 	if (!load_settings_output(settings_file, output_lhco, output_xsec))
 		return EXIT_FAILURE;		
-	// read the merging settings from tztag.cmnd file
+	// read the merging settings from command file
 	bool pythia_fast = false, merging_on = false;
 	string merging_process;
 	int merging_njets = 2;
 	double merging_scale = 0;
 	if (!load_settings_merging(settings_file, pythia_fast, merging_on, merging_process, merging_njets, merging_scale))
 		return EXIT_FAILURE;
-		
-	return 1;
 
 	// basic cuts definition
 	cuts basic_cuts;
