@@ -89,44 +89,6 @@ private:
 	double eta_max;
 };
 
-// basic cut: upper bound on missing transverse energy of the event
-class cut_no_met : public cut
-{		
-public:
-	cut_no_met(double met) : met_cut(met) {};
-	
-	bool operator() (const event *ev) 
-	{ 
-		return ev->met() < met_cut;
-	};		
-private:
-	double met_cut;		
-};
-
-// lepton pair mass plot
-class plot_leptonmass : public plot_default
-{
-public:
-	plot_leptonmass() {}
-
-	double operator() (const event *ev)
-	{
-		return mass({ev->get(ptype_lepton, 1), ev->get(ptype_lepton, 2)});
-	}
-};
-
-// top partner mass plot
-class plot_thmass : public plot_default
-{
-public:
-	plot_thmass() {}
-
-	double operator() (const event *ev)
-	{
-		return mass({ev->get(ptype_lepton, 1), ev->get(ptype_lepton, 2), ev->get(ptype_jet, 1)});
-	}
-};
-
 // main program: may have one argument
 int main(int argc, const char* argv[])
 {
@@ -203,7 +165,7 @@ int main(int argc, const char* argv[])
 	// calculate cross section and store
 	ofstream ofs_txt;
 	ofs_txt.open(output_xsec.c_str());
-	ofs_txt << input_xsec * eff_basic_signal * eff_fatjpt_signal * eff_ttag_signal << endl;
+	ofs_txt << input_xsec << "\t" << eff_basic_signal * eff_fatjpt_signal * eff_ttag_signal << "\t" << input_xsec * eff_basic_signal * eff_fatjpt_signal * eff_ttag_signal << endl;
 	ofs_txt.close();
 	
 	// store lhco events
