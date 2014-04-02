@@ -13,6 +13,11 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "-O2 -std=c++0x")
 endif()
 
+
+#################
+### Libraries ###
+#################
+
 ## Library: Zlib
 find_package(ZLIB REQUIRED)
 
@@ -123,17 +128,25 @@ message("inc: " "${MCANALYSIS_INCLUDE_DIRS}")
 message("lib: " "${MCANALYSIS_LIBRARIES}")
 message("=======================================================")
 
+
+####################
+### Executables  ###
+####################
+
 ## Executables: tests
 add_subdirectory(tests)
 
 ## Executables: tools
 add_subdirectory(tools)
 
-## Executables: analyses
-## Only include if option -DINCLUDE_ANALYSES equals true
-if(INCLUDE_ANALYSES)
-	add_subdirectory(analyses)
-endif()
+## Scripts: scripts
+add_subdirectory(scripts)
+
+
+
+#############################
+### Optional Executables ###
+#############################
 
 ## Executables: private
 ## this directory is for the users private programs
@@ -143,11 +156,21 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/private/CMakeLists.txt")
 	add_subdirectory(private)
 endif()
 
+## Executables: analyses
+## Only include if option -DINCLUDE_ANALYSES equals true
+if(INCLUDE_ANALYSES)
+	add_subdirectory(analyses)
+endif()
+
+## Executables: gres
+## Only include if option -DINCLUDE_GRES equals true
+if(INCLUDE_TTAG)
+	add_subdirectory(ttag)
+endif()
+
 ## Executables: gres
 ## Only include if option -DINCLUDE_GRES equals true
 if(INCLUDE_GRES)
 	add_subdirectory(gres)
 endif()
 
-## Scripts: scripts
-add_subdirectory(scripts)

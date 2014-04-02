@@ -5,6 +5,6 @@ SIG_LHCO = /data/btag/events/signal/thth_tztz/tztag_analysis/mass_1000/thth_tztz
 SIG_XSEC = 0.0000205883
 
 ### GENERAL ###
-OUTPUT_FOLDER = /output
+OUTPUT_FOLDER = output/
 LUMINOSITY = 100
 

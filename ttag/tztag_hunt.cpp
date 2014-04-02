@@ -80,6 +80,8 @@ int main(int argc, const char* argv[])
 	double luminosity = 1;
 	string output_folder = "output/";
 	if (!load_settings_general(settings_file, output_folder, luminosity))
+		return EXIT_FAILURE;
+	luminosity *= 1000;
 	
 	// make sure the output file's directory exists
 	if (!is_directory(output_folder))
@@ -109,6 +111,7 @@ int main(int argc, const char* argv[])
 	
 	// plot top partner mass
 	plot pmass("plot_thmass", output_folder);
+	pmass.set_bins(50, 200, 2200);
 	plot_thmass *th_mass = new plot_thmass();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{
