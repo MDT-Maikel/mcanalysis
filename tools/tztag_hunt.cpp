@@ -31,6 +31,7 @@ using namespace analysis;
 
 // function prototypes
 bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco, vector<double> &bkg_xsec, string &sig_lhco, double &sig_xsec);
+bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity);
 
 // lepton pair mass plot
 class plot_leptonmass : public plot_default
@@ -75,9 +76,10 @@ int main(int argc, const char* argv[])
 	double sig_xsec;
 	if (!load_settings_mcinput(settings_file, bkg_lhco, bkg_xsec, sig_lhco, sig_xsec))
 		return EXIT_FAILURE;
-	// read the output settings from command file
-	// TODO
+	// read the general settings from command file
+	double luminosity = 1;
 	string output_folder = "output/";
+	if (!load_settings_general(settings_file, output_folder, luminosity))
 	
 	// make sure the output file's directory exists
 	if (!is_directory(output_folder))
@@ -98,16 +100,22 @@ int main(int argc, const char* argv[])
 	plot lmass("plot_leptonmass", output_folder);
 	plot_leptonmass *lepton_mass = new plot_leptonmass();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
-		lmass.add_sample(bkg_evts[i], lepton_mass, "bkg" + lexical_cast<string>(i));
-	lmass.add_sample(sig_evts, lepton_mass, "signal");
+	{
+		double weight = bkg_xsec[i] * luminosity / bkg_evts[i].size();
+		lmass.add_sample(bkg_evts[i], lepton_mass, "bkg" + lexical_cast<string>(i), weight);
+	}
+	lmass.add_sample(sig_evts, lepton_mass, "signal", sig_xsec * luminosity / sig_evts.size());
 	lmass.run();	
 	
 	// plot top partner mass
 	plot pmass("plot_thmass", output_folder);
 	plot_thmass *th_mass = new plot_thmass();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
-		pmass.add_sample(bkg_evts[i], th_mass, "bkg" + lexical_cast<string>(i));
-	pmass.add_sample(sig_evts, th_mass, "signal");
+	{
+		double weight = bkg_xsec[i] * luminosity / bkg_evts[i].size();
+		pmass.add_sample(bkg_evts[i], th_mass, "bkg" + lexical_cast<string>(i), weight);
+	}
+	pmass.add_sample(sig_evts, th_mass, "signal", sig_xsec * luminosity / sig_evts.size());
 	pmass.run();	
 	
 	// clear remaining pointers
@@ -164,4 +172,18 @@ bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco
 	return true;
 }
 
+bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity)
+{
+	// read input settings
+	output_folder = read_settings<string>(settings_file, static_cast<string>("OUTPUT_FOLDER"));
+	luminosity = read_settings<double>(settings_file, static_cast<string>("LUMINOSITY"));
+	
+	// display the loaded settings if no errors occur
+	cout << "################################################################################" << endl;
+	cout << "Loaded input settings from " << settings_file << ":" << endl;
+	cout << "Output folder: " << output_folder << endl;
+	cout << "Luminosity (ifb): " << luminosity << endl;
+	cout << "################################################################################" << endl;
+	return true;
+}
 
