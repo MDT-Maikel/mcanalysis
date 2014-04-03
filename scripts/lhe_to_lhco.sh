@@ -48,11 +48,11 @@ fi
 
 # run gen_hepmc to create .hepmc file from input .lhe
 $build_dir/tools/gen_hepmc $opt_fast $opt_merging $pythia $lhe_input $tmp_dir/hepmc_output.hepmc
-echo "\n===== hepmc file created =====\n"
+echo "===== hepmc file created ====="
 
 # run Delphes to create .root file from input .hepmc
 $delphes_dir/DelphesHepMC $delphes_card $tmp_dir/root_output.root $tmp_dir/hepmc_output.hepmc
-echo "\n===== root file created =====\n"
+echo "===== root file created ====="
 
 # run root2lhco to create .lhco file from input .root
 $delphes_dir/root2lhco $tmp_dir/root_output.root $tmp_dir/lhco_output_tmp.lhco
@@ -63,7 +63,7 @@ tail -n +2 $tmp_dir/lhco_output_tmp.lhco > $tmp_dir/lhco_output.lhco
 # compress the .lhco file
 gzip $tmp_dir/lhco_output.lhco
 chmod g=rwx $tmp_dir/lhco_output.lhco.gz
-echo "\n===== lhco.gz file created =====\n"
+echo "===== lhco.gz file created ====="
 
 # copy .lhco.gz file in correct folder and remove tmp files
 cp $tmp_dir/lhco_output.lhco.gz $lhco_output

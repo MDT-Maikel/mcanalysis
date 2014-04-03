@@ -13,10 +13,10 @@ include_directories(
 	"${MCANALYSIS_INCLUDE_DIRS}"
 )
 
-## Executable: tztag_basic
-add_executable(tztag_basic tztag_basic.cpp)
+## Executable: tztag_2top
+add_executable(tztag_2top tztag_2top.cpp)
 target_link_libraries(
-	tztag_basic
+	tztag_2top
 	${MCANALYSIS_LIBRARIES}
 	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
@@ -25,9 +25,25 @@ target_link_libraries(
 	${PYTHIA8_LIBRARIES}
 	${FASTJET_LIBRARIES}
 )
-## Copy the tztag_basic.cmnd file as well
-add_custom_target(copy_tztag_basic ALL COMMENT "Copying tztag_basic.cmnd")
-add_custom_command(TARGET copy_tztag_basic COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/ttag/tztag_basic.cmnd ${PROJECT_BINARY_DIR}/ttag/tztag_basic.cmnd)
+## Copy the tztag_2top.cmnd file as well
+add_custom_target(copy_tztag_2top ALL COMMENT "Copying tztag_2top.cmnd")
+add_custom_command(TARGET copy_tztag_2top COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/ttag/tztag_2top.cmnd ${PROJECT_BINARY_DIR}/ttag/tztag_2top.cmnd)
+
+## Executable: tztag_1top
+add_executable(tztag_1top tztag_1top.cpp)
+target_link_libraries(
+	tztag_1top
+	${MCANALYSIS_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${Boost_LIBRARIES}
+	${ROOT_LIBRARIES}
+	${PYTHIA8_LIBRARIES}
+	${FASTJET_LIBRARIES}
+)
+## Copy the tztag_1top.cmnd file as well
+add_custom_target(copy_tztag_1top ALL COMMENT "Copying tztag_1top.cmnd")
+add_custom_command(TARGET copy_tztag_1top COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/ttag/tztag_1top.cmnd ${PROJECT_BINARY_DIR}/ttag/tztag_1top.cmnd)
 
 ## Executable: tztag_hunt
 add_executable(tztag_hunt tztag_hunt.cpp)

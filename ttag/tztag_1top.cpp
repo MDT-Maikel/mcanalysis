@@ -1,4 +1,4 @@
-/* thth->tztz tagging 
+/* thth->tztz 1 top tagging 
  *
  * 
 */
@@ -97,7 +97,7 @@ int main(int argc, const char* argv[])
 	double duration;
 	
 	// take single argument specifying settings file if available
-	string settings_file = "tztag_basic.cmnd";
+	string settings_file = "tztag.cmnd";
 	if (argc >= 2) 
 		settings_file = argv[1];
 
@@ -148,12 +148,12 @@ int main(int argc, const char* argv[])
 	thth_tztz.initialise(TopTagger);
 
 	// apply cuts and extract efficiencies
-	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, ht>300 GeV
-	double eff_fatjpt_signal = thth_tztz.require_fatjet_pt(200, 2); // require at least 2 fatjets with pT>200 GeV
-	double eff_ttag_signal = thth_tztz.require_top_tagged(2); // require 2 fatjets to be HEP Top-Tagged
+	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require 2 osl which reconstruct a Z
+	double eff_fatjpt_signal = thth_tztz.require_fatjet_pt(200, 1); // require at least 1 fatjet with pT>200 GeV
+	double eff_ttag_signal = thth_tztz.require_top_tagged(1); // require at least 1 fatjet to be HEP Top-Tagged
 
 	unsigned int remaining_events = thth_tztz.map_lhco_taggedJets.size();
-	cout << "\n2 Fatjet pT>200 GeV Efficiency: " << setprecision(4) << 100 * eff_fatjpt_signal << " %" << endl;
+	cout << "\nFatjet pT>200 GeV Efficiency: " << setprecision(4) << 100 * eff_fatjpt_signal << " %" << endl;
 	cout << "\nTop Tagging Efficiency: " << setprecision(4) << 100 * eff_ttag_signal << " %" << endl;
 	cout << "\nRemaining events: " << remaining_events << endl;
 	cout << "\nSignal Efficiency: " << setprecision(4) << 100 * eff_basic_signal * eff_fatjpt_signal * eff_ttag_signal << " %" << endl;

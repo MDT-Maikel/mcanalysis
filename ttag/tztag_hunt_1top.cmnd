@@ -1,0 +1,11 @@
+### MC INPUT ###
+BKG_LHCO = {/data/btag/events/background/ttz/tztag_1top_analysis/ttz_analysed.lhco.gz,/data/btag/events/background/z/tztag_1top_analysis/z_analysed.lhco.gz,/data/btag/events/background/tz/tztag_1top_analysis/tz_analysed.lhco.gz}
+BKG_XSEC = {0.000064044443,0.00053061,.00000497325525}
+SIG_LHCO = /data/btag/events/signal/thth_tztz/tztag_1top_analysis/mass_1000/thth_tztz_mass1000_analysed.lhco.gz
+SIG_XSEC = 0.0000205883
+
+### GENERAL ###
+OUTPUT_FOLDER = output/
+LUMINOSITY = 100
+
+############################# UPDATE CROSS SECTIONS! #############################

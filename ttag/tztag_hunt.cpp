@@ -45,6 +45,41 @@ public:
 	}
 };
 
+// deltaR(Z, tagged top)
+class plot_deltarZt : public plot_default
+{
+public:
+	plot_deltarZt() {}
+
+	double operator() (const event *ev)
+	{
+		// extract eta and phi of leptons and top-jet
+		double etaL1 = (ev->get(ptype_lepton, 1))->eta();
+		double etaL2 = (ev->get(ptype_lepton, 2))->eta();
+		double etaJ = (ev->get(ptype_jet, 1))->eta();
+
+		double phiL1 = (ev->get(ptype_lepton, 1))->phi();
+		double phiL2 = (ev->get(ptype_lepton, 2))->phi();
+		double phiJ = (ev->get(ptype_jet, 1))->phi();
+
+		// evaluate deltaR(l1,j)
+		double deltaEta1 = etaJ - etaL1;
+		double deltaPhi1 = abs(phiJ - phiL1);
+		deltaPhi1 = min(deltaPhi1, 8 * atan(1) - deltaPhi1);
+		double deltaR1   = sqrt( pow(deltaEta1,2.0) + pow(deltaPhi1,2.0) );
+
+		// evaluate deltaR(l2,j)
+		double deltaEta2 = etaJ - etaL2;
+		double deltaPhi2 = abs(phiJ - phiL2);
+		deltaPhi2 = min(deltaPhi2, 8 * atan(1) - deltaPhi2);
+		double deltaR2   = sqrt(pow(deltaEta2, 2.0) + pow(deltaPhi2, 2.0));
+
+		// return average deltaR
+		double deltaR = (deltaR1+deltaR2)/2;
+		return deltaR;
+	}
+};
+
 // top partner mass plot
 class plot_thmass : public plot_default
 {
@@ -65,7 +100,7 @@ int main(int argc, const char* argv[])
 	double duration;
 	
 	// take single argument specifying settings file if available
-	string settings_file = "tztag_hunt.cmnd";
+	string settings_file = "tztag_hunt_1top.cmnd";
 	if (argc >= 2) 
 		settings_file = argv[1];
 		
@@ -108,6 +143,17 @@ int main(int argc, const char* argv[])
 	}
 	lmass.add_sample(sig_evts, lepton_mass, "signal", sig_xsec * luminosity / sig_evts.size());
 	lmass.run();	
+
+	// plot deltaR(Z, tagged top)
+	plot drZt("plot_deltarZt", output_folder);
+	drZt.set_normalized(true);
+	plot_deltarZt *deltarZt = new plot_deltarZt();
+	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	{
+		drZt.add_sample(bkg_evts[i], deltarZt, "bkg" + lexical_cast<string>(i));
+	}
+	drZt.add_sample(sig_evts, deltarZt, "signal");
+	drZt.run();
 	
 	// plot top partner mass
 	plot pmass("plot_thmass", output_folder);
