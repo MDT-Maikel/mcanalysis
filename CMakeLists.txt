@@ -14,6 +14,27 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 
+##################
+## User Options ##
+##################
+
+## Set user specific options, be sure to initialize there values.
+option(INCLUDE_ANALYSIS "Include analysis module" ON)
+option(INCLUDE_TTAG "Include ttag module" OFF)
+option(INCLUDE_GRES "Include gres module" OFF)
+option(INCLUDE_HCEFF "Include hceff module" OFF)
+
+## Print the status of the user options
+message("=======================================================")
+message("================== User Option Status =================")
+message("=======================================================")
+message("Including analysis module: " "${INCLUDE_ANALYSIS}")
+message("Including ttag module:     " "${INCLUDE_TTAG}")
+message("Including gres module:     " "${INCLUDE_GRES}")
+message("Including hceff module:    " "${INCLUDE_HCEFF}")
+message("=======================================================")
+
+
 #################
 ### Libraries ###
 #################
@@ -143,7 +164,6 @@ add_subdirectory(tools)
 add_subdirectory(scripts)
 
 
-
 #############################
 ### Optional Executables ###
 #############################
@@ -157,20 +177,26 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/private/CMakeLists.txt")
 endif()
 
 ## Executables: analyses
-## Only include if option -DINCLUDE_ANALYSES equals true
+## Only include if option INCLUDE_ANALYSES is on
 if(INCLUDE_ANALYSES)
 	add_subdirectory(analyses)
 endif()
 
-## Executables: gres
-## Only include if option -DINCLUDE_GRES equals true
+## Executables: ttag
+## Only include if option INCLUDE_TTAG is on
 if(INCLUDE_TTAG)
 	add_subdirectory(ttag)
 endif()
 
 ## Executables: gres
-## Only include if option -DINCLUDE_GRES equals true
+## Only include if option INCLUDE_GRES is on
 if(INCLUDE_GRES)
 	add_subdirectory(gres)
+endif()
+
+## Executables: hceff
+## Only include if option INCLUDE_HCEFF is on
+if(INCLUDE_HCEFF)
+	add_subdirectory(hceff)
 endif()
 

@@ -17,9 +17,10 @@ is recommended to build in a separate directory using the commands in the source
 CMake comes with a lot of options, the ones relevant for this project are:
 	-DCMAKE_CXX_COMPILER=<different C++ compiler> "specifies the C++ compiler"
 	-DCMAKE_C_COMPILER=<different C compiler>     "specifies the C compiler"
-	-DINCLUDE_ANALYSES=<false/true>               "whether to include different LHC analyses"
-	-DINCLUDE_TTAG=<false/true>                   "whether to include the ttag module"
-	-DINCLUDE_GRES=<false/true>                   "whether to include the gres module"
+	-DINCLUDE_ANALYSES=<ON/OFF>                   "whether to include different LHC analyses"
+	-DINCLUDE_TTAG=<ON/OFF>                       "whether to include the ttag module"
+	-DINCLUDE_GRES=<ON/OFF>                       "whether to include the gres module"
+	-DINCLUDE_HCEFF=<ON/OFF>                      "whether to include the hceff module"
 
 
 ######################
