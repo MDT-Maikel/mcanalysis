@@ -138,8 +138,8 @@ int main(int argc, const char* argv[])
 	basic_cuts.add_cut(osl, "2 opposite sign leptons");
 	cut_ht *ht = new cut_ht(1000, ptype_jet, 20, 3.0);
 	basic_cuts.add_cut(ht, "ht>1000 GeV");
-	cut_bjet *bjet = new cut_bjet(1, 100., 2.8);
-	basic_cuts.add_cut(bjet, "b-jet pt>100 GeV");
+	// cut_bjet *bjet = new cut_bjet(1, 100., 2.8);
+	// basic_cuts.add_cut(bjet, "b-jet pt>100 GeV");
 
 	// jet_analysis settings
 	jet_analysis thth_tztz;
@@ -163,7 +163,7 @@ int main(int argc, const char* argv[])
 	thth_tztz.initialise(TopTagger);
 
 	// apply cuts and extract efficiencies
-	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, HT>1000 GeV, b-jet
+	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, HT>1000 GeV
 	double eff_fatjpt_signal = thth_tztz.require_fatjet_pt(200, 1); // require at least 1 fatjet with pT>200 GeV
 	double eff_ttag_signal = thth_tztz.require_top_tagged(1); // require at least 1 fatjet to be HEP Top-Tagged
 
@@ -189,7 +189,7 @@ int main(int argc, const char* argv[])
 	// clear remaining pointers
 	delete osl;
 	delete ht;
-	delete bjet;
+	// delete bjet;
 	
 	// clear remaining event pointers
 	delete_events(signal_reconstructed);
