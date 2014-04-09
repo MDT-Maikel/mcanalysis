@@ -32,8 +32,53 @@ using namespace analysis;
 // function prototypes
 bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco, vector<double> &bkg_xsec, string &sig_lhco, double &sig_xsec);
 bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity, bool &kinematic_dist);
+vector<const particle*> identify_candidate_leptons(const vector<const particle*> & leptons);
 
-// HT(jets) plot
+//===== Definition of observables before cut application =====//
+
+// deltaR(L1, L2)
+class plot_deltarLL : public plot_default
+{
+public:
+	plot_deltarLL() {}
+
+	double operator() (const event *ev)
+	{
+		vector<const particle*> leptons;
+		for (unsigned int i = 0; i < ev->size(); ++i)
+		{
+			if ((*ev)[i]->type() & ptype_lepton && (*ev)[i]->pt() > 10. && abs((*ev)[i]->eta()) < 2.5)
+				leptons.push_back((*ev)[i]);
+		}
+
+		// at least two visible leptons needs to be present
+		if (leptons.size() < 2)
+			return 0.0;
+
+		// identify lepton candidates
+		vector<const particle*> l_candidates = identify_candidate_leptons(leptons);
+		const particle *first_l = l_candidates[0];
+		const particle *second_l = l_candidates[1];
+		
+		if (first_l == nullptr || second_l == nullptr)
+			return 0.0;
+
+		// evaluate deltaR
+		double etaL1 = first_l->eta();
+		double phiL1 = first_l->phi();
+		double etaL2 = second_l->eta();
+		double phiL2 = second_l->phi();
+
+		double deltaEta = etaL1 - etaL2;
+		double deltaPhi = abs(phiL1 - phiL2);
+		deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+		double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
+
+		return deltaR;
+	}
+};
+
+// HT(jets)
 class plot_HT : public plot_default
 {
 public:
@@ -64,7 +109,9 @@ public:
 	}
 };
 
-// lepton pair mass plot
+//===== Definition of observables after cut application =====//
+
+// lepton pair mass
 class plot_leptonmass : public plot_default
 {
 public:
@@ -76,7 +123,7 @@ public:
 	}
 };
 
-// deltaR(Z, tagged top) plot
+// deltaR(Z, tagged top)
 class plot_deltarZt : public plot_default
 {
 public:
@@ -111,7 +158,7 @@ public:
 	}
 };
 
-// pT of reconstructed Z plot
+// pT of reconstructed Z
 class plot_Zpt : public plot_default
 {
 public:
@@ -132,7 +179,7 @@ public:
 	}
 };
 
-// top partner mass plot
+// top partner mass
 class plot_thmass : public plot_default
 {
 public:
@@ -187,8 +234,19 @@ int main(int argc, const char* argv[])
 	read_lhco(sig_evts, sig_lhco);
 
 	// if requested, plot some kinematic distributions before the application of the cuts
-	if ( kinematic_dist )
+	if (kinematic_dist)
 	{
+		// plot deltaR(L1, L2)
+		plot deltarLL("plot_deltarLL", output_folder);
+		deltarLL.set_normalized(true);
+		plot_deltarLL *LL = new plot_deltarLL();
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			deltarLL.add_sample(bkg_evts[i], LL, "bkg" + lexical_cast<string>(i));
+		}
+		deltarLL.add_sample(sig_evts, LL, "signal");
+		deltarLL.run();
+
 		// plot HT(jets)
 		plot ht("plot_HT", output_folder);
 		ht.set_normalized(true);
@@ -234,6 +292,7 @@ int main(int argc, const char* argv[])
 		ptBht.run();
 	
 		// clear remaining pointers
+		delete LL;
 		delete HT;
 		delete Bpt;
 		delete htcut;
@@ -319,6 +378,57 @@ int main(int argc, const char* argv[])
 	return EXIT_SUCCESS;
 }
 
+// identify lepton candidates to reconstruct the Z boson
+vector<const particle*> identify_candidate_leptons(const vector<const particle*> & leptons)
+{
+	const particle *candidate1 = nullptr;
+	const particle *candidate2 = nullptr;
+
+	double mz = 91.1876;
+	double mass_range = 10.;
+	double mass_diff_min = 1000.;
+
+	for (unsigned int i = 0; i < leptons.size()-1; ++i)
+	{
+		const particle *first_l = leptons[i];
+
+		for (unsigned int j = i+1; j < leptons.size(); ++j)
+		{
+			const particle *second_l = leptons[j];
+
+			// same flavour required
+			if (second_l->type() != first_l->type())
+				continue;
+			
+			// opposite charge required
+			if (second_l->charge() + first_l->charge() != 0)
+				continue;
+
+			// inv. mass required to be within 10 GeV from mZ
+			double inv_mass = mass({first_l, second_l});
+			if (abs(inv_mass - mz) > mass_range)
+				continue;
+
+			// select osl leptons with inv. mass closest to mZ
+			if (abs(inv_mass - mz) < mass_diff_min)
+			{
+				candidate1 = first_l;
+				candidate2 = second_l;
+				mass_diff_min = abs(inv_mass - mz);
+			}
+				 
+		} // end second loop over leptons
+		
+	} // end first loop over leptons
+
+	// return lepton candidates
+	vector<const particle*> l_candidates;
+	l_candidates.push_back(candidate1);
+	l_candidates.push_back(candidate2);
+	return l_candidates;
+}
+
+// load settings functions
 bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco, vector<double> &bkg_xsec, string &sig_lhco, double &sig_xsec)
 {
 	// read input settings
@@ -349,7 +459,7 @@ bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco
 	}
 	cout << "} pb" << endl;
 	cout << "Signal LHCO: " << sig_lhco << endl;
-	cout << "Signal xsec: " << sig_xsec << endl;
+	cout << "Signal xsec: " << sig_xsec << " pb" << endl;
 	cout << "################################################################################" << endl;
 	return true;
 }
