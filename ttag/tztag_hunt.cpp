@@ -192,7 +192,7 @@ int main(int argc, const char* argv[])
 		// plot HT(jets)
 		plot ht("plot_HT", output_folder);
 		ht.set_normalized(true);
-		ht.set_range(0.,3000.);
+		ht.set_bins(100, 0., 3000.);
 		plot_HT *HT = new plot_HT();
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 		{
@@ -204,7 +204,7 @@ int main(int argc, const char* argv[])
 		// plot pT of leading b-jet
 		plot ptB("plot_ptB", output_folder);
 		ptB.set_normalized(true);
-		ptB.set_range(20.,300.);
+		ptB.set_bins(100, 20., 300.);
 		plot_Bpt *Bpt = new plot_Bpt();
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 		{
