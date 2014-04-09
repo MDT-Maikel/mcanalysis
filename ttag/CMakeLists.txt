@@ -13,19 +13,6 @@ include_directories(
 	"${MCANALYSIS_INCLUDE_DIRS}"
 )
 
-## Executable: tztag_2top
-add_executable(tztag_2top tztag_2top.cpp)
-target_link_libraries(
-	tztag_2top
-	${MCANALYSIS_LIBRARIES}
-	${GZSTREAM_LIBRARIES}
-	${ZLIB_LIBRARIES}
-	${Boost_LIBRARIES}
-	${ROOT_LIBRARIES}
-	${PYTHIA8_LIBRARIES}
-	${FASTJET_LIBRARIES}
-)
-
 ## Executable: tztag_1top
 add_executable(tztag_1top tztag_1top.cpp)
 target_link_libraries(
@@ -57,6 +44,6 @@ target_link_libraries(
 ## Copy the tztag_hunt_1top.cmnd file as well
 add_custom_target(copy_tztag_hunt_1top ALL COMMENT "Copying tztag_hunt_1top.cmnd")
 add_custom_command(TARGET copy_tztag_hunt_1top COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/ttag/tztag_hunt_1top.cmnd ${PROJECT_BINARY_DIR}/ttag/tztag_hunt_1top.cmnd)
-## Copy the tztag_hunt_2top.cmnd file as well
-add_custom_target(copy_tztag_hunt_2top ALL COMMENT "Copying tztag_hunt_2top.cmnd")
-add_custom_command(TARGET copy_tztag_hunt_2top COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/ttag/tztag_hunt_2top.cmnd ${PROJECT_BINARY_DIR}/ttag/tztag_hunt_2top.cmnd)
+## Copy the tztag_hunt_kin_dist.cmnd file as well
+add_custom_target(copy_tztag_hunt_kin_dist ALL COMMENT "Copying tztag_hunt_kin_dist.cmnd")
+add_custom_command(TARGET copy_tztag_hunt_kin_dist COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/ttag/tztag_hunt_kin_dist.cmnd ${PROJECT_BINARY_DIR}/ttag/tztag_hunt_kin_dist.cmnd)
