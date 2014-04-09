@@ -46,6 +46,13 @@ namespace analysis
 		return 0.0;
 	}
 
+	double lhco::bjet() const
+	{
+		if (p_type & ptype_jet)
+			return p_btag;
+		return 0.0;
+	}
+
 	/* properties: kinematics */
 
 	double lhco::pt() const { return p_pt; }

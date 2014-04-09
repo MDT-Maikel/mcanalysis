@@ -28,6 +28,7 @@ namespace analysis
 	/* properties: quantum numbers */
 	
 	double particle::charge() const { return 0; }
+	double particle::bjet() const { return 0; }
 
 	/* properties: kinematics */
 

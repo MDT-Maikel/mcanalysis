@@ -58,33 +58,46 @@ public:
 			return false;
 
 		// identify lepton candidates
-		vector<const particle*> test_leptons = identify_candidate_leptons(leptons);
-		const particle *leading_l;
-		const particle *closest_l;
-		leading_l = test_leptons[0];
-		closest_l = test_leptons[1];
+		vector<const particle*> l_candidates = identify_candidate_leptons(leptons);
+		const particle *first_l = l_candidates[0];
+		const particle *second_l = l_candidates[1];
 		
-		if (closest_l == nullptr)
-			return false;
-		
-		// check whether they are opposite sign leptons
-		/*double charge = 0.;
-		charge += leading_l->charge();
-		charge += closest_l->charge();
-		if ( charge != 0. )
-			return false;*/
-
-		// check whether their invariant mass is close to the Z boson mass
-		double mz = 91.1876;
-		double mass_range = 10.;
-		double inv_mass = mass({leading_l, closest_l});
-		if (inv_mass < mz - mass_range || inv_mass > mz + mass_range)
+		if (first_l == nullptr || second_l == nullptr)
 			return false;
 		
 		// cut passed
 		return true;
 	}
 private:
+	double pt_min;
+	double eta_max;
+};
+
+// basic cut: at least n visible b-jets
+class cut_bjet : public cut
+{
+public:
+	cut_bjet(int n, double pt, double eta) : n_b(n), pt_min(pt), eta_max(eta) {}
+
+	bool operator() (const event *ev)
+	{ 
+		// extract all visible b-jets
+		vector<const particle*> bjets;
+		for (unsigned int i = 0; i < ev->size(); ++i)
+		{
+			if ((*ev)[i]->bjet() != 0.0 && (*ev)[i]->pt() > pt_min && abs((*ev)[i]->eta()) < eta_max)
+				bjets.push_back((*ev)[i]);
+		}
+
+		// check whether at least n visible b-jets are present
+		if (bjets.size() < n_b)
+			return false;
+		
+		// cut passed
+		return true;
+	}
+private:
+	int n_b;
 	double pt_min;
 	double eta_max;
 };
@@ -123,7 +136,9 @@ int main(int argc, const char* argv[])
 	cuts basic_cuts;
 	cut_2osl *osl = new cut_2osl(10, 2.5);
 	basic_cuts.add_cut(osl, "2 opposite sign leptons");
-	// cut_ht *ht = new cut_ht(300,ptype_jet);
+	cut_bjet *bjet = new cut_bjet(1, 20, 2.8);
+	basic_cuts.add_cut(bjet, "b-jet cut");
+	// cut_ht *ht = new cut_ht(300, ptype_jet, 20, 3.0);
 	// basic_cuts.add_cut(ht, "ht>300 GeV");
 
 	// jet_analysis settings
@@ -148,7 +163,7 @@ int main(int argc, const char* argv[])
 	thth_tztz.initialise(TopTagger);
 
 	// apply cuts and extract efficiencies
-	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require 2 osl which reconstruct a Z
+	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, b-jet
 	double eff_fatjpt_signal = thth_tztz.require_fatjet_pt(200, 1); // require at least 1 fatjet with pT>200 GeV
 	double eff_ttag_signal = thth_tztz.require_top_tagged(1); // require at least 1 fatjet to be HEP Top-Tagged
 
@@ -173,6 +188,7 @@ int main(int argc, const char* argv[])
 	
 	// clear remaining pointers
 	delete osl;
+	delete bjet;
 	// delete ht;
 	
 	// clear remaining event pointers
@@ -246,44 +262,56 @@ bool load_settings_merging(const string &settings_file, bool &pythia_fast, bool 
 // identify lepton candidates to reconstruct the Z boson
 vector<const particle*> identify_candidate_leptons(const vector<const particle*> & leptons)
 {
-	// identify leading-pT lepton
-	const particle *leading_l = leptons[0];
-	unsigned int leading_index = 0;
-	for (unsigned int i = 0; i < leptons.size(); ++i)
+	const particle *candidate1 = nullptr;
+	const particle *candidate2 = nullptr;
+
+	double delta_r_max = 1.6;
+	double mz = 91.1876;
+	double mass_range = 10.;
+	double mass_diff_min = 1000.;
+
+	for (unsigned int i = 0; i < leptons.size()-1; ++i)
 	{
-		if (leptons[i]->pt() > leading_l->pt())
+		const particle *first_l = leptons[i];
+
+		for (unsigned int j = i+1; j < leptons.size(); ++j)
 		{
-			leading_l = leptons[i];
-			leading_index = i;
-		}	
-	}
+			const particle *second_l = leptons[j];
 
-	// identify lepton closest in delta_r
-	const particle *closest_l = nullptr;
-	double delta_r_min = 10000;
-	for (unsigned int i = 0; i < leptons.size(); ++i)
-	{
-		if (i == leading_index)
-			continue;
-
-		if (leptons[i]->type() != leading_l->type())
-			continue;
+			// same flavour required
+			if (second_l->type() != first_l->type())
+				continue;
 			
-		if (leptons[i]->charge() + leading_l->charge() != 0)
-			continue;		
+			// opposite charge required
+			if (second_l->charge() + first_l->charge() != 0)
+				continue;
+
+			// delta_r < 1.6 required
+			if (delta_r(first_l, second_l) > delta_r_max)
+				continue;
+
+			// inv. mass required to be within 10 GeV from mZ
+			double inv_mass = mass({first_l, second_l});
+			if (abs(inv_mass - mz) > mass_range)
+				continue;
+
+			// select osl leptons with inv. mass closest to mZ
+			if (abs(inv_mass - mz) < mass_diff_min)
+			{
+				candidate1 = first_l;
+				candidate2 = second_l;
+				mass_diff_min = abs(inv_mass - mz);
+			}
+				 
+		} // end second loop over leptons
 		
-		if (delta_r(leptons[leading_index], leptons[i]) < delta_r_min)
-		{
-			delta_r_min = delta_r(leptons[leading_index], leptons[i]);
-			closest_l = leptons[i];
-		}
-	}
+	} // end first loop over leptons
 
 	// return lepton candidates
-	vector<const particle*> test_leptons;
-	test_leptons.push_back(leading_l);
-	test_leptons.push_back(closest_l);
-	return test_leptons;
+	vector<const particle*> l_candidates;
+	l_candidates.push_back(candidate1);
+	l_candidates.push_back(candidate2);
+	return l_candidates;
 }
 
 // identify top candidate in the same emisphere of lepton candidates
@@ -325,7 +353,7 @@ PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const
 	return top_candidate;
 }
 
-
+// reconstruct top partner consistituents
 void get_top_partner_constituents(const vector<event*> &signal_lhco, const vector<vector<PseudoJet> > &signal_fatjets, vector<event*> &signal_reconstructed)
 {
 	// loop over events
@@ -341,22 +369,22 @@ void get_top_partner_constituents(const vector<event*> &signal_lhco, const vecto
 			if ((*ev)[j]->type() & ptype_lepton && (*ev)[j]->pt() > 10. && abs((*ev)[j]->eta()) < 2.5)
 				leptons.push_back((*ev)[j]);
 		}		
-		vector<const particle*> test_leptons = identify_candidate_leptons(leptons);
-		for (unsigned int j = 0; j < test_leptons.size(); ++j)
+		vector<const particle*> l_candidates = identify_candidate_leptons(leptons);
+		for (unsigned int j = 0; j < l_candidates.size(); ++j)
 		{
 			int p_type = ptype_electron;
-			double	p_eta 	 = test_leptons[j]->eta(), 
-					p_phi 	 = test_leptons[j]->phi(), 
-					p_pt 	 = test_leptons[j]->pt(), 
-					p_m 	 = test_leptons[j]->mass(),
-					p_charge = test_leptons[j]->charge();
+			double	p_eta 	 = l_candidates[j]->eta(), 
+					p_phi 	 = l_candidates[j]->phi(), 
+					p_pt 	 = l_candidates[j]->pt(), 
+					p_m 	 = l_candidates[j]->mass(),
+					p_charge = l_candidates[j]->charge();
 			lhco *p = new lhco(p_type, p_eta, p_phi, p_pt, p_m, p_charge);
 			newev->push_back(p);
 		}
 
 		// extract top candidate		
 		vector< PseudoJet > fatjets = signal_fatjets[i];
-		PseudoJet top_candidate = identify_candidate_top(fatjets, test_leptons);
+		PseudoJet top_candidate = identify_candidate_top(fatjets, l_candidates);
 		int p_type = ptype_jet;
 		double	p_eta 	= top_candidate.eta(), 
 				p_phi 	= top_candidate.phi(), 

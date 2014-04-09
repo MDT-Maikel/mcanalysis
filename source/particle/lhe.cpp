@@ -100,6 +100,18 @@ namespace analysis
 		return 0.0;
 	}
 
+	double lhe::bjet() const
+	{
+		switch (p_id)
+		{	
+		case pid_bottom: case pid_bottombar:
+			return 1.0;			
+		default:
+			return 0.0;		
+		}
+		return 0.0;
+	}
+
 	/* properties: kinematics */
 
 	double lhe::px() const { return p_px; }

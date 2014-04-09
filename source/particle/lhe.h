@@ -47,6 +47,7 @@ namespace analysis
 		
 		/* properties: quantum numbers */
 		double charge() const;
+		double bjet() const;
 
 		/* properties: kinematics */
 		double px() const;

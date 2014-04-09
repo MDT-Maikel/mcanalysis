@@ -31,7 +31,38 @@ using namespace analysis;
 
 // function prototypes
 bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco, vector<double> &bkg_xsec, string &sig_lhco, double &sig_xsec);
-bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity);
+bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity, bool &kinematic_dist);
+
+// HT(jets) plot
+class plot_HT : public plot_default
+{
+public:
+	plot_HT() {}
+
+	double operator() (const event *ev)
+	{
+		double HT = ev->ht(ptype_jet, 20, 3.0);
+		return HT;
+	}
+};
+
+// pT of leading b-jet
+class plot_Bpt : public plot_default
+{
+public:
+	plot_Bpt() {}
+
+	double operator() (const event *ev)
+	{
+		double pt_max = 0.;
+		for (unsigned int i = 0; i < ev->size(); ++i)
+		{
+			if ( (*ev)[i]->bjet() != 0.0 && abs((*ev)[i]->eta()) < 2.8 && (*ev)[i]->pt() > pt_max )
+				pt_max = (*ev)[i]->pt();
+		}
+		return pt_max;
+	}
+};
 
 // lepton pair mass plot
 class plot_leptonmass : public plot_default
@@ -45,7 +76,7 @@ public:
 	}
 };
 
-// deltaR(Z, tagged top)
+// deltaR(Z, tagged top) plot
 class plot_deltarZt : public plot_default
 {
 public:
@@ -77,6 +108,27 @@ public:
 		// return average deltaR
 		double deltaR = (deltaR1+deltaR2)/2;
 		return deltaR;
+	}
+};
+
+// pT of reconstructed Z plot
+class plot_Zpt : public plot_default
+{
+public:
+	plot_Zpt() {}
+
+	double operator() (const event *ev)
+	{
+		double px_l1 = (ev->get(ptype_lepton, 1))->px();
+		double py_l1 = (ev->get(ptype_lepton, 1))->py();
+		double px_l2 = (ev->get(ptype_lepton, 2))->px();
+		double py_l2 = (ev->get(ptype_lepton, 2))->py();
+
+		double px2_Z = pow(px_l1 + px_l2, 2.0);
+		double py2_Z = pow(py_l1 + py_l2, 2.0);
+		double pt_Z = sqrt( px2_Z + py2_Z );
+
+		return pt_Z;
 	}
 };
 
@@ -112,9 +164,10 @@ int main(int argc, const char* argv[])
 	if (!load_settings_mcinput(settings_file, bkg_lhco, bkg_xsec, sig_lhco, sig_xsec))
 		return EXIT_FAILURE;
 	// read the general settings from command file
-	double luminosity = 1;
 	string output_folder = "output/";
-	if (!load_settings_general(settings_file, output_folder, luminosity))
+	double luminosity = 1;
+	bool kinematic_dist = false;
+	if (!load_settings_general(settings_file, output_folder, luminosity, kinematic_dist))
 		return EXIT_FAILURE;
 	luminosity *= 1000;
 	
@@ -132,16 +185,60 @@ int main(int argc, const char* argv[])
 		bkg_evts.push_back(evts);
 	}	
 	read_lhco(sig_evts, sig_lhco);
+
+	// if requested, plot some kinematic distributions before the application of the cuts
+	if ( kinematic_dist )
+	{
+		// plot HT(jets)
+		plot ht("plot_HT", output_folder);
+		ht.set_normalized(true);
+		plot_HT *HT = new plot_HT();
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			ht.add_sample(bkg_evts[i], HT, "bkg" + lexical_cast<string>(i));
+		}
+		ht.add_sample(sig_evts, HT, "signal");
+		ht.run();
+
+		// plot pT of leading b-jet
+		plot ptB("plot_ptB", output_folder);
+		ptB.set_normalized(true);
+		plot_Bpt *Bpt = new plot_Bpt();
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			ptB.add_sample(bkg_evts[i], Bpt, "bkg" + lexical_cast<string>(i));
+		}
+		ptB.add_sample(sig_evts, Bpt, "signal");
+		ptB.run();
+
+		// clear remaining pointers
+		delete HT;
+		delete Bpt;
+		
+		// clear remaining event pointers
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+			delete_events(bkg_evts[i]);
+		delete_events(sig_evts);
+		
+		// log results
+		duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
+		cout << "=====================================================================" << endl;
+		cout << "Program completed in " << duration << " seconds." << endl;
+		cout << "=====================================================================" << endl;
+		
+		// finished the program
+		return EXIT_SUCCESS;
+	}
 	
 	// plot lepton pair mass
 	plot lmass("plot_leptonmass", output_folder);
+	lmass.set_normalized(true);
 	plot_leptonmass *lepton_mass = new plot_leptonmass();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{
-		double weight = bkg_xsec[i] * luminosity / bkg_evts[i].size();
-		lmass.add_sample(bkg_evts[i], lepton_mass, "bkg" + lexical_cast<string>(i), weight);
+		lmass.add_sample(bkg_evts[i], lepton_mass, "bkg" + lexical_cast<string>(i));
 	}
-	lmass.add_sample(sig_evts, lepton_mass, "signal", sig_xsec * luminosity / sig_evts.size());
+	lmass.add_sample(sig_evts, lepton_mass, "signal");
 	lmass.run();	
 
 	// plot deltaR(Z, tagged top)
@@ -154,6 +251,17 @@ int main(int argc, const char* argv[])
 	}
 	drZt.add_sample(sig_evts, deltarZt, "signal");
 	drZt.run();
+
+	// plot pT of reconstructed Z
+	plot ptZ("plot_ptZ", output_folder);
+	ptZ.set_normalized(true);
+	plot_Zpt *Zpt = new plot_Zpt();
+	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	{
+		ptZ.add_sample(bkg_evts[i], Zpt, "bkg" + lexical_cast<string>(i));
+	}
+	ptZ.add_sample(sig_evts, Zpt, "signal");
+	ptZ.run();
 	
 	// plot top partner mass
 	plot pmass("plot_thmass", output_folder);
@@ -169,6 +277,8 @@ int main(int argc, const char* argv[])
 	
 	// clear remaining pointers
 	delete lepton_mass;
+	delete deltarZt;
+	delete Zpt;
 	delete th_mass;
 	
 	// clear remaining event pointers
@@ -221,17 +331,19 @@ bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco
 	return true;
 }
 
-bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity)
+bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity, bool &kinematic_dist)
 {
 	// read input settings
 	output_folder = read_settings<string>(settings_file, static_cast<string>("OUTPUT_FOLDER"));
 	luminosity = read_settings<double>(settings_file, static_cast<string>("LUMINOSITY"));
+	kinematic_dist = read_settings<bool>(settings_file, static_cast<string>("KINEMATIC_DIST"));
 	
 	// display the loaded settings if no errors occur
 	cout << "################################################################################" << endl;
 	cout << "Loaded input settings from " << settings_file << ":" << endl;
 	cout << "Output folder: " << output_folder << endl;
 	cout << "Luminosity (ifb): " << luminosity << endl;
+	cout << "Plot kinematic distributions?: " << kinematic_dist << endl;
 	cout << "################################################################################" << endl;
 	return true;
 }
