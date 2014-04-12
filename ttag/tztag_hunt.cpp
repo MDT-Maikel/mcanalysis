@@ -237,8 +237,9 @@ int main(int argc, const char* argv[])
 	if (kinematic_dist)
 	{
 		// plot deltaR(L1, L2)
-		plot deltarLL("plot_deltarLL", output_folder);
+		plot deltarLL("plot_deltarLL_before_cuts", output_folder);
 		deltarLL.set_normalized(true);
+		deltarLL.set_bins(100, 0.1, 5.3);
 		plot_deltarLL *LL = new plot_deltarLL();
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 		{
@@ -248,7 +249,7 @@ int main(int argc, const char* argv[])
 		deltarLL.run();
 
 		// plot HT(jets)
-		plot ht("plot_HT", output_folder);
+		plot ht("plot_HT_before_cuts", output_folder);
 		ht.set_normalized(true);
 		ht.set_bins(100, 0., 3000.);
 		plot_HT *HT = new plot_HT();
@@ -260,7 +261,7 @@ int main(int argc, const char* argv[])
 		ht.run();
 
 		// plot pT of leading b-jet
-		plot ptB("plot_ptB", output_folder);
+		plot ptB("plot_ptB_before_cuts", output_folder);
 		ptB.set_normalized(true);
 		ptB.set_bins(100, 20., 300.);
 		plot_Bpt *Bpt = new plot_Bpt();
@@ -321,7 +322,19 @@ int main(int argc, const char* argv[])
 		lmass.add_sample(bkg_evts[i], lepton_mass, "bkg" + lexical_cast<string>(i));
 	}
 	lmass.add_sample(sig_evts, lepton_mass, "signal");
-	lmass.run();	
+	lmass.run();
+
+	// plot deltaR(L1, L2)
+	plot deltarLL("plot_deltarLL", output_folder);
+	deltarLL.set_normalized(true);
+	deltarLL.set_bins(100, 0.1, 2.0);
+	plot_deltarLL *LL = new plot_deltarLL();
+	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	{
+		deltarLL.add_sample(bkg_evts[i], LL, "bkg" + lexical_cast<string>(i));
+	}
+	deltarLL.add_sample(sig_evts, LL, "signal");
+	deltarLL.run();	
 
 	// plot deltaR(Z, tagged top)
 	plot drZt("plot_deltarZt", output_folder);
@@ -359,6 +372,7 @@ int main(int argc, const char* argv[])
 	
 	// clear remaining pointers
 	delete lepton_mass;
+	delete LL;
 	delete deltarZt;
 	delete Zpt;
 	delete th_mass;

@@ -1,5 +1,5 @@
 ### MC INPUT ###
-BKG_LHCO = {/data/btag/events/background/ttz/lhco/run1.lhco.gz,/data/btag/events/background/z/lhco/run1.lhco.gz,/data/btag/events/background/tz/lhco/run1.lhco.gz,/data/btag/events/background/tt/lhco/run1.lhco.gz}
+BKG_LHCO = {/data/btag/events/background/ttz/lhco/run1.lhco.gz,/data/btag/events/background/z/lhco/run1.lhco.gz,/data/btag/events/background/tz/lhco/run1.lhco.gz,/data/btag/events/background/tbz/lhco/run1.lhco.gz}
 BKG_XSEC = {1.,1.,1.,1.}
 SIG_LHCO = /data/btag/events/signal/thth_tztz/lhco/mass_1000/run1_mass1000.lhco.gz
 SIG_XSEC = 1.
