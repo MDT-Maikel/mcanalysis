@@ -73,6 +73,48 @@ private:
 	double eta_max;
 };
 
+// basic cut: pt of the reconstructed Z boson
+class cut_ptZ : public cut
+{
+public:
+	cut_ptZ(double pt) : pt_min(pt) {}
+
+	bool operator() (const event *ev) 
+	{ 
+		// extract all visible leptons
+		vector<const particle*> leptons;
+		for (unsigned int i = 0; i < ev->size(); ++i)
+		{
+			if ((*ev)[i]->type() & ptype_lepton && (*ev)[i]->pt() > 10. && abs((*ev)[i]->eta()) < 2.5)
+				leptons.push_back((*ev)[i]);
+		}
+
+		// identify lepton candidates (notice that the osl leptons reconstructing the Z need to be present)
+		vector<const particle*> l_candidates = identify_candidate_leptons(leptons);
+		const particle *first_l = l_candidates[0];
+		const particle *second_l = l_candidates[1];
+		
+		// evaluate pT(Z)
+		double px_l1 = first_l->px();
+		double py_l1 = first_l->py();
+		double px_l2 = second_l->px();
+		double py_l2 = second_l->py();
+
+		double px2_Z = pow(px_l1 + px_l2, 2.0);
+		double py2_Z = pow(py_l1 + py_l2, 2.0);
+		double pt_Z = sqrt( px2_Z + py2_Z );
+
+		// check if pT(Z) > pt_min
+		if (pt_Z < pt_min)
+			return false;
+		
+		// cut passed
+		return true;
+	}
+private:
+	double pt_min;
+};
+
 // basic cut: at least n visible b-jets
 class cut_bjet : public cut
 {
@@ -135,11 +177,13 @@ int main(int argc, const char* argv[])
 	// basic cuts definition
 	cuts basic_cuts;
 	cut_2osl *osl = new cut_2osl(10, 2.5);
-	basic_cuts.add_cut(osl, "2 opposite sign leptons");
-	cut_ht *ht = new cut_ht(1000, ptype_jet, 20, 3.0);
-	basic_cuts.add_cut(ht, "ht>1000 GeV");
-	// cut_bjet *bjet = new cut_bjet(1, 100., 2.8);
-	// basic_cuts.add_cut(bjet, "b-jet pt>100 GeV");
+	basic_cuts.add_cut(osl, "2 opposite sign leptons within R=1.0 cone");
+	cut_ptZ *ptZ = new cut_ptZ(200);
+	basic_cuts.add_cut(ptZ, "pT(Z)>200 GeV");
+	cut_ht *ht = new cut_ht(1200, ptype_jet, 20, 3.0);
+	basic_cuts.add_cut(ht, "ht>1200 GeV");
+	cut_bjet *bjet = new cut_bjet(1, 80, 2.8);
+	basic_cuts.add_cut(bjet, "1 b-jet pt>80 GeV");
 
 	// jet_analysis settings
 	jet_analysis thth_tztz;
@@ -163,7 +207,7 @@ int main(int argc, const char* argv[])
 	thth_tztz.initialise(TopTagger);
 
 	// apply cuts and extract efficiencies
-	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, HT>1000 GeV
+	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, pT(Z)>200 GeV, HT>1200 GeV, pT(b)>80 GeV
 	double eff_fatjpt_signal = thth_tztz.require_fatjet_pt(200, 1); // require at least 1 fatjet with pT>200 GeV
 	double eff_ttag_signal = thth_tztz.require_top_tagged(1); // require at least 1 fatjet to be HEP Top-Tagged
 
@@ -188,8 +232,9 @@ int main(int argc, const char* argv[])
 	
 	// clear remaining pointers
 	delete osl;
+	delete ptZ;
 	delete ht;
-	// delete bjet;
+	delete bjet;
 	
 	// clear remaining event pointers
 	delete_events(signal_reconstructed);
@@ -265,7 +310,7 @@ vector<const particle*> identify_candidate_leptons(const vector<const particle*>
 	const particle *candidate1 = nullptr;
 	const particle *candidate2 = nullptr;
 
-	double delta_r_max = 1.6;
+	double delta_r_max = 1.0;
 	double mz = 91.1876;
 	double mass_range = 10.;
 	double mass_diff_min = 1000.;
@@ -286,7 +331,7 @@ vector<const particle*> identify_candidate_leptons(const vector<const particle*>
 			if (second_l->charge() + first_l->charge() != 0)
 				continue;
 
-			// delta_r < 1.6 required
+			// delta_r < delta_r_max required
 			if (delta_r(first_l, second_l) > delta_r_max)
 				continue;
 
