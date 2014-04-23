@@ -33,8 +33,9 @@ using namespace analysis;
 bool load_settings_input(const string &settings_file, string &input_sig_lhe, string &input_sig_lhco, double &sig_xsec, int &nr_events);
 bool load_settings_output(const string &settings_file, string &output_lhco, string &output_xsec);
 bool load_settings_merging(const string &settings_file, bool &pythia_fast, bool &merging_on, string &merging_process, int &merging_njets, double &merging_scale);
-PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const particle*> & leptons);
 vector<const particle*> identify_candidate_leptons(const vector<const particle*> & leptons);
+PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const particle*> & leptons);
+double cut_deltaRtb(jet_analysis &analysis, double delta_r);
 void get_top_partner_constituents(const vector<event*> &signal_lhco, const vector<vector<PseudoJet> > &signal_fatjets, vector<event*> &signal_reconstructed);
 
 // basic cut: at least two opposite sign leptons need to be present, with invariant mass near the Z boson
@@ -147,12 +148,12 @@ private:
 // main program: may have one argument
 int main(int argc, const char* argv[])
 {
-	// initiate timing procedure
+	// initialise timing procedure
 	clock_t clock_old = clock();
 	double duration;
 	
 	// take single argument specifying settings file if available
-	string settings_file = "tztag.cmnd";
+	string settings_file = "tztag_1top.cmnd";
 	if (argc >= 2) 
 		settings_file = argv[1];
 
@@ -174,6 +175,26 @@ int main(int argc, const char* argv[])
 	if (!load_settings_merging(settings_file, pythia_fast, merging_on, merging_process, merging_njets, merging_scale))
 		return EXIT_FAILURE;
 
+	// jet_analysis initialisation (settings, load files, shower and cluster the events)
+	jet_analysis thth_tztz;
+	thth_tztz.set_nEvents(nr_events);
+	thth_tztz.undo_BDRSTagging();
+	thth_tztz.set_Rsize_fat(1.5);
+	PseudoJet (jet_analysis::*TopTagger)(const PseudoJet &) = &jet_analysis::HEPTopTagging;
+	if (pythia_fast)
+		thth_tztz.set_fast_showering();
+
+	thth_tztz.import_lhe(input_lhe);
+	thth_tztz.import_lhco(input_lhco);
+	if (merging_on)
+	{
+		thth_tztz.set_merging_process(merging_process);
+		thth_tztz.set_merging_njmax(merging_njets);
+		thth_tztz.set_merging_scale(merging_scale);
+		thth_tztz.AllowPythiaDecay();
+	}
+	thth_tztz.initialise(TopTagger);
+
 	// basic cuts definition
 	cuts basic_cuts;
 	cut_2osl *osl = new cut_2osl(10, 2.5);
@@ -185,37 +206,18 @@ int main(int argc, const char* argv[])
 	cut_bjet *bjet = new cut_bjet(1, 80, 2.8);
 	basic_cuts.add_cut(bjet, "1 b-jet pt>80 GeV");
 
-	// jet_analysis settings
-	jet_analysis thth_tztz;
-	thth_tztz.set_nEvents(nr_events);
-	thth_tztz.undo_BDRSTagging();
-	thth_tztz.set_Rsize_fat(1.5);
-	if (pythia_fast)
-		thth_tztz.set_fast_showering();
-
-	// load files, shower and cluster the events
-	thth_tztz.import_lhe(input_lhe);
-	thth_tztz.import_lhco(input_lhco);
-	if (merging_on)
-	{
-		thth_tztz.set_merging_process(merging_process);
-		thth_tztz.set_merging_njmax(merging_njets);
-		thth_tztz.set_merging_scale(merging_scale);
-		thth_tztz.AllowPythiaDecay();
-	}	
-	PseudoJet (jet_analysis::*TopTagger)(const PseudoJet &) = &jet_analysis::HEPTopTagging;
-	thth_tztz.initialise(TopTagger);
-
 	// apply cuts and extract efficiencies
-	double eff_basic_signal = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, pT(Z)>200 GeV, HT>1200 GeV, pT(b)>80 GeV
-	double eff_fatjpt_signal = thth_tztz.require_fatjet_pt(200, 1); // require at least 1 fatjet with pT>200 GeV
-	double eff_ttag_signal = thth_tztz.require_top_tagged(1); // require at least 1 fatjet to be HEP Top-Tagged
+	double eff_basic = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, pT(Z)>200 GeV, HT>1200 GeV, pT(b)>80 GeV
+	double eff_fatjpt = thth_tztz.require_fatjet_pt(200, 1); // require at least 1 fatjet with pT>200 GeV
+	double eff_ttag = thth_tztz.require_top_tagged(1); // require at least 1 fatjet to be HEP Top-Tagged
+	double eff_deltaRtb = cut_deltaRtb(thth_tztz, 1.5); // require deltaR(t, b)<1.5 for at least one b-jet
 
 	unsigned int remaining_events = thth_tztz.map_lhco_taggedJets.size();
-	cout << "\nFatjet pT>200 GeV Efficiency: " << setprecision(4) << 100 * eff_fatjpt_signal << " %" << endl;
-	cout << "\nTop Tagging Efficiency: " << setprecision(4) << 100 * eff_ttag_signal << " %" << endl;
+	cout << "\nFatjet pT>200 GeV Efficiency: " << setprecision(4) << 100 * eff_fatjpt << " %" << endl;
+	cout << "\nTop Tagging Efficiency: " << setprecision(4) << 100 * eff_ttag << " %" << endl;
+	cout << "\nDeltaR(t,b)<1.5 Efficiency: " << setprecision(4) << 100 * eff_deltaRtb << " %" << endl;
 	cout << "\nRemaining events: " << remaining_events << endl;
-	cout << "\nSignal Efficiency: " << setprecision(4) << 100 * eff_basic_signal * eff_fatjpt_signal * eff_ttag_signal << " %" << endl;
+	cout << "\nSignal Efficiency: " << setprecision(4) << 100 * eff_basic * eff_fatjpt * eff_ttag * eff_deltaRtb << " %" << endl;
 	
 	// identify top partner constituents
 	vector<event*> signal_reconstructed;
@@ -224,7 +226,7 @@ int main(int argc, const char* argv[])
 	// calculate cross section and store
 	ofstream ofs_txt;
 	ofs_txt.open(output_xsec.c_str());
-	ofs_txt << input_xsec << "\t" << eff_basic_signal * eff_fatjpt_signal * eff_ttag_signal << "\t" << input_xsec * eff_basic_signal * eff_fatjpt_signal * eff_ttag_signal << endl;
+	ofs_txt << input_xsec << "\t" << eff_basic * eff_fatjpt * eff_ttag * eff_deltaRtb << "\t" << input_xsec * eff_basic * eff_fatjpt * eff_ttag * eff_deltaRtb << endl;
 	ofs_txt.close();
 	
 	// store lhco events
@@ -260,8 +262,8 @@ bool load_settings_input(const string &settings_file, string &input_sig_lhe, str
 	// display the loaded settings if no errors occur
 	cout << "################################################################################" << endl;
 	cout << "Loaded input settings from " << settings_file << ":" << endl;
-	cout << "Input input LHE file: " << input_sig_lhe << endl;
-	cout << "Input input LHCO file: " << input_sig_lhco << endl;
+	cout << "Input LHE file: " << input_sig_lhe << endl;
+	cout << "Input LHCO file: " << input_sig_lhco << endl;
 	cout << "Input cross section: " << sig_xsec << endl;
 	cout << "Input nr of events: " << nr_events << endl;
 	cout << "################################################################################" << endl;
@@ -277,7 +279,7 @@ bool load_settings_output(const string &settings_file, string &output_lhco, stri
 	// display the loaded settings if no errors occur
 	cout << "################################################################################" << endl;
 	cout << "Loaded output settings from " << settings_file << ":" << endl;
-	cout << "Results output lhco: " << output_lhco << endl;
+	cout << "Results output LHCO: " << output_lhco << endl;
 	cout << "Results output xsec: " << output_xsec << endl;
 	cout << "################################################################################" << endl;
 	return true;	
@@ -359,7 +361,7 @@ vector<const particle*> identify_candidate_leptons(const vector<const particle*>
 	return l_candidates;
 }
 
-// identify top candidate in the same emisphere of lepton candidates
+// identify top candidate closest to the reconstructed Z
 PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const particle*> & leptons)
 {
 	// identify top-tagged jets
@@ -396,6 +398,74 @@ PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const
 
 	// return top candidate
 	return top_candidate;
+}
+
+// cut: require deltaR(t, b)<delta_r for at least one b-jet
+double cut_deltaRtb(jet_analysis &analysis, double delta_r)
+{
+	map< event *, vector< PseudoJet > >::iterator it;
+	map< event *, vector< PseudoJet > > original_map = analysis.map_lhco_taggedJets;
+	map< event *, vector< PseudoJet > > reduced_map;
+	int map_size = 0, passed = 0;
+	double eff;
+
+	// loop over events
+	for (it=original_map.begin(); it!=original_map.end(); ++it)
+	{
+		map_size++;
+
+		// extract lepton candidates
+		event *ev = it->first;
+		vector< const particle* > leptons;
+		for (unsigned int j = 0; j < ev->size(); ++j)
+		{
+			if ((*ev)[j]->type() & ptype_lepton && (*ev)[j]->pt() > 10. && abs((*ev)[j]->eta()) < 2.5)
+				leptons.push_back((*ev)[j]);
+		}		
+		vector<const particle*> l_candidates = identify_candidate_leptons(leptons);
+
+		// identify top candidate		
+		vector< PseudoJet > fatjets = it->second;
+		PseudoJet top_candidate = identify_candidate_top(fatjets, l_candidates);
+		double	top_eta = top_candidate.eta(), 
+				top_phi = top_candidate.phi();
+
+		// extract all visible b-jets
+		vector<const particle*> bjets;
+		for (unsigned int j = 0; j < ev->size(); ++j)
+		{
+			if ((*ev)[j]->bjet() != 0.0 && (*ev)[j]->pt() > 20. && abs((*ev)[j]->eta()) < 2.8)
+				bjets.push_back((*ev)[j]);
+		}
+
+		// evaluate deltaR(t, b): the cut is passed if at least one b-jet is within a cone of R=1.5 wrt the reconstructed top
+		for (unsigned int j = 0; j < bjets.size(); ++j)
+		{
+			double	b_eta = bjets[j]->eta(), 
+					b_phi = bjets[j]->phi();
+
+			double deltaEta = top_eta - b_eta;
+			double deltaPhi = abs(top_phi - b_phi);
+			deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+			double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
+
+			if (deltaR < delta_r)
+			{
+				passed++;
+				reduced_map.insert( make_pair(it->first,it->second) );
+				break;
+			}		
+		}
+
+	}
+
+	// calculate efficiency
+	eff = (map_size == 0 ? 0.0 : static_cast<double>(passed) / map_size);
+
+	// resize the map_lhco_taggedJets
+	analysis.map_lhco_taggedJets = reduced_map;
+
+	return eff;
 }
 
 // reconstruct top partner consistituents
