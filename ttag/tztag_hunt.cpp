@@ -272,17 +272,17 @@ int main(int argc, const char* argv[])
 		ptB.add_sample(sig_evts, Bpt, "signal");
 		ptB.run();
 
-		// plot pT of leading b-jet after ht>1200 GeV cut
+		// plot pT of leading b-jet after ht>1500 GeV cut
 		cuts basic_cuts;
-		cut_ht *htcut = new cut_ht(1200, ptype_jet, 20, 3.0);
-		basic_cuts.add_cut(htcut, "ht>1200 GeV");
+		cut_ht *htcut = new cut_ht(1500, ptype_jet, 20, 3.0);
+		basic_cuts.add_cut(htcut, "ht>1500 GeV");
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 		{
 			basic_cuts.apply(bkg_evts[i]);
 		}
 		basic_cuts.apply(sig_evts);
 
-		plot ptBht("plot_ptB_htcut1200", output_folder);
+		plot ptBht("plot_ptB_htcut1500", output_folder);
 		ptBht.set_normalized(true);
 		ptBht.set_bins(100, 20., 300.);
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
