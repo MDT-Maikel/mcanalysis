@@ -131,30 +131,28 @@ public:
 
 	double operator() (const event *ev)
 	{
-		// extract eta and phi of leptons and top-jet
-		double etaL1 = (ev->get(ptype_lepton, 1))->eta();
-		double etaL2 = (ev->get(ptype_lepton, 2))->eta();
-		double etaJ = (ev->get(ptype_jet, 1))->eta();
+		// reconstruct Z-boson 4-vector
+		const double px_Z = (ev->get(ptype_lepton, 1))->px() + (ev->get(ptype_lepton, 2))->px();
+		const double py_Z = (ev->get(ptype_lepton, 1))->py() + (ev->get(ptype_lepton, 2))->py();
+		const double pz_Z = (ev->get(ptype_lepton, 1))->pz() + (ev->get(ptype_lepton, 2))->pz();
+		const double pe_Z = (ev->get(ptype_lepton, 1))->pe() + (ev->get(ptype_lepton, 2))->pe();
+		PseudoJet Zboson(px_Z, py_Z, pz_Z, pe_Z);
 
-		double phiL1 = (ev->get(ptype_lepton, 1))->phi();
-		double phiL2 = (ev->get(ptype_lepton, 2))->phi();
+		// extract eta and phi of Z and top-jet
+		double etaZ = Zboson.eta();
+		double phiZ = Zboson.phi();
+		double etaJ = (ev->get(ptype_jet, 1))->eta();
 		double phiJ = (ev->get(ptype_jet, 1))->phi();
 
-		// evaluate deltaR(l1,j)
-		double deltaEta1 = etaJ - etaL1;
-		double deltaPhi1 = abs(phiJ - phiL1);
-		deltaPhi1 = min(deltaPhi1, 8 * atan(1) - deltaPhi1);
-		double deltaR1   = sqrt( pow(deltaEta1,2.0) + pow(deltaPhi1,2.0) );
+		// evaluate deltaR(t,Z)
+		double deltaEta = etaJ - etaZ;
+		double deltaPhi = abs(phiJ - phiZ);
+		deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+		double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
 
-		// evaluate deltaR(l2,j)
-		double deltaEta2 = etaJ - etaL2;
-		double deltaPhi2 = abs(phiJ - phiL2);
-		deltaPhi2 = min(deltaPhi2, 8 * atan(1) - deltaPhi2);
-		double deltaR2   = sqrt(pow(deltaEta2, 2.0) + pow(deltaPhi2, 2.0));
-
-		// return average deltaR
-		double deltaR = (deltaR1+deltaR2)/2;
+		// return deltaR
 		return deltaR;
+
 	}
 };
 
@@ -360,7 +358,7 @@ int main(int argc, const char* argv[])
 	
 	// plot top partner mass
 	plot pmass("plot_thmass", output_folder);
-	pmass.set_bins(30, 400, 2200);
+	pmass.set_bins(20, 400, 1500);
 	plot_thmass *th_mass = new plot_thmass();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{

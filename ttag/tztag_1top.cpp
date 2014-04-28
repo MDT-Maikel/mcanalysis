@@ -103,7 +103,7 @@ public:
 
 		double px2_Z = pow(px_l1 + px_l2, 2.0);
 		double py2_Z = pow(py_l1 + py_l2, 2.0);
-		double pt_Z = sqrt( px2_Z + py2_Z );
+		double pt_Z = sqrt(px2_Z + py2_Z);
 
 		// check if pT(Z) > pt_min
 		if (pt_Z < pt_min)
@@ -364,6 +364,13 @@ vector<const particle*> identify_candidate_leptons(const vector<const particle*>
 // identify top candidate most back-to-back wrt the reconstructed Z
 PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const particle*> & leptons)
 {
+	// reconstruct ideal back-to-back top wrt Z-boson
+	const double px_Z = leptons[0]->px() + leptons[1]->px();
+	const double py_Z = leptons[0]->py() + leptons[1]->py();
+	const double pz_Z = leptons[0]->pz() + leptons[1]->pz();
+	const double pe_Z = leptons[0]->pe() + leptons[1]->pe();
+	PseudoJet Ideal_T(-px_Z, -py_Z, -pz_Z, pe_Z);
+
 	// identify top-tagged jets
 	vector< PseudoJet > topjets;
 	for (unsigned int i = 0; i < fatjets.size(); ++i)
@@ -374,27 +381,19 @@ PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const
 
 	// identify top candidate
 	PseudoJet top_candidate;
-	double delta_r_min = 10000;
+	double delta_r_min = 1000.;
 	for (unsigned int i = 0; i < topjets.size(); ++i)
 	{
-		// delta_R to lepton1
-		double deltaEta1 = topjets[i].eta() - leptons[0]->eta();
-		double deltaPhi1 = abs(topjets[i].phi() - leptons[0]->phi());
-		deltaPhi1 = min(deltaPhi1, 8 * atan(1) - deltaPhi1);
-		double deltaR1   = sqrt( pow(deltaEta1,2.0) + pow(deltaPhi1,2.0) );
+		// deltaR between top candidate and back-to-back ideal direction
+		double deltaEta = topjets[i].eta() - Ideal_T.eta();
+		double deltaPhi = abs(topjets[i].phi() - Ideal_T.phi());
+		deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+		double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
 
-		// delta_R to lepton2
-		double deltaEta2 = topjets[i].eta() - leptons[1]->eta();
-		double deltaPhi2 = abs(topjets[i].phi() - leptons[1]->phi());
-		deltaPhi2 = min(deltaPhi2, 8 * atan(1) - deltaPhi2);
-		double deltaR2   = sqrt(pow(deltaEta2, 2.0) + pow(deltaPhi2, 2.0));
-
-		// delta_R to reconstructed Z as average of delta_R to leptons
-		double deltaRtest = (deltaR1+deltaR2)/2;
-
-		if (deltaRtest - 4 * atan(1) < delta_r_min)
+		// minimize deltaR
+		if (deltaR < delta_r_min)
 		{
-			delta_r_min = deltaRtest - 4 * atan(1);
+			delta_r_min = deltaR;
 			top_candidate = topjets[i];
 		}
 	}
