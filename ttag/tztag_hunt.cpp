@@ -360,7 +360,7 @@ int main(int argc, const char* argv[])
 	
 	// plot top partner mass
 	plot pmass("plot_thmass", output_folder);
-	pmass.set_bins(50, 200, 2200);
+	pmass.set_bins(30, 400, 2200);
 	plot_thmass *th_mass = new plot_thmass();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{

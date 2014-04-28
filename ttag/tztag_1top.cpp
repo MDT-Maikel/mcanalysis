@@ -361,7 +361,7 @@ vector<const particle*> identify_candidate_leptons(const vector<const particle*>
 	return l_candidates;
 }
 
-// identify top candidate closest to the reconstructed Z
+// identify top candidate most back-to-back wrt the reconstructed Z
 PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const particle*> & leptons)
 {
 	// identify top-tagged jets
@@ -372,26 +372,29 @@ PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const
 			topjets.push_back(fatjets[i]);
 	}
 
-	// identify top candidate closest in delta_r wrt lepton candidates
+	// identify top candidate
 	PseudoJet top_candidate;
 	double delta_r_min = 10000;
 	for (unsigned int i = 0; i < topjets.size(); ++i)
 	{
+		// delta_R to lepton1
 		double deltaEta1 = topjets[i].eta() - leptons[0]->eta();
 		double deltaPhi1 = abs(topjets[i].phi() - leptons[0]->phi());
 		deltaPhi1 = min(deltaPhi1, 8 * atan(1) - deltaPhi1);
 		double deltaR1   = sqrt( pow(deltaEta1,2.0) + pow(deltaPhi1,2.0) );
 
+		// delta_R to lepton2
 		double deltaEta2 = topjets[i].eta() - leptons[1]->eta();
 		double deltaPhi2 = abs(topjets[i].phi() - leptons[1]->phi());
 		deltaPhi2 = min(deltaPhi2, 8 * atan(1) - deltaPhi2);
 		double deltaR2   = sqrt(pow(deltaEta2, 2.0) + pow(deltaPhi2, 2.0));
 
+		// delta_R to reconstructed Z as average of delta_R to leptons
 		double deltaRtest = (deltaR1+deltaR2)/2;
 
-		if (deltaRtest < delta_r_min)
+		if (deltaRtest - 4 * atan(1) < delta_r_min)
 		{
-			delta_r_min = deltaRtest;
+			delta_r_min = deltaRtest - 4 * atan(1);
 			top_candidate = topjets[i];
 		}
 	}
