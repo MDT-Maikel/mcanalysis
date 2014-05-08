@@ -13,6 +13,13 @@ include_directories(
 	"${MCANALYSIS_INCLUDE_DIRS}"
 )
 
+## Executable: calc_val
+add_executable(calc_val calc_val.cpp)
+target_link_libraries(
+	calc_val
+	${Boost_LIBRARIES}
+)
+
 ## Executable: tztag_1top
 add_executable(tztag_1top tztag_1top.cpp)
 target_link_libraries(
