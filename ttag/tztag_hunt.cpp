@@ -328,6 +328,7 @@ int main(int argc, const char* argv[])
 		// plot deltaR(Z, b)
 		plot drZb("plot_deltarZb_before_cuts", output_folder);
 		drZb.set_normalized(true);
+		drZb.set_bins(100, 0.1, 5.3);
 		plot_deltarZb *deltarZb = new plot_deltarZb();
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 		{
@@ -360,17 +361,17 @@ int main(int argc, const char* argv[])
 		ptB.add_sample(sig_evts, Bpt, "signal");
 		ptB.run();
 
-		// plot pT of leading b-jet after ht>1500 GeV cut
+		// plot pT of leading b-jet after ht>1000 GeV cut
 		cuts basic_cuts;
-		cut_ht *htcut = new cut_ht(1500, ptype_jet, 20, 3.0);
-		basic_cuts.add_cut(htcut, "ht>1500 GeV");
+		cut_ht *htcut = new cut_ht(1000, ptype_jet, 20, 3.0);
+		basic_cuts.add_cut(htcut, "ht>1000 GeV");
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 		{
 			basic_cuts.apply(bkg_evts[i]);
 		}
 		basic_cuts.apply(sig_evts);
 
-		plot ptBht("plot_ptB_htcut1500", output_folder);
+		plot ptBht("plot_ptB_htcut1000", output_folder);
 		ptBht.set_normalized(true);
 		ptBht.set_bins(100, 20., 300.);
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
@@ -428,6 +429,7 @@ int main(int argc, const char* argv[])
 	// plot pT of reconstructed Z
 	plot ptZ("plot_ptZ", output_folder);
 	ptZ.set_normalized(true);
+	ptZ.set_bins(100, 150., 1000.);
 	plot_Zpt *Zpt = new plot_Zpt();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{
@@ -439,6 +441,7 @@ int main(int argc, const char* argv[])
 	// plot pT of reconstructed top-jet
 	plot ptT("plot_ptT", output_folder);
 	ptT.set_normalized(true);
+	ptT.set_bins(100, 150., 1500.);
 	plot_Tpt *Tpt = new plot_Tpt();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{
@@ -450,6 +453,7 @@ int main(int argc, const char* argv[])
 	// plot deltaR(Z, tagged top)
 	plot drZt("plot_deltarZt", output_folder);
 	drZt.set_normalized(true);
+	drZt.set_bins(100, 0.1, 5.3);
 	plot_deltarZt *deltarZt = new plot_deltarZt();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{
