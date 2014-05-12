@@ -44,6 +44,7 @@ public:
 
 	double operator() (const event *ev)
 	{
+		// identify leptons
 		vector<const particle*> leptons;
 		for (unsigned int i = 0; i < ev->size(); ++i)
 		{
@@ -51,7 +52,7 @@ public:
 				leptons.push_back((*ev)[i]);
 		}
 
-		// at least two visible leptons needs to be present
+		// at least two visible leptons are required
 		if (leptons.size() < 2)
 			return 0.0;
 
@@ -74,6 +75,70 @@ public:
 		deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
 		double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
 
+		return deltaR;
+	}
+};
+
+// deltaR(Z, b)
+class plot_deltarZb : public plot_default
+{
+public:
+	plot_deltarZb() {}
+
+	double operator() (const event *ev)
+	{
+		// identify leptons
+		vector<const particle*> leptons;
+		for (unsigned int i = 0; i < ev->size(); ++i)
+		{
+			if ((*ev)[i]->type() & ptype_lepton && (*ev)[i]->pt() > 10. && abs((*ev)[i]->eta()) < 2.5)
+				leptons.push_back((*ev)[i]);
+		}
+
+		// at least two visible leptons are required
+		if (leptons.size() < 2)
+			return 0.0;
+
+		// identify lepton candidates
+		vector<const particle*> l_candidates = identify_candidate_leptons(leptons);
+		const particle *first_l = l_candidates[0];
+		const particle *second_l = l_candidates[1];
+		
+		if (first_l == nullptr || second_l == nullptr)
+			return 0.0;
+
+		// reconstruct Z-boson 4-vector
+		const double px_Z = first_l->px() + second_l->px();
+		const double py_Z = first_l->py() + second_l->py();
+		const double pz_Z = first_l->pz() + second_l->pz();
+		const double pe_Z = first_l->pe() + second_l->pe();
+		PseudoJet Zboson(px_Z, py_Z, pz_Z, pe_Z);
+
+		// identify b-jets
+		vector<const particle*> bjets;
+		for (unsigned int i = 0; i < ev->size(); ++i)
+		{
+			if ( (*ev)[i]->bjet() != 0.0 && abs((*ev)[i]->eta()) < 2.8 && (*ev)[i]->pt() > 20 )
+				bjets.push_back((*ev)[i]);
+		}
+
+		// at least one b-jet is required
+		if (bjets.size() < 1)
+			return 0.0;
+
+		// extract eta and phi of Z and (leading) b-jet
+		double etaZ = Zboson.eta();
+		double phiZ = Zboson.phi();
+		double etaB = bjets[0]->eta();
+		double phiB = bjets[0]->phi();
+
+		// evaluate deltaR(b,Z)
+		double deltaEta = etaB - etaZ;
+		double deltaPhi = abs(phiB - phiZ);
+		deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+		double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
+
+		// return deltaR
 		return deltaR;
 	}
 };
@@ -123,6 +188,41 @@ public:
 	}
 };
 
+// pT of reconstructed Z
+class plot_Zpt : public plot_default
+{
+public:
+	plot_Zpt() {}
+
+	double operator() (const event *ev)
+	{
+		double px_l1 = (ev->get(ptype_lepton, 1))->px();
+		double py_l1 = (ev->get(ptype_lepton, 1))->py();
+		double px_l2 = (ev->get(ptype_lepton, 2))->px();
+		double py_l2 = (ev->get(ptype_lepton, 2))->py();
+
+		double px2_Z = pow(px_l1 + px_l2, 2.0);
+		double py2_Z = pow(py_l1 + py_l2, 2.0);
+		double pt_Z = sqrt( px2_Z + py2_Z );
+
+		return pt_Z;
+	}
+};
+
+// pT of reconstructed top
+class plot_Tpt : public plot_default
+{
+public:
+	plot_Tpt() {}
+
+	double operator() (const event *ev)
+	{
+		double pt = (ev->get(ptype_jet, 1))->pt();
+
+		return pt;
+	}
+};
+
 // deltaR(Z, tagged top)
 class plot_deltarZt : public plot_default
 {
@@ -153,27 +253,6 @@ public:
 		// return deltaR
 		return deltaR;
 
-	}
-};
-
-// pT of reconstructed Z
-class plot_Zpt : public plot_default
-{
-public:
-	plot_Zpt() {}
-
-	double operator() (const event *ev)
-	{
-		double px_l1 = (ev->get(ptype_lepton, 1))->px();
-		double py_l1 = (ev->get(ptype_lepton, 1))->py();
-		double px_l2 = (ev->get(ptype_lepton, 2))->px();
-		double py_l2 = (ev->get(ptype_lepton, 2))->py();
-
-		double px2_Z = pow(px_l1 + px_l2, 2.0);
-		double py2_Z = pow(py_l1 + py_l2, 2.0);
-		double pt_Z = sqrt( px2_Z + py2_Z );
-
-		return pt_Z;
 	}
 };
 
@@ -246,6 +325,17 @@ int main(int argc, const char* argv[])
 		deltarLL.add_sample(sig_evts, LL, "signal");
 		deltarLL.run();
 
+		// plot deltaR(Z, b)
+		plot drZb("plot_deltarZb_before_cuts", output_folder);
+		drZb.set_normalized(true);
+		plot_deltarZb *deltarZb = new plot_deltarZb();
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			drZb.add_sample(bkg_evts[i], deltarZb, "bkg" + lexical_cast<string>(i));
+		}
+		drZb.add_sample(sig_evts, deltarZb, "signal");
+		drZb.run();
+
 		// plot HT(jets)
 		plot ht("plot_HT_before_cuts", output_folder);
 		ht.set_normalized(true);
@@ -292,6 +382,7 @@ int main(int argc, const char* argv[])
 	
 		// clear remaining pointers
 		delete LL;
+		delete deltarZb;
 		delete HT;
 		delete Bpt;
 		delete htcut;
@@ -311,16 +402,16 @@ int main(int argc, const char* argv[])
 		return EXIT_SUCCESS;
 	}
 	
-	// plot lepton pair mass
-	plot lmass("plot_leptonmass", output_folder);
-	lmass.set_normalized(true);
-	plot_leptonmass *lepton_mass = new plot_leptonmass();
-	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
-	{
-		lmass.add_sample(bkg_evts[i], lepton_mass, "bkg" + lexical_cast<string>(i));
-	}
-	lmass.add_sample(sig_evts, lepton_mass, "signal");
-	lmass.run();
+	// // plot lepton pair mass
+	// plot lmass("plot_leptonmass", output_folder);
+	// lmass.set_normalized(true);
+	// plot_leptonmass *lepton_mass = new plot_leptonmass();
+	// for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	// {
+	// 	lmass.add_sample(bkg_evts[i], lepton_mass, "bkg" + lexical_cast<string>(i));
+	// }
+	// lmass.add_sample(sig_evts, lepton_mass, "signal");
+	// lmass.run();
 
 	// plot deltaR(L1, L2)
 	plot deltarLL("plot_deltarLL", output_folder);
@@ -334,17 +425,6 @@ int main(int argc, const char* argv[])
 	deltarLL.add_sample(sig_evts, LL, "signal");
 	deltarLL.run();	
 
-	// plot deltaR(Z, tagged top)
-	plot drZt("plot_deltarZt", output_folder);
-	drZt.set_normalized(true);
-	plot_deltarZt *deltarZt = new plot_deltarZt();
-	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
-	{
-		drZt.add_sample(bkg_evts[i], deltarZt, "bkg" + lexical_cast<string>(i));
-	}
-	drZt.add_sample(sig_evts, deltarZt, "signal");
-	drZt.run();
-
 	// plot pT of reconstructed Z
 	plot ptZ("plot_ptZ", output_folder);
 	ptZ.set_normalized(true);
@@ -355,10 +435,32 @@ int main(int argc, const char* argv[])
 	}
 	ptZ.add_sample(sig_evts, Zpt, "signal");
 	ptZ.run();
+
+	// plot pT of reconstructed top-jet
+	plot ptT("plot_ptT", output_folder);
+	ptT.set_normalized(true);
+	plot_Tpt *Tpt = new plot_Tpt();
+	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	{
+		ptT.add_sample(bkg_evts[i], Tpt, "bkg" + lexical_cast<string>(i));
+	}
+	ptT.add_sample(sig_evts, Tpt, "signal");
+	ptT.run();
+
+	// plot deltaR(Z, tagged top)
+	plot drZt("plot_deltarZt", output_folder);
+	drZt.set_normalized(true);
+	plot_deltarZt *deltarZt = new plot_deltarZt();
+	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	{
+		drZt.add_sample(bkg_evts[i], deltarZt, "bkg" + lexical_cast<string>(i));
+	}
+	drZt.add_sample(sig_evts, deltarZt, "signal");
+	drZt.run();
 	
 	// plot top partner mass
 	plot pmass("plot_thmass", output_folder);
-	pmass.set_bins(20, 400, 1500);
+	pmass.set_bins(15, 500, 1500);
 	plot_thmass *th_mass = new plot_thmass();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{
@@ -369,10 +471,11 @@ int main(int argc, const char* argv[])
 	pmass.run();	
 	
 	// clear remaining pointers
-	delete lepton_mass;
+	// delete lepton_mass;
 	delete LL;
-	delete deltarZt;
 	delete Zpt;
+	delete Tpt;
+	delete deltarZt;
 	delete th_mass;
 	
 	// clear remaining event pointers
