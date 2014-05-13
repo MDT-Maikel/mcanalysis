@@ -143,6 +143,27 @@ public:
 	}
 };
 
+// jet multiplicity
+class plot_nj : public plot_default
+{
+public:
+	plot_nj() {}
+
+	double operator() (const event *ev)
+	{
+		// identify and count skinny jets
+		vector<const particle*> jets;
+		for (unsigned int i = 0; i < ev->size(); ++i)
+		{
+			if ((*ev)[i]->type() & ptype_jet && (*ev)[i]->pt() > 20. && abs((*ev)[i]->eta()) < 3.0)
+				jets.push_back((*ev)[i]);
+		}
+		double nj = static_cast<double>(jets.size());
+
+		return nj;
+	}
+};
+
 // HT(jets)
 class plot_HT : public plot_default
 {
@@ -337,6 +358,18 @@ int main(int argc, const char* argv[])
 		drZb.add_sample(sig_evts, deltarZb, "signal");
 		drZb.run();
 
+		// plot jet multiplicity
+		plot nj("plot_nj_before_cuts", output_folder);
+		nj.set_normalized(true);
+		nj.set_bins(15, 0., 15.);
+		plot_nj *NJ = new plot_nj();
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			nj.add_sample(bkg_evts[i], NJ, "bkg" + lexical_cast<string>(i));
+		}
+		nj.add_sample(sig_evts, NJ, "signal");
+		nj.run();
+
 		// plot HT(jets)
 		plot ht("plot_HT_before_cuts", output_folder);
 		ht.set_normalized(true);
@@ -384,6 +417,7 @@ int main(int argc, const char* argv[])
 		// clear remaining pointers
 		delete LL;
 		delete deltarZb;
+		delete NJ;
 		delete HT;
 		delete Bpt;
 		delete htcut;
