@@ -34,7 +34,7 @@ bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco
 bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity, bool &kinematic_dist);
 vector<const particle*> identify_candidate_leptons(const vector<const particle*> & leptons);
 
-//===== Definition of observables before cut application =====//
+//===== Observables defined on non-analyzed events =====//
 
 // deltaR(L1, L2)
 class plot_deltarLL : public plot_default
@@ -56,7 +56,7 @@ public:
 		if (leptons.size() < 2)
 			return 0.0;
 
-		// identify lepton candidates
+		// identify lepton candidates: no deltaR_min is required!
 		vector<const particle*> l_candidates = identify_candidate_leptons(leptons);
 		const particle *first_l = l_candidates[0];
 		const particle *second_l = l_candidates[1];
@@ -99,7 +99,7 @@ public:
 		if (leptons.size() < 2)
 			return 0.0;
 
-		// identify lepton candidates
+		// identify lepton candidates: no deltaR_min is required!
 		vector<const particle*> l_candidates = identify_candidate_leptons(leptons);
 		const particle *first_l = l_candidates[0];
 		const particle *second_l = l_candidates[1];
@@ -143,6 +143,45 @@ public:
 	}
 };
 
+// pt of Z
+class plot_Zpt : public plot_default
+{
+public:
+	plot_Zpt() {}
+
+	double operator() (const event *ev)
+	{
+		// identify leptons
+		vector<const particle*> leptons;
+		for (unsigned int i = 0; i < ev->size(); ++i)
+		{
+			if ((*ev)[i]->type() & ptype_lepton && (*ev)[i]->pt() > 10. && abs((*ev)[i]->eta()) < 2.5)
+				leptons.push_back((*ev)[i]);
+		}
+
+		// at least two visible leptons are required
+		if (leptons.size() < 2)
+			return 0.0;
+
+		// identify lepton candidates: no deltaR_min is required!
+		vector<const particle*> l_candidates = identify_candidate_leptons(leptons);
+		const particle *first_l = l_candidates[0];
+		const particle *second_l = l_candidates[1];
+		
+		if (first_l == nullptr || second_l == nullptr)
+			return 0.0;
+
+		// reconstruct Z-boson transverse momentum
+		const double px_Z = first_l->px() + second_l->px();
+		const double py_Z = first_l->py() + second_l->py();
+
+		double pt_Z = sqrt( pow(px_Z, 2) + pow(py_Z, 2) );
+
+		// return pt_Z
+		return pt_Z;
+	}
+};
+
 // jet multiplicity
 class plot_nj : public plot_default
 {
@@ -164,19 +203,6 @@ public:
 	}
 };
 
-// HT(jets)
-class plot_HT : public plot_default
-{
-public:
-	plot_HT() {}
-
-	double operator() (const event *ev)
-	{
-		double HT = ev->ht(ptype_jet, 20, 3.0);
-		return HT;
-	}
-};
-
 // pT of leading b-jet
 class plot_Bpt : public plot_default
 {
@@ -195,7 +221,20 @@ public:
 	}
 };
 
-//===== Definition of observables after cut application =====//
+// HT(jets)
+class plot_HT : public plot_default
+{
+public:
+	plot_HT() {}
+
+	double operator() (const event *ev)
+	{
+		double HT = ev->ht(ptype_jet, 20, 3.0);
+		return HT;
+	}
+};
+
+//===== Observables defined on analyzed events =====//
 
 // lepton pair mass
 class plot_leptonmass : public plot_default
@@ -209,11 +248,11 @@ public:
 	}
 };
 
-// pT of reconstructed Z
-class plot_Zpt : public plot_default
+// pT of reconstructed Z (with deltaR_min on the lepton pair required)
+class plot_recZpt : public plot_default
 {
 public:
-	plot_Zpt() {}
+	plot_recZpt() {}
 
 	double operator() (const event *ev)
 	{
@@ -358,6 +397,18 @@ int main(int argc, const char* argv[])
 		drZb.add_sample(sig_evts, deltarZb, "signal");
 		drZb.run();
 
+		// plot pT of Z
+		plot ptZ("plot_ptZ_before_cuts", output_folder);
+		ptZ.set_normalized(true);
+		ptZ.set_bins(100, 100., 1000.);
+		plot_Zpt *Zpt = new plot_Zpt();
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			ptZ.add_sample(bkg_evts[i], Zpt, "bkg" + lexical_cast<string>(i));
+		}
+		ptZ.add_sample(sig_evts, Zpt, "signal");
+		ptZ.run();
+
 		// plot jet multiplicity
 		plot nj("plot_nj_before_cuts", output_folder);
 		nj.set_normalized(true);
@@ -369,18 +420,6 @@ int main(int argc, const char* argv[])
 		}
 		nj.add_sample(sig_evts, NJ, "signal");
 		nj.run();
-
-		// plot HT(jets)
-		plot ht("plot_HT_before_cuts", output_folder);
-		ht.set_normalized(true);
-		ht.set_bins(100, 0., 3000.);
-		plot_HT *HT = new plot_HT();
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
-		{
-			ht.add_sample(bkg_evts[i], HT, "bkg" + lexical_cast<string>(i));
-		}
-		ht.add_sample(sig_evts, HT, "signal");
-		ht.run();
 
 		// plot pT of leading b-jet
 		plot ptB("plot_ptB_before_cuts", output_folder);
@@ -394,7 +433,19 @@ int main(int argc, const char* argv[])
 		ptB.add_sample(sig_evts, Bpt, "signal");
 		ptB.run();
 
-		// plot pT of leading b-jet after ht>1000 GeV cut
+		// plot HT(jets)
+		plot ht("plot_HT_before_cuts", output_folder);
+		ht.set_normalized(true);
+		ht.set_bins(100, 0., 3000.);
+		plot_HT *HT = new plot_HT();
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			ht.add_sample(bkg_evts[i], HT, "bkg" + lexical_cast<string>(i));
+		}
+		ht.add_sample(sig_evts, HT, "signal");
+		ht.run();
+
+		// apply ht cut
 		cuts basic_cuts;
 		cut_ht *htcut = new cut_ht(1000, ptype_jet, 20, 3.0);
 		basic_cuts.add_cut(htcut, "ht>1000 GeV");
@@ -404,7 +455,52 @@ int main(int argc, const char* argv[])
 		}
 		basic_cuts.apply(sig_evts);
 
-		plot ptBht("plot_ptB_htcut1000", output_folder);
+		// plot deltaR(L1, L2) after ht cut
+		plot deltarLLht("plot_deltarLL_htcut", output_folder);
+		deltarLLht.set_normalized(true);
+		deltarLLht.set_bins(100, 0.1, 5.3);
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			deltarLLht.add_sample(bkg_evts[i], LL, "bkg" + lexical_cast<string>(i));
+		}
+		deltarLLht.add_sample(sig_evts, LL, "signal");
+		deltarLLht.run();
+
+		// plot deltaR(Z, b) after ht cut
+		plot drZbht("plot_deltarZb_htcut", output_folder);
+		drZbht.set_normalized(true);
+		drZbht.set_bins(100, 0.1, 5.3);
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			drZbht.add_sample(bkg_evts[i], deltarZb, "bkg" + lexical_cast<string>(i));
+		}
+		drZbht.add_sample(sig_evts, deltarZb, "signal");
+		drZbht.run();
+
+		// plot pT of Z after ht cut
+		plot ptZht("plot_ptZ_htcut", output_folder);
+		ptZht.set_normalized(true);
+		ptZht.set_bins(100, 100., 1000.);
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			ptZht.add_sample(bkg_evts[i], Zpt, "bkg" + lexical_cast<string>(i));
+		}
+		ptZht.add_sample(sig_evts, Zpt, "signal");
+		ptZht.run();
+
+		// plot jet multiplicity after ht cut
+		plot njht("plot_nj_htcut", output_folder);
+		njht.set_normalized(true);
+		njht.set_bins(15, 0., 15.);
+		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		{
+			njht.add_sample(bkg_evts[i], NJ, "bkg" + lexical_cast<string>(i));
+		}
+		njht.add_sample(sig_evts, NJ, "signal");
+		njht.run();
+
+		// plot pT of leading b-jet after ht cut
+		plot ptBht("plot_ptB_htcut", output_folder);
 		ptBht.set_normalized(true);
 		ptBht.set_bins(100, 20., 300.);
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
@@ -417,9 +513,10 @@ int main(int argc, const char* argv[])
 		// clear remaining pointers
 		delete LL;
 		delete deltarZb;
+		delete Zpt;
 		delete NJ;
-		delete HT;
 		delete Bpt;
+		delete HT;
 		delete htcut;
 		
 		// clear remaining event pointers
@@ -461,16 +558,16 @@ int main(int argc, const char* argv[])
 	deltarLL.run();	
 
 	// plot pT of reconstructed Z
-	plot ptZ("plot_ptZ", output_folder);
-	ptZ.set_normalized(true);
-	ptZ.set_bins(100, 150., 1000.);
-	plot_Zpt *Zpt = new plot_Zpt();
+	plot ptRecZ("plot_ptZ", output_folder);
+	ptRecZ.set_normalized(true);
+	ptRecZ.set_bins(100, 150., 1000.);
+	plot_recZpt *recZpt = new plot_recZpt();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{
-		ptZ.add_sample(bkg_evts[i], Zpt, "bkg" + lexical_cast<string>(i));
+		ptRecZ.add_sample(bkg_evts[i], recZpt, "bkg" + lexical_cast<string>(i));
 	}
-	ptZ.add_sample(sig_evts, Zpt, "signal");
-	ptZ.run();
+	ptRecZ.add_sample(sig_evts, recZpt, "signal");
+	ptRecZ.run();
 
 	// plot pT of reconstructed top-jet
 	plot ptT("plot_ptT", output_folder);
@@ -511,7 +608,7 @@ int main(int argc, const char* argv[])
 	// clear remaining pointers
 	// delete lepton_mass;
 	delete LL;
-	delete Zpt;
+	delete recZpt;
 	delete Tpt;
 	delete deltarZt;
 	delete th_mass;
