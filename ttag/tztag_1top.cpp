@@ -35,6 +35,7 @@ bool load_settings_output(const string &settings_file, string &output_lhco, stri
 bool load_settings_merging(const string &settings_file, bool &pythia_fast, bool &merging_on, string &merging_process, int &merging_njets, double &merging_scale);
 vector<const particle*> identify_candidate_leptons(const vector<const particle*> & leptons);
 PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const particle*> & leptons);
+double cut_ptT(jet_analysis &analysis, double pt_min);
 double cut_deltaRtb(jet_analysis &analysis, double delta_r);
 void get_top_partner_constituents(const vector<event*> &signal_lhco, const vector<vector<PseudoJet> > &signal_fatjets, vector<event*> &signal_reconstructed);
 
@@ -95,15 +96,11 @@ public:
 		const particle *first_l = l_candidates[0];
 		const particle *second_l = l_candidates[1];
 		
-		// evaluate pT(Z)
-		double px_l1 = first_l->px();
-		double py_l1 = first_l->py();
-		double px_l2 = second_l->px();
-		double py_l2 = second_l->py();
+		// reconstruct Z-boson transverse momentum
+		double px_Z = first_l->px() + second_l->px();
+		double py_Z = first_l->py() + second_l->py();
 
-		double px2_Z = pow(px_l1 + px_l2, 2.0);
-		double py2_Z = pow(py_l1 + py_l2, 2.0);
-		double pt_Z = sqrt(px2_Z + py2_Z);
+		double pt_Z = sqrt(pow(px_Z, 2.0) + pow(py_Z, 2.0));
 
 		// check if pT(Z) > pt_min
 		if (pt_Z < pt_min)
@@ -114,6 +111,35 @@ public:
 	}
 private:
 	double pt_min;
+};
+
+// basic cut: at least n visible jets
+class cut_njet : public cut
+{
+public:
+	cut_njet(int n, double pt, double eta) : n_j(n), pt_min(pt), eta_max(eta) {}
+
+	bool operator() (const event *ev)
+	{ 
+		// extract all visible jets
+		vector<const particle*> jets;
+		for (unsigned int i = 0; i < ev->size(); ++i)
+		{
+			if ((*ev)[i]->type() & ptype_jet && (*ev)[i]->pt() > pt_min && abs((*ev)[i]->eta()) < eta_max)
+				jets.push_back((*ev)[i]);
+		}
+
+		// check whether at least n visible jets are present
+		if (jets.size() < n_j)
+			return false;
+		
+		// cut passed
+		return true;
+	}
+private:
+	int n_j;
+	double pt_min;
+	double eta_max;
 };
 
 // basic cut: at least n visible b-jets
@@ -199,25 +225,29 @@ int main(int argc, const char* argv[])
 	cuts basic_cuts;
 	cut_2osl *osl = new cut_2osl(10, 2.5);
 	basic_cuts.add_cut(osl, "2 opposite sign leptons within R=1.0 cone");
-	cut_ptZ *ptZ = new cut_ptZ(200);
-	basic_cuts.add_cut(ptZ, "pT(Z)>200 GeV");
-	cut_ht *ht = new cut_ht(0, ptype_jet, 20, 3.0);
-	basic_cuts.add_cut(ht, "ht>0 GeV");
-	cut_bjet *bjet = new cut_bjet(1, 20, 2.8);
-	basic_cuts.add_cut(bjet, "1 b-jet pt>20 GeV");
+	cut_ptZ *ptZ = new cut_ptZ(250);
+	basic_cuts.add_cut(ptZ, "pT(Z)>250 GeV");
+	cut_ht *ht = new cut_ht(1000, ptype_jet, 20, 3.0);
+	basic_cuts.add_cut(ht, "ht>1000 GeV");
+	cut_njet *njet = new cut_njet(5, 20, 3.0);
+	basic_cuts.add_cut(njet, "at least 5 jets pt>20 GeV");
+	cut_bjet *bjet = new cut_bjet(1, 80, 2.8);
+	basic_cuts.add_cut(bjet, "at least 1 b-jet pt>80 GeV");
 
 	// apply cuts and extract efficiencies
-	double eff_basic = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, pT(Z)>200 GeV, HT>0 GeV, pT(b)>20 GeV
+	double eff_basic = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z; pT(Z), HT, nj, nb, pT(b) cuts
 	double eff_fatjpt = thth_tztz.require_fatjet_pt(200, 1); // require at least 1 fatjet with pT>200 GeV
 	double eff_ttag = thth_tztz.require_top_tagged(1); // require at least 1 fatjet to be HEP Top-Tagged
+	double eff_ptT = cut_ptT(thth_tztz, 250); // require pT(t)>250 GeV
 	double eff_deltaRtb = cut_deltaRtb(thth_tztz, 1.5); // require deltaR(t, b)<1.5 for at least one b-jet
 
 	unsigned int remaining_events = thth_tztz.map_lhco_taggedJets.size();
 	cout << "\nFatjet pT>200 GeV Efficiency: " << setprecision(4) << 100 * eff_fatjpt << " %" << endl;
 	cout << "\nTop Tagging Efficiency: " << setprecision(4) << 100 * eff_ttag << " %" << endl;
+	cout << "\npT(t)>250 GeV Efficiency: " << setprecision(4) << 100 * eff_ptT << " %" << endl;
 	cout << "\nDeltaR(t,b)<1.5 Efficiency: " << setprecision(4) << 100 * eff_deltaRtb << " %" << endl;
 	cout << "\nRemaining events: " << remaining_events << endl;
-	cout << "\nSignal Efficiency: " << setprecision(4) << 100 * eff_basic * eff_fatjpt * eff_ttag * eff_deltaRtb << " %" << endl;
+	cout << "\nSignal Efficiency: " << setprecision(4) << 100 * eff_basic * eff_fatjpt * eff_ttag * eff_ptT * eff_deltaRtb << " %" << endl;
 	
 	// identify top partner constituents
 	vector<event*> signal_reconstructed;
@@ -226,7 +256,7 @@ int main(int argc, const char* argv[])
 	// calculate cross section and store
 	ofstream ofs_txt;
 	ofs_txt.open(output_xsec.c_str());
-	ofs_txt << input_xsec << "\t" << eff_basic * eff_fatjpt * eff_ttag * eff_deltaRtb << "\t" << input_xsec * eff_basic * eff_fatjpt * eff_ttag * eff_deltaRtb << endl;
+	ofs_txt << input_xsec << "\t" << eff_basic * eff_fatjpt * eff_ttag * eff_ptT * eff_deltaRtb << "\t" << input_xsec * eff_basic * eff_fatjpt * eff_ttag * eff_ptT * eff_deltaRtb << endl;
 	ofs_txt.close();
 	
 	// store lhco events
@@ -236,6 +266,7 @@ int main(int argc, const char* argv[])
 	delete osl;
 	delete ptZ;
 	delete ht;
+	delete njet;
 	delete bjet;
 	
 	// clear remaining event pointers
@@ -400,6 +431,53 @@ PseudoJet identify_candidate_top(const vector<PseudoJet> & fatjets, vector<const
 
 	// return top candidate
 	return top_candidate;
+}
+
+// cut: require pT(t)>pT_min
+double cut_ptT(jet_analysis &analysis, double pt_min)
+{
+	map< event *, vector< PseudoJet > >::iterator it;
+	map< event *, vector< PseudoJet > > original_map = analysis.map_lhco_taggedJets;
+	map< event *, vector< PseudoJet > > reduced_map;
+	int map_size = 0, passed = 0;
+	double eff;
+
+	// loop over events
+	for (it=original_map.begin(); it!=original_map.end(); ++it)
+	{
+		map_size++;
+
+		// extract lepton candidates
+		event *ev = it->first;
+		vector< const particle* > leptons;
+		for (unsigned int j = 0; j < ev->size(); ++j)
+		{
+			if ((*ev)[j]->type() & ptype_lepton && (*ev)[j]->pt() > 10. && abs((*ev)[j]->eta()) < 2.5)
+				leptons.push_back((*ev)[j]);
+		}		
+		vector<const particle*> l_candidates = identify_candidate_leptons(leptons);
+
+		// identify top candidate		
+		vector< PseudoJet > fatjets = it->second;
+		PseudoJet top_candidate = identify_candidate_top(fatjets, l_candidates);
+
+		// evaluate pT(t): the cut is passed if pT(t)>pT_min
+		double pt_T = top_candidate.pt();
+		if (pt_T > pt_min)
+		{
+			passed++;
+			reduced_map.insert( make_pair(it->first,it->second) );
+		}
+
+	}
+
+	// calculate efficiency
+	eff = (map_size == 0 ? 0.0 : static_cast<double>(passed) / map_size);
+
+	// resize the map_lhco_taggedJets
+	analysis.map_lhco_taggedJets = reduced_map;
+
+	return eff;
 }
 
 // cut: require deltaR(t, b)<delta_r for at least one b-jet

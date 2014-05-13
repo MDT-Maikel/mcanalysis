@@ -172,10 +172,10 @@ public:
 			return 0.0;
 
 		// reconstruct Z-boson transverse momentum
-		const double px_Z = first_l->px() + second_l->px();
-		const double py_Z = first_l->py() + second_l->py();
+		double px_Z = first_l->px() + second_l->px();
+		double py_Z = first_l->py() + second_l->py();
 
-		double pt_Z = sqrt( pow(px_Z, 2) + pow(py_Z, 2) );
+		double pt_Z = sqrt(pow(px_Z, 2.0) + pow(py_Z, 2.0));
 
 		// return pt_Z
 		return pt_Z;
