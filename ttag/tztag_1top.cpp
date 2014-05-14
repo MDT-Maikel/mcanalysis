@@ -227,10 +227,10 @@ int main(int argc, const char* argv[])
 	basic_cuts.add_cut(osl, "2 opposite sign leptons within R=1.0 cone");
 	cut_ptZ *ptZ = new cut_ptZ(250);
 	basic_cuts.add_cut(ptZ, "pT(Z)>250 GeV");
-	cut_ht *ht = new cut_ht(1000, ptype_jet, 20, 3.0);
-	basic_cuts.add_cut(ht, "ht>1000 GeV");
-	cut_njet *njet = new cut_njet(5, 20, 3.0);
-	basic_cuts.add_cut(njet, "at least 5 jets pt>20 GeV");
+	cut_ht *ht = new cut_ht(800, ptype_jet, 20, 3.0);
+	basic_cuts.add_cut(ht, "ht>800 GeV");
+	cut_njet *njet = new cut_njet(4, 20, 3.0);
+	basic_cuts.add_cut(njet, "at least 4 jets pt>20 GeV");
 	cut_bjet *bjet = new cut_bjet(1, 80, 2.8);
 	basic_cuts.add_cut(bjet, "at least 1 b-jet pt>80 GeV");
 
@@ -266,7 +266,7 @@ int main(int argc, const char* argv[])
 	delete osl;
 	delete ptZ;
 	delete ht;
-	delete njet;
+	// delete njet;
 	delete bjet;
 	
 	// clear remaining event pointers
