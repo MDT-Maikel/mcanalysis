@@ -38,7 +38,7 @@ int main(int argc, const char* argv[])
 
 	jet_analysis test;
 	test.set_nEvents(50000);
-	test.set_Isolation("electron",2.5,15,0.3);
+	test.set_Isolation("electron",2.5,15,0.3); // etaMax = 2.5, ptMin = 15 GeV, deltaR_IsoEl = 0.3
 	test.set_Rsize_fat(1.5);
 	test.set_skinnyjet_algorithm("cambridge");
 	test.set_Rsize_skinny(1.5);

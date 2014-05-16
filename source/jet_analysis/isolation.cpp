@@ -26,7 +26,7 @@ namespace analysis
 			     abs(electron.eta()) < electronMaxEta ) 
 			{
 				// Check all other particles in event: add up their transverse
-				// energies in a cone of radius deltaR_IsolatedLepton
+				// energies in a cone of radius deltaR_IsoEl
 				double sumEtInCone = 0.;
 				for (int i=0; i<particles.size(); i++) 
 				{
@@ -37,17 +37,21 @@ namespace analysis
 
 						// Only count visible particles that are not our electron in question
 						if (i != j && 
-						  particles[i].idAbs() != 12 && 
-						  particles[i].idAbs() != 14 && 
-						  particles[i].idAbs() != 16 && 
-						  particles[i].idAbs() != 1000022 &&
-						  particles[i].idAbs() != 8880022 &&
-						  abs(particles[i].eta()) < MaxEta) 
+							particles[i].idAbs() != 12 && 
+							particles[i].idAbs() != 14 && 
+							particles[i].idAbs() != 16 && 
+							particles[i].idAbs() != 1000022 &&
+							particles[i].idAbs() != 8880022 &&
+							abs(particles[i].eta()) < MaxEta &&
+							particles[i].pT() > pTminTrack_IsoEl
+							) 
 						{
 							double deltaEta = x.eta() - electron.eta();
-							double deltaPhi = x.phi() - electron.phi();
-							double deltaR   = sqrt(deltaEta * deltaEta + deltaPhi * deltaPhi);
-							if (deltaR < deltaR_IsolatedLepton)
+							double deltaPhi = abs(x.phi() - electron.phi());
+							deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+							double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
+
+							if (deltaR < deltaR_IsoEl)
 								sumEtInCone += abs(x.pt());
 
 						} // end if(visible and not considered electron)
@@ -56,8 +60,8 @@ namespace analysis
 
 				} // end for(particles.size())
 
-				// isolation criterium: pT within cone less than 10% of pT(e)
-				if (sumEtInCone < 0.1*abs(electron.pt())) 
+				// isolation criterium: pT within cone less than pTfracMax_IsoEl% of pT(e)
+				if (sumEtInCone < pTfracMax_IsoEl*abs(electron.pt())) 
 					return true;
 
 			} // end if(pTmin, etamax)
@@ -81,7 +85,7 @@ namespace analysis
 			     abs(muon.eta()) < muonMaxEta ) 
 			{
 				// Check all other particles in event: add up their transverse
-				// energies in a cone of radius deltaR_IsolatedLepton
+				// energies in a cone of radius deltaR_IsoMuon
 				double sumEtInCone = 0.;
 				for (int i=0; i<particles.size(); i++) 
 				{
@@ -92,17 +96,21 @@ namespace analysis
 
 						// Only count visible particles that are not our muon in question
 						if (i != j && 
-						  particles[i].idAbs() != 12 && 
-						  particles[i].idAbs() != 14 && 
-						  particles[i].idAbs() != 16 && 
-						  particles[i].idAbs() != 1000022 &&
-						  particles[i].idAbs() != 8880022 &&
-						  abs(particles[i].eta()) < MaxEta) 
+							particles[i].idAbs() != 12 && 
+							particles[i].idAbs() != 14 && 
+							particles[i].idAbs() != 16 && 
+							particles[i].idAbs() != 1000022 &&
+							particles[i].idAbs() != 8880022 &&
+							abs(particles[i].eta()) < MaxEta &&
+							particles[i].pT() > pTminTrack_IsoMuon
+							) 
 						{
 							double deltaEta = x.eta() - muon.eta();
-							double deltaPhi = x.phi() - muon.phi();
-							double deltaR   = sqrt(deltaEta * deltaEta + deltaPhi * deltaPhi);
-							if (deltaR < deltaR_IsolatedLepton)
+							double deltaPhi = abs(x.phi() - muon.phi());
+							deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+							double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
+
+							if (deltaR < deltaR_IsoMuon)
 								sumEtInCone += abs(x.pt());
 
 						} // end if(visible and not considered muon)
@@ -111,8 +119,8 @@ namespace analysis
 
 				} // end for(particles.size())
 
-				// isolation criterium: pT within cone less than sumEtInCone_IsolatedMuon GeV
-				if (sumEtInCone < sumEtInCone_IsolatedMuon) 
+				// isolation criterium: isolation criterium: pT within cone less than pTfracMax_IsoMuon% of pT(mu)
+				if (sumEtInCone < pTfracMax_IsoMuon*abs(muon.pt())) 
 					return true;
 
 			} // end if(pTmin, etamax)
@@ -136,7 +144,7 @@ namespace analysis
 			     abs(photon.eta()) < photonMaxEta ) 
 			{
 				// Check all other particles in event: add up their transverse
-				// energies in a cone of radius deltaR_IsolatedPhoton
+				// energies in a cone of radius deltaR_IsoGamma
 				double sumEtInCone = 0.;
 				for (int i=0; i<particles.size(); i++) 
 				{
@@ -147,17 +155,21 @@ namespace analysis
 
 						// Only count visible particles that are not our photon in question
 						if (i != j && 
-						  particles[i].idAbs() != 12 && 
-						  particles[i].idAbs() != 14 && 
-						  particles[i].idAbs() != 16 && 
-						  particles[i].idAbs() != 1000022 &&
-						  particles[i].idAbs() != 8880022 &&
-						  abs(particles[i].eta()) < MaxEta) 
+							particles[i].idAbs() != 12 && 
+							particles[i].idAbs() != 14 && 
+							particles[i].idAbs() != 16 && 
+							particles[i].idAbs() != 1000022 &&
+							particles[i].idAbs() != 8880022 &&
+							abs(particles[i].eta()) < MaxEta &&
+							particles[i].pT() > pTminTrack_IsoGamma
+							) 
 						{
 							double deltaEta = x.eta() - photon.eta();
-							double deltaPhi = x.phi() - photon.phi();
-							double deltaR   = sqrt(deltaEta * deltaEta + deltaPhi * deltaPhi);
-							if (deltaR < deltaR_IsolatedPhoton)
+							double deltaPhi = abs(x.phi() - photon.phi());
+							deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+							double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
+
+							if (deltaR < deltaR_IsoGamma)
 								sumEtInCone += abs(x.pt());
 
 						} // end if(visible and not considered photon)
@@ -166,8 +178,8 @@ namespace analysis
 
 				} // end for(particles.size())
 
-				// isolation criterium: pT within cone less than sumEtInCone_IsolatedPhoton GeV
-				if (sumEtInCone < sumEtInCone_IsolatedPhoton) 
+				// isolation criterium: pT within cone less than pTfracMax_IsoGamma% of pT(gamma)
+				if (sumEtInCone < pTfracMax_IsoGamma*abs(photon.pt())) 
 					return true;
 
 			} // end if(pTmin, etamax)

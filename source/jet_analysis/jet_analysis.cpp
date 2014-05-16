@@ -26,16 +26,24 @@ namespace analysis
 		// detector range and Isolation parameters
 		MaxEta = 4.9;
 		jetMinPt = 20.;
+
 		electronMaxEta = 2.47;
 		electronMinPt = 20.;
-		muonMaxEta = 2.4;
+		deltaR_IsoEl = 0.3;
+		pTminTrack_IsoEl = 1.0;
+		pTfracMax_IsoEl = 0.1;
+
+		muonMaxEta = 2.5;
 		muonMinPt = 10.;
-		deltaR_IsolatedLepton = 0.2; 
-		sumEtInCone_IsolatedMuon = 1.8; 
+		deltaR_IsoMuon = 0.4;
+		pTminTrack_IsoMuon = 1.0;
+		pTfracMax_IsoMuon = 0.06;
+
 		photonMaxEta = 2.37;
 		photonMinPt = 20.;
-		deltaR_IsolatedPhoton = 0.2; 
-		sumEtInCone_IsolatedPhoton = 2.6;
+		deltaR_IsoGamma = 0.3;
+		pTminTrack_IsoGamma = 1.0;
+		pTfracMax_IsoGamma = 0.1;
 
 		// merging procedure flags
 		DoMerging = false;

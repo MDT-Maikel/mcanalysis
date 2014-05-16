@@ -51,7 +51,7 @@ namespace analysis
 		void set_fast_showering();
 		void import_lhco(const std::string & name);
 		void set_nEvents(const int & events);
-		void set_Isolation(const std::string & type, const double & eta, const double & pt, const double & Rcone, const double & EtCone = 1.8);
+		void set_Isolation(const std::string & type, const double & eta, const double & pt, const double & Rcone, const double & ptMinTrack = 1.0, const double & ptfracMax = 0.1);
 		void set_Rsize_fat(const double & R);
 		void set_Rsize_skinny(const double & R);
 		void set_skinnyjet_algorithm(const std::string & type);
@@ -108,16 +108,24 @@ namespace analysis
 		/* detector range and isolation parameters */
 		double MaxEta;
 		double jetMinPt;
+
 		double electronMaxEta;
 		double electronMinPt;
+		double deltaR_IsoEl;
+		double pTminTrack_IsoEl;
+		double pTfracMax_IsoEl;
+
 		double muonMaxEta;
 		double muonMinPt;
-		double deltaR_IsolatedLepton; 
-		double sumEtInCone_IsolatedMuon;
+		double deltaR_IsoMuon;
+		double pTminTrack_IsoMuon;
+		double pTfracMax_IsoMuon;
+
 		double photonMaxEta;
 		double photonMinPt;
-		double deltaR_IsolatedPhoton; 
-		double sumEtInCone_IsolatedPhoton; 
+		double deltaR_IsoGamma;
+		double pTminTrack_IsoGamma;
+		double pTfracMax_IsoGamma; 
 
 		/* merging flags and parameters */
 		bool DoMerging;

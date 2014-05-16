@@ -35,27 +35,31 @@ namespace analysis
 	}
 
 	// TODO: update using p_type
-	void jet_analysis::set_Isolation(const std::string & type, const double & eta, const double & pt, const double & Rcone, const double & EtCone)
+	void jet_analysis::set_Isolation(const std::string & type, const double & eta, const double & pt, const double & Rcone, const double & ptMinTrack, const double & ptfracMax)
 	{
 		if (type == "electron")
 		{
 			electronMaxEta = eta;
 			electronMinPt = pt;
-			deltaR_IsolatedLepton = Rcone;
+			deltaR_IsoEl = Rcone;
+			pTminTrack_IsoEl = ptMinTrack;
+			pTfracMax_IsoEl = ptfracMax;
 		}
 		else if (type == "muon")
 		{
 			muonMaxEta = eta;
 			muonMinPt = pt;
-			deltaR_IsolatedLepton = Rcone;
-			sumEtInCone_IsolatedMuon = EtCone;
+			deltaR_IsoMuon = Rcone;
+			pTminTrack_IsoMuon = ptMinTrack;
+			pTfracMax_IsoMuon = ptfracMax;
 		}
 		else if (type == "photon")
 		{
 			photonMaxEta = eta;
 			photonMinPt = pt;
-			deltaR_IsolatedPhoton = Rcone;
-			sumEtInCone_IsolatedPhoton = EtCone;
+			deltaR_IsoGamma = Rcone;
+			pTminTrack_IsoGamma = ptMinTrack;
+			pTfracMax_IsoGamma = ptfracMax;
 		}
 		else
 			std::cout << "Wrong type assignment." << std::endl;
