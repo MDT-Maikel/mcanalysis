@@ -82,3 +82,8 @@ notes:    set environment variable FASTJET_DIR=<install dir>
 download: http://lcgapp.cern.ch/project/simu/HepMC/
 install:  ./configure --prefix=<install dir> --with-momentum=GEV --with-length=CM
 notes:    set environment variable HEPMC_DIR=<install dir>
+
+[Delphes]
+download: ​https://cp3.irmp.ucl.ac.be/projects/delphes/
+install:  make
+notes:    if Pythia is installed in a non-standard folder <pythia_dir>, then it might be needed to manually insert the path to this directory into the Pythia.h-include at the beginning of the following files: modules/PileUpMergerPythia8.cc and readers/DelphesPythia8.cpp

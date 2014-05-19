@@ -13,7 +13,7 @@ fi
 # set the directories
 script_dir=`pwd`
 build_dir=$script_dir/..
-delphes_dir=$SOFTDIR/Delphes-3.0.12
+delphes_dir=$SOFTDIR/Delphes-3.1.2
 
 # set .lhe input
 lhe_input=$1
