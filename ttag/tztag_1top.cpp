@@ -142,7 +142,7 @@ public:
 		PseudoJet Zboson(px_Z, py_Z, pz_Z, pe_Z);
 
 		// extract eta of Z
-		double eta_Z = Zboson.eta();
+		double eta_Z = abs(Zboson.eta());
 
 		// check if eta(Z) < eta_max
 		if (eta_Z > eta_max)
@@ -269,15 +269,17 @@ int main(int argc, const char* argv[])
 	basic_cuts.add_cut(osl, "2 opposite sign leptons within R=1.0 cone");
 	cut_ptZ *ptZ = new cut_ptZ(250);
 	basic_cuts.add_cut(ptZ, "pT(Z)>250 GeV");
-	cut_ht *ht = new cut_ht(800, ptype_jet, 30, 3.0);
-	basic_cuts.add_cut(ht, "ht>800 GeV");
+	cut_etaZ *etaZ = new cut_etaZ(1.5);
+	basic_cuts.add_cut(etaZ, "eta(Z)<1.5 GeV");
+	cut_ht *ht = new cut_ht(700, ptype_jet, 30, 3.0);
+	basic_cuts.add_cut(ht, "ht>700 GeV");
 	cut_njet *njet = new cut_njet(4, 30, 3.0);
 	basic_cuts.add_cut(njet, "at least 4 jets pt>30 GeV");
 	cut_bjet *bjet = new cut_bjet(1, 80, 2.8);
 	basic_cuts.add_cut(bjet, "at least 1 b-jet pt>80 GeV");
 
 	// apply cuts and extract efficiencies
-	double eff_basic = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, pT(Z), HT, nj, nb, pT(b) cuts
+	double eff_basic = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, pT(Z), eta(Z), HT, nj, nb, pT(b) cuts
 	double eff_fatjpt = thth_tztz.require_fatjet_pt(200, 1); // require at least 1 fatjet with pT>200 GeV
 	double eff_ttag = thth_tztz.require_top_tagged(1); // require at least 1 fatjet to be HEP Top-Tagged
 	double eff_ptT = cut_ptT(thth_tztz, 250); // require pT(t)>250 GeV
@@ -307,8 +309,9 @@ int main(int argc, const char* argv[])
 	// clear remaining pointers
 	delete osl;
 	delete ptZ;
+	delete etaZ;
 	delete ht;
-	// delete njet;
+	delete njet;
 	delete bjet;
 	
 	// clear remaining event pointers
@@ -551,7 +554,7 @@ double cut_etaT(jet_analysis &analysis, double eta_max)
 		PseudoJet top_candidate = identify_candidate_top(fatjets, l_candidates);
 
 		// evaluate eta(t): the cut is passed if eta(t)<eta_max
-		double eta_T = top_candidate.eta();
+		double eta_T = abs(top_candidate.eta());
 		if (eta_T < eta_max)
 		{
 			passed++;

@@ -543,8 +543,8 @@ int main(int argc, const char* argv[])
 
 		// apply ht cut
 		cuts basic_cuts;
-		cut_ht *htcut = new cut_ht(800, ptype_jet, 30, 3.0);
-		basic_cuts.add_cut(htcut, "ht>800 GeV");
+		cut_ht *htcut = new cut_ht(700, ptype_jet, 30, 3.0);
+		basic_cuts.add_cut(htcut, "ht>700 GeV");
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 		{
 			basic_cuts.apply(bkg_evts[i]);
