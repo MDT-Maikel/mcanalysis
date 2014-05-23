@@ -219,7 +219,7 @@ public:
 		PseudoJet Zboson(px_Z, py_Z, pz_Z, pe_Z);
 
 		// extract eta of Z
-		double eta = Zboson.eta();
+		double eta = abs(Zboson.eta());
 
 		// return eta
 		return eta;
@@ -330,7 +330,7 @@ public:
 		PseudoJet Zboson(px_Z, py_Z, pz_Z, pe_Z);
 
 		// extract eta of Z
-		double eta = Zboson.eta();
+		double eta = abs(Zboson.eta());
 
 		// return eta
 		return eta;
@@ -358,7 +358,7 @@ public:
 
 	double operator() (const event *ev)
 	{
-		double eta = (ev->get(ptype_jet, 1))->eta();
+		double eta = abs((ev->get(ptype_jet, 1))->eta());
 		return eta;
 	}
 };
@@ -496,7 +496,7 @@ int main(int argc, const char* argv[])
 		// plot eta of Z
 		plot etaZ("plot_etaZ_before_cuts", output_folder);
 		etaZ.set_normalized(true);
-		etaZ.set_bins(100, 0.0, 5.0);
+		etaZ.set_bins(100, 0.2, 5.0);
 		plot_etaZ *Zeta = new plot_etaZ();
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 		{
@@ -587,7 +587,7 @@ int main(int argc, const char* argv[])
 		// plot eta of Z
 		plot etaZht("plot_etaZ_htcut", output_folder);
 		etaZht.set_normalized(true);
-		etaZht.set_bins(100, 0.0, 5.0);
+		etaZht.set_bins(100, 0.2, 5.0);
 		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 		{
 			etaZht.add_sample(bkg_evts[i], Zeta, labels[i]);
@@ -680,7 +680,7 @@ int main(int argc, const char* argv[])
 	// plot eta of reconstructed Z
 	plot etaRecZ("plot_etaZ", output_folder);
 	etaRecZ.set_normalized(true);
-	etaRecZ.set_bins(100, 0.0, 5.0);
+	etaRecZ.set_bins(100, 0.2, 5.0);
 	plot_recZeta *recZeta = new plot_recZeta();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{
@@ -704,7 +704,7 @@ int main(int argc, const char* argv[])
 	// plot eta of reconstructed top-jet
 	plot etaT("plot_etaT", output_folder);
 	etaT.set_normalized(true);
-	etaT.set_bins(100, 0.0, 5.0);
+	etaT.set_bins(100, 0.2, 5.0);
 	plot_etaT *Teta = new plot_etaT();
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{
