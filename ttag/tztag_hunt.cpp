@@ -742,12 +742,6 @@ int main(int argc, const char* argv[])
 	pmass_comb.set_bins(15, 500, 1500);
 	pmass_comb.set_stacked(true);
 	double weight;
-	// tbz sample
-	weight = bkg_xsec[3] * luminosity / bkg_evts[3].size();
-	pmass_comb.add_sample(bkg_evts[3], th_mass, labels[3], weight);
-	// tz sample
-	weight = bkg_xsec[2] * luminosity / bkg_evts[2].size();
-	pmass_comb.add_sample(bkg_evts[2], th_mass, labels[2], weight);
 	// ttz sample
 	weight = bkg_xsec[0] * luminosity / bkg_evts[0].size();
 	pmass_comb.add_sample(bkg_evts[0], th_mass, labels[0], weight);
