@@ -737,6 +737,18 @@ int main(int argc, const char* argv[])
 	pmass.add_sample(sig_evts, th_mass, "signal", sig_xsec * luminosity / sig_evts.size());
 	pmass.run();	
 	
+	// plot top partner mass: combined
+	plot pmass_comb("plot_thmass_combined", output_folder);
+	pmass_comb.set_bins(15, 500, 1500);
+	pmass_comb.set_stacked(true);
+	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	{
+		double weight = bkg_xsec[i] * luminosity / bkg_evts[i].size();
+		pmass_comb.add_sample(bkg_evts[i], th_mass, labels[i], weight);
+	}
+	pmass_comb.add_sample(sig_evts, th_mass, "signal", sig_xsec * luminosity / sig_evts.size());
+	pmass_comb.run();
+
 	// clear remaining pointers
 	// delete lepton_mass;
 	delete LL;

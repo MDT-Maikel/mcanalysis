@@ -270,7 +270,7 @@ int main(int argc, const char* argv[])
 	cut_ptZ *ptZ = new cut_ptZ(250);
 	basic_cuts.add_cut(ptZ, "pT(Z)>250 GeV");
 	cut_etaZ *etaZ = new cut_etaZ(1.5);
-	basic_cuts.add_cut(etaZ, "eta(Z)<1.5 GeV");
+	basic_cuts.add_cut(etaZ, "eta(Z)<1.5");
 	cut_ht *ht = new cut_ht(700, ptype_jet, 30, 3.0);
 	basic_cuts.add_cut(ht, "ht>700 GeV");
 	cut_njet *njet = new cut_njet(4, 30, 3.0);
