@@ -741,11 +741,20 @@ int main(int argc, const char* argv[])
 	plot pmass_comb("plot_thmass_combined", output_folder);
 	pmass_comb.set_bins(15, 500, 1500);
 	pmass_comb.set_stacked(true);
-	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
-	{
-		double weight = bkg_xsec[i] * luminosity / bkg_evts[i].size();
-		pmass_comb.add_sample(bkg_evts[i], th_mass, labels[i], weight);
-	}
+	double weight;
+	// tbz sample
+	weight = bkg_xsec[3] * luminosity / bkg_evts[3].size();
+	pmass_comb.add_sample(bkg_evts[3], th_mass, labels[3], weight);
+	// tz sample
+	weight = bkg_xsec[2] * luminosity / bkg_evts[2].size();
+	pmass_comb.add_sample(bkg_evts[2], th_mass, labels[2], weight);
+	// ttz sample
+	weight = bkg_xsec[0] * luminosity / bkg_evts[0].size();
+	pmass_comb.add_sample(bkg_evts[0], th_mass, labels[0], weight);
+	// zjj sample
+	weight = bkg_xsec[1] * luminosity / bkg_evts[1].size();
+	pmass_comb.add_sample(bkg_evts[1], th_mass, labels[1], weight);
+	// signal sample
 	pmass_comb.add_sample(sig_evts, th_mass, "signal", sig_xsec * luminosity / sig_evts.size());
 	pmass_comb.run();
 
