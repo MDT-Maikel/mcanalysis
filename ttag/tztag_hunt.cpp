@@ -117,7 +117,7 @@ int main(int argc, const char* argv[])
 	// for testing
 	for (int i = 1; i <= 15; ++i)
 	{
-		double bin = hist_sb->GetXaxis()->FindBin(i);
+		double bin = hist_sb->GetBinCenter(i);
 		double sb_val = hist_sb->GetBinContent(i);
 		double b_val = hist_b->GetBinContent(i);
 		cout << "hist_sb bin " << bin << " content: " << sb_val << endl;
