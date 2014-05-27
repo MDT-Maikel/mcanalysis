@@ -114,10 +114,36 @@ int main(int argc, const char* argv[])
 		hist_sb->Fill(val, weight);
 	}
 
-	double bin_sb = hist_sb->GetBinContent(1000);
-	double bin_b = hist_b->GetBinContent(1000);
-	cout << "hist_sb bin 1000 content: " << bin_sb << endl;
-	cout << "hist_b bin 1000 content: " << bin_b << endl;
+	// for testing
+	for (int bin = 500; bin < 1500; bin+=60)
+	{
+		double bin_sb = hist_sb->GetBinContent(bin);
+		double bin_b = hist_b->GetBinContent(bin);
+		cout << "hist_sb bin" << bin << "content: " << bin_sb << endl;
+		cout << "hist_b bin" << bin << "content: " << bin_b << endl << endl;
+	}
+	
+	Int_t iFont=42;
+	gStyle->SetOptStat(0);
+	gStyle->SetTextFont(iFont);
+	gStyle->SetFrameLineWidth(3);
+	gStyle->SetHistLineWidth(3);
+	gStyle->SetLineWidth(2);
+	gStyle->SetTitleXOffset (1.);
+	gStyle->SetTitleYOffset (1.);
+	gStyle->SetLabelSize(0.05,"XYZ");
+	gStyle->SetLabelFont(iFont, "XYZ");
+	gStyle->SetTitleSize(0.055,"XYZ");
+	gStyle->SetTitleFont(iFont, "xyz");
+	gStyle->SetEndErrorSize(0);
+	TCanvas* c1 = new TCanvas("","");
+	c1->SetTicks(1,1);
+	c1->SetBottomMargin(0.2);
+	c1->SetLeftMargin(0.2);
+	c1->SetLogy(1);
+	hist_sb->Draw("");
+	c1->Print("output/test.png");
+
 	
 	// // create a bumphunter instance and do basic settings
 	// bumphunter hunt(hist_sb, hist_b);
