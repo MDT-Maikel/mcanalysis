@@ -1,0 +1,10 @@
+### MC INPUT ###
+BKG_LHCO = {/data/btag/events/background/ttz/tztag_1top_analysis/ttz_analysed.lhco.gz,/data/btag/events/background/z/tztag_1top_analysis/z_analysed.lhco.gz,/data/btag/events/background/tz/tztag_1top_analysis/tz_analysed.lhco.gz,/data/btag/events/background/tbz/tztag_1top_analysis/tbz_analysed.lhco.gz}
+BKG_XSEC = {0.00009730601525,0.00884676625,0.0000245603495,0.000011973026925}
+SIG_LHCO = /data/btag/events/signal/thth_tztz/tztag_1top_analysis/mass_1000/thth_tztz_mass1000_analysed.lhco.gz
+SIG_XSEC = 0.0000304382
+
+### GENERAL ###
+OUTPUT_FOLDER = output/
+LUMINOSITY = 100
+KINEMATIC_DIST = 0
