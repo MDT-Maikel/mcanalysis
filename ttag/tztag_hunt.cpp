@@ -115,27 +115,13 @@ int main(int argc, const char* argv[])
 	}
 
 	// for testing
-	for (int bin = 500; bin < 1500; bin+=60)
+	for (int i = 1; i < 15; ++i)
 	{
-		double bin_sb = hist_sb->GetBinContent(bin);
-		double bin_b = hist_b->GetBinContent(bin);
-		cout << "hist_sb bin" << bin << "content: " << bin_sb << endl;
-		cout << "hist_b bin" << bin << "content: " << bin_b << endl << endl;
+		double bin_sb = hist_sb->GetBinContent(i);
+		double bin_b = hist_b->GetBinContent(i);
+		cout << "hist_sb bin " << i << " content: " << bin_sb << endl;
+		cout << "hist_b bin " << i << " content: " << bin_b << endl << endl;
 	}
-	
-	Int_t iFont=42;
-	gStyle->SetOptStat(0);
-	gStyle->SetTextFont(iFont);
-	gStyle->SetFrameLineWidth(3);
-	gStyle->SetHistLineWidth(3);
-	gStyle->SetLineWidth(2);
-	gStyle->SetTitleXOffset (1.);
-	gStyle->SetTitleYOffset (1.);
-	gStyle->SetLabelSize(0.05,"XYZ");
-	gStyle->SetLabelFont(iFont, "XYZ");
-	gStyle->SetTitleSize(0.055,"XYZ");
-	gStyle->SetTitleFont(iFont, "xyz");
-	gStyle->SetEndErrorSize(0);
 	TCanvas* c1 = new TCanvas("","");
 	c1->SetTicks(1,1);
 	c1->SetBottomMargin(0.2);
