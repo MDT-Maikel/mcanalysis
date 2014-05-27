@@ -80,7 +80,7 @@ int main(int argc, const char* argv[])
 	read_lhco(sig_evts, sig_lhco);
 
 	// define histrograms
-	double nbins = 15.;
+	int nbins = 20;
 	double hmin = 500.;
 	double hmax = 1500.;
 
@@ -135,9 +135,9 @@ int main(int argc, const char* argv[])
 	bumphunter hunt(hist_b, hist_sb);
 	hunt.set_folder(output_folder);
 	hunt.set_name("tztag_hunt_poisson");
-	hunt.SetNPseudoExperiments(5000);
+	hunt.SetNPseudoExperiments(100000);
 	hunt.SetBinModel(bumphunter::BUMP_POISSON);
-	hunt.SetSearchRegion(800, 1200);
+	hunt.SetSearchRegion(800, 1500);
 	hunt.SetMinWindowSize(1);
 	hunt.SetMaxWindowSize(3);
 	hunt.SetWindowStepSize(1);
@@ -158,11 +158,6 @@ int main(int argc, const char* argv[])
 	hunt.run();
 	double sigma_poissongamma = hunt.get_global_sigma();
 
-	// determine success conditions
-	bool bumphunter_success;
-	bumphunter_success = sigma_poisson >= sigma_gaussian;
-	bumphunter_success = sigma_poisson >= sigma_poissongamma;
-
 	// clear remaining pointers
 	delete hist_b;
 	delete hist_sb;
@@ -176,7 +171,6 @@ int main(int argc, const char* argv[])
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	cout << "=====================================================================" << endl;
 	cout << "Program completed in " << duration << " seconds." << endl;
-	cout << "BumpHunter algorithm has " << (bumphunter_success ? "succeeded!" : "failed!") << endl;
 	cout << "Poisson bin model significance: " << sigma_poisson << " sigma" << endl;
 	cout << "Gaussian bin model significance: " << sigma_gaussian << " sigma" << endl;
 	cout << "PoissonGamma bin model significance: " << sigma_poissongamma << " sigma" << endl;
