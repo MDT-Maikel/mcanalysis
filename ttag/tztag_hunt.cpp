@@ -35,7 +35,7 @@ using namespace analysis;
 
 // function prototypes
 bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco, vector<double> &bkg_xsec, string &sig_lhco, double &sig_xsec);
-bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity, bool &kinematic_dist);
+bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity);
 double get_thmass(const event *ev);
 
 // main program: may have one argument
@@ -60,8 +60,7 @@ int main(int argc, const char* argv[])
 	// read the general settings from command file
 	string output_folder = "output/";
 	double luminosity = 1;
-	bool kinematic_dist = false;
-	if (!load_settings_general(settings_file, output_folder, luminosity, kinematic_dist))
+	if (!load_settings_general(settings_file, output_folder, luminosity))
 		return EXIT_FAILURE;
 	luminosity *= 1000;
 	
@@ -114,51 +113,55 @@ int main(int argc, const char* argv[])
 		hist_sb->Fill(val, weight);
 	}
 
-	// for testing
-	for (int i = 1; i <= 15; ++i)
-	{
-		double bin = hist_sb->GetBinCenter(i);
-		double sb_val = hist_sb->GetBinContent(i);
-		double b_val = hist_b->GetBinContent(i);
-		cout << "hist_sb bin " << bin << " content: " << sb_val << endl;
-		cout << "hist_b bin " << bin << " content: " << b_val << endl << endl;
-	}
-	gStyle->SetOptStat(0);
-	TCanvas* c1 = new TCanvas("","");
-	c1->SetTicks(1,1);
-	c1->SetBottomMargin(0.2);
-	c1->SetLeftMargin(0.2);
-	c1->SetLogy(1);
-	hist_sb->Draw("");
-	c1->Print("output/test.png");
+	// // for testing
+	// for (int i = 1; i <= 15; ++i)
+	// {
+	// 	double bin = hist_sb->GetBinCenter(i);
+	// 	double sb_val = hist_sb->GetBinContent(i);
+	// 	double b_val = hist_b->GetBinContent(i);
+	// 	cout << "hist_sb bin " << bin << " content: " << sb_val << endl;
+	// 	cout << "hist_b bin " << bin << " content: " << b_val << endl << endl;
+	// }
+	// gStyle->SetOptStat(0);
+	// TCanvas* c1 = new TCanvas("","");
+	// c1->SetTicks(1,1);
+	// c1->SetBottomMargin(0.2);
+	// c1->SetLeftMargin(0.2);
+	// c1->SetLogy(1);
+	// hist_sb->Draw("");
+	// c1->Print("output/test.png");
+	
+	// create a bumphunter instance and do basic settings
+	bumphunter hunt(hist_b, hist_sb);
+	hunt.set_folder(output_folder);
+	hunt.set_name("tztag_hunt_poisson");
+	hunt.SetNPseudoExperiments(5000);
+	hunt.SetBinModel(bumphunter::BUMP_POISSON);
+	hunt.SetSearchRegion(800, 1200);
+	hunt.SetMinWindowSize(1);
+	hunt.SetMaxWindowSize(3);
+	hunt.SetWindowStepSize(1);
+	
+	// run bumphunter analysis
+	hunt.run();
+	double sigma_poisson = hunt.get_global_sigma();
+	
+	// run bumphunter analysis a second time with gaussian bin model
+	hunt.SetBinModel(bumphunter::BUMP_GAUSSIAN);
+	hunt.set_name("tztag_hunt_gaussian");
+	hunt.run();
+	double sigma_gaussian = hunt.get_global_sigma();
+	
+	// run bumphunter analysis a second time with poisson-gamma bin model
+	hunt.SetBinModel(bumphunter::BUMP_POISSON_GAMMA);
+	hunt.set_name("tztag_hunt_poissongamma");
+	hunt.run();
+	double sigma_poissongamma = hunt.get_global_sigma();
 
-	
-	// // create a bumphunter instance and do basic settings
-	// bumphunter hunt(hist_sb, hist_b);
-	// hunt.set_folder(output_folder);
-	// hunt.set_name("tztag_hunt_poisson");
-	// hunt.SetNPseudoExperiments(5000);
-	// hunt.SetBinModel(bumphunter::BUMP_POISSON);
-	// hunt.SetSearchRegion(800, 1200);
-	// hunt.SetMinWindowSize(1);
-	// hunt.SetMaxWindowSize(3);
-	// hunt.SetWindowStepSize(1);
-	
-	// // run bumphunter analysis
-	// hunt.run();
-	// double sigma_poisson = hunt.get_global_sigma();
-	
-	// // run bumphunter analysis a second time with gaussian bin model
-	// hunt.SetBinModel(bumphunter::BUMP_GAUSSIAN);
-	// hunt.set_name("tztag_hunt_gaussian");
-	// hunt.run();
-	// double sigma_gaussian = hunt.get_global_sigma();
-	
-	// // run bumphunter analysis a second time with poisson-gamma bin model
-	// hunt.SetBinModel(bumphunter::BUMP_POISSON_GAMMA);
-	// hunt.set_name("tztag_hunt_poissongamma");
-	// hunt.run();
-	// double sigma_poissongamma = hunt.get_global_sigma();
+	// determine success conditions
+	bool bumphunter_success;
+	bumphunter_success = sigma_poisson >= sigma_gaussian;
+	bumphunter_success = sigma_poisson >= sigma_poissongamma;
 
 	// clear remaining pointers
 	delete hist_b;
@@ -173,6 +176,10 @@ int main(int argc, const char* argv[])
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	cout << "=====================================================================" << endl;
 	cout << "Program completed in " << duration << " seconds." << endl;
+	cout << "BumpHunter algorithm has " << (bumphunter_success ? "succeeded!" : "failed!") << endl;
+	cout << "Poisson bin model significance: " << sigma_poisson << " sigma" << endl;
+	cout << "Gaussian bin model significance: " << sigma_gaussian << " sigma" << endl;
+	cout << "PoissonGamma bin model significance: " << sigma_poissongamma << " sigma" << endl;
 	cout << "=====================================================================" << endl;
 	
 	// finished the program
@@ -221,19 +228,17 @@ bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco
 	return true;
 }
 
-bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity, bool &kinematic_dist)
+bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity)
 {
 	// read input settings
 	output_folder = read_settings<string>(settings_file, static_cast<string>("OUTPUT_FOLDER"));
 	luminosity = read_settings<double>(settings_file, static_cast<string>("LUMINOSITY"));
-	kinematic_dist = read_settings<bool>(settings_file, static_cast<string>("KINEMATIC_DIST"));
 	
 	// display the loaded settings if no errors occur
 	cout << "################################################################################" << endl;
 	cout << "Loaded input settings from " << settings_file << ":" << endl;
 	cout << "Output folder: " << output_folder << endl;
 	cout << "Luminosity (ifb): " << luminosity << endl;
-	cout << "Plot kinematic distributions?: " << kinematic_dist << endl;
 	cout << "################################################################################" << endl;
 	return true;
 }
