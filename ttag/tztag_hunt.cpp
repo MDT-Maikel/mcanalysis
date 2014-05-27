@@ -115,13 +115,15 @@ int main(int argc, const char* argv[])
 	}
 
 	// for testing
-	for (int i = 1; i < 15; ++i)
+	for (int i = 1; i <= 15; ++i)
 	{
-		double bin_sb = hist_sb->GetBinContent(i);
-		double bin_b = hist_b->GetBinContent(i);
-		cout << "hist_sb bin " << i << " content: " << bin_sb << endl;
-		cout << "hist_b bin " << i << " content: " << bin_b << endl << endl;
+		double bin = hist_sb->GetXaxis()->FindBin(i);
+		double sb_val = hist_sb->GetBinContent(i);
+		double b_val = hist_b->GetBinContent(i);
+		cout << "hist_sb bin " << bin << " content: " << sb_val << endl;
+		cout << "hist_b bin " << bin << " content: " << b_val << endl << endl;
 	}
+	gStyle->SetOptStat(0);
 	TCanvas* c1 = new TCanvas("","");
 	c1->SetTicks(1,1);
 	c1->SetBottomMargin(0.2);
