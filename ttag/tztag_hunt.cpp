@@ -135,7 +135,7 @@ int main(int argc, const char* argv[])
 	bumphunter hunt(hist_b, hist_sb);
 	hunt.set_folder(output_folder);
 	hunt.set_name("tztag_hunt_poisson");
-	hunt.SetNPseudoExperiments(100000);
+	hunt.SetNPseudoExperiments(1000000);
 	hunt.SetBinModel(bumphunter::BUMP_POISSON);
 	hunt.SetSearchRegion(800, 1500);
 	hunt.SetMinWindowSize(1);
@@ -145,12 +145,6 @@ int main(int argc, const char* argv[])
 	// run bumphunter analysis
 	hunt.run();
 	double sigma_poisson = hunt.get_global_sigma();
-	
-	// run bumphunter analysis a second time with gaussian bin model
-	hunt.SetBinModel(bumphunter::BUMP_GAUSSIAN);
-	hunt.set_name("tztag_hunt_gaussian");
-	hunt.run();
-	double sigma_gaussian = hunt.get_global_sigma();
 	
 	// run bumphunter analysis a second time with poisson-gamma bin model
 	hunt.SetBinModel(bumphunter::BUMP_POISSON_GAMMA);
@@ -172,7 +166,6 @@ int main(int argc, const char* argv[])
 	cout << "=====================================================================" << endl;
 	cout << "Program completed in " << duration << " seconds." << endl;
 	cout << "Poisson bin model significance: " << sigma_poisson << " sigma" << endl;
-	cout << "Gaussian bin model significance: " << sigma_gaussian << " sigma" << endl;
 	cout << "PoissonGamma bin model significance: " << sigma_poissongamma << " sigma" << endl;
 	cout << "=====================================================================" << endl;
 	
