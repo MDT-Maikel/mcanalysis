@@ -135,7 +135,7 @@ int main(int argc, const char* argv[])
 	bumphunter hunt(hist_b, hist_sb);
 	hunt.set_folder(output_folder);
 	hunt.set_name("tztag_hunt_poisson");
-	hunt.SetNPseudoExperiments(1000000);
+	hunt.SetNPseudoExperiments(10000000);
 	hunt.SetBinModel(bumphunter::BUMP_POISSON);
 	hunt.SetSearchRegion(800, 1500);
 	hunt.SetMinWindowSize(1);
