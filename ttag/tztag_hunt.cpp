@@ -165,8 +165,8 @@ int main(int argc, const char* argv[])
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	cout << "=====================================================================" << endl;
 	cout << "Program completed in " << duration << " seconds." << endl;
-	cout << "Poisson bin model significance: " << sigma_poisson << " sigma" << endl;
-	cout << "PoissonGamma bin model significance: " << sigma_poissongamma << " sigma" << endl;
+	cout << "Poisson bin model significance : " << sigma_poisson << endl;
+	cout << "PoissonGamma bin model significance : " << sigma_poissongamma << endl;
 	cout << "=====================================================================" << endl;
 	
 	// finished the program
