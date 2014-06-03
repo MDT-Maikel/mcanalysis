@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # script to read the cross section from a madgraph file
 
@@ -19,6 +19,10 @@ fi
 
 # get the cross section using the identifier and then take second argument after ':'
 xsec=`sed -n "/\<Integrated weight\>/p" $xsec_file  | cut -d":" -f2`
+if [[ "$OSTYPE" = "darwin"* ]]
+then
+	xsec=`sed -n "/[[:<:]]Integrated weight[[:<:]]/p" $xsec_file  | cut -d":" -f2`
+fi
 echo $xsec
 
 #succeeded

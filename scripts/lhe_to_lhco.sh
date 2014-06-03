@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # generates lhco data from lhe data using pythia and delphes
 

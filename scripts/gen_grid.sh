@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # generates a grid of mc data and possible analyzes it
 
@@ -48,21 +48,21 @@ for pi in in `seq 0 10 100`; do
 		param_card=$run_dir/Cards/param_card.dat
 		# edit first independent parameters, because of formatting
 		read par_pi <<< $(./calc_val "PI" $pi $pf)
-		sh change_par.sh $param_card "PI" $par_pi
+		./change_par.sh $param_card "PI" $par_pi
 		read par_pf <<< $(./calc_val "PF" $pi $pf)	
-		sh change_par.sh $param_card "PF" $par_pf
+		./change_par.sh $param_card "PF" $par_pf
 		# then edit the dependent paramaters
 		read par_dep <<< $(./calc_val "PD" $pi $pf)	
-		sh change_par.sh $param_card "PD" $par_dep
+		./change_par.sh $param_card "PD" $par_dep
 		
 		# run mg5 with given process dir, event dir and event name 
-		sh run_mg5.sh $run_dir $event_dir $run_name
+		./run_mg5.sh $run_dir $event_dir $run_name
 		
 		# remove the run dir
 		rm -rf $run_dir
 	
 		# read the cross section from the event sample
-		read cross_section <<< $(sh read_xsec.sh $event_dir"/"$run_name".txt")
+		read cross_section <<< $(./read_xsec.sh $event_dir"/"$run_name".txt")
 
 		# possible run an C++ analysis on the produced event sample
 		# in this case ./analysis takes an lhco file and prints
