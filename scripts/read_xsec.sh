@@ -21,7 +21,7 @@ fi
 xsec=`sed -n "/\<Integrated weight\>/p" $xsec_file  | cut -d":" -f2`
 if [[ "$OSTYPE" = "darwin"* ]]
 then
-	xsec=`sed -n "/[[:<:]]Integrated weight[[:<:]]/p" $xsec_file  | cut -d":" -f2`
+	xsec=`sed -n "/[[:<:]]Integrated weight[[:>:]]/p" $xsec_file  | cut -d":" -f2`
 fi
 echo $xsec
 
