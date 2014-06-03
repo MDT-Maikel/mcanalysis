@@ -17,7 +17,7 @@ new_val=$3
 
 # replace the parameter and store in tmp_file
 tmp=`sed -n "/\<$par\>/p" $param_card  | cut -d"#" -f1`
-if [[ "$OSTYPE" == "darwin"* ]]
+if [ "$OSTYPE" = "darwin"* ]
 then
 	tmp=`sed -n "/[[:<:]]$par[[:>:]]/p" $param_card  | cut -d"#" -f1`
 fi
@@ -29,7 +29,7 @@ then
 fi
 
 temp_card=$param_card"_temp"
-if [[ "$OSTYPE" == "darwin"* ]]
+if [ "$OSTYPE" = "darwin"* ]
 then
 	sed "s/[[:<:]]$old_val # $par[[:>:]]/$new_val # $par/" $param_card > $temp_card
 else
