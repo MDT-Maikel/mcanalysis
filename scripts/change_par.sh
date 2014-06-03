@@ -22,11 +22,12 @@ if [ -z $old_val ]
 then
 	old_val=`echo $tmp | cut -d" " -f2`
 fi
-sed "s/\<"$old_val" # "$par"\>/"$new_val" # "$par"/" $param_card > tmp0
+temp_card=$param_card"_temp"
+sed "s/\<"$old_val" # "$par"\>/"$new_val" # "$par"/" $param_card > $temp_card
 
 # replace original card with tmp_file
-cp tmp0 $param_card
-rm tmp0
+cp  $temp_card $param_card
+rm  $temp_card
 
 #succeeded
 exit
