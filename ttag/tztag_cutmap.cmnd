@@ -1,0 +1,3 @@
+### SETTINGS ###
+INPUT_LHCO = /data/btag/events/background/zjj/lhco/merged/zjj_sample.lhco.gz
+OUTPUT_CUTMAP = /data/btag/store/cutmap_zjj
