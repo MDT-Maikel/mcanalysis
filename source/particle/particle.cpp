@@ -14,6 +14,13 @@ namespace analysis
 	
 	particle::particle() {}
 	particle::~particle() {}
+	
+	/* copy & assignment */
+			
+	particle* particle::clone() const
+	{
+		return new particle(*this);
+	}
 
 	/* properties: type */
 

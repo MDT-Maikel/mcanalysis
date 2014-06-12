@@ -11,6 +11,10 @@ namespace analysis
 {
 
 	/* con & destructor */
+	
+	event::event()
+	{
+	}
 
 	event::~event() 
 	{
@@ -20,6 +24,22 @@ namespace analysis
 			particles[i] = nullptr;
 		}
 		particles.clear();
+	}
+	
+	/* copy & assignment */
+	
+	event::event(const event& ev)
+	{
+		
+		for (unsigned int i = 0; i < ev.size(); i++)
+			particles.push_back(ev[i]->clone());
+	}
+
+	event & event::operator = (const event& ev)
+	{
+		for (unsigned int i = 0; i < ev.size(); i++)
+			particles.push_back(ev[i]->clone());
+		return *this;
 	}
 
 	/* member operations */

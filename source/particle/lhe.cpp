@@ -21,6 +21,13 @@ namespace analysis
 		p_pe = pe;
 		p_mass = mass;
 	}
+	
+	/* copy & assignment */
+			
+	lhe* lhe::clone() const
+	{
+		return new lhe(*this);
+	}
 
 	/* properties: type */
 

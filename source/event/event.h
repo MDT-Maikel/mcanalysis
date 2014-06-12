@@ -6,6 +6,7 @@
 #ifndef INC_EVENT
 #define INC_EVENT
 
+#include <iostream>
 #include <algorithm>
 #include <cmath>
 #include <vector>
@@ -26,12 +27,12 @@ namespace analysis
 	public:
 		
 		/* con & destructor */
-		event() = default;
+		event();
 		~event();
 		
 		/* copy & assignment */
-		event(const event&) = default;
-		event & operator = (const event&) = default;
+		event(const event& ev);
+		event & operator = (const event& ev);
 
 		/* member operations */
 		particle* operator[] (int n);

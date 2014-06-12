@@ -32,6 +32,7 @@ namespace analysis
 		/* copy & assignment */
 		lhco(const lhco&) = default;
     	lhco& operator = (const lhco&) = default;
+     	virtual lhco* clone() const;
 
 		/* properties: type */
 		int id() const;

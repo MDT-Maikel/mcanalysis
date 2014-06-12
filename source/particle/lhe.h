@@ -36,6 +36,7 @@ namespace analysis
 		/* copy & assignment */
 		// lhe(const lhe&) = default;
     	// lhe& operator = (const lhe&) = default;
+    	virtual lhe* clone() const;
 
 		/* properties: type */
 		int id() const;

@@ -25,6 +25,13 @@ namespace analysis
 		p_dum1 = dum1;
 		p_dum2 = dum2;
 	}
+	
+	/* copy & assignment */
+			
+	lhco* lhco::clone() const
+	{
+		return new lhco(*this);
+	}
 
 	/* properties: type */
 

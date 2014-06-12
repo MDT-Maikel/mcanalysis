@@ -76,6 +76,7 @@ namespace analysis
 		/* copy & assignment */
 		particle(const particle&) = default;
     	particle& operator = (const particle&) = default;
+    	virtual particle* clone() const;
 
 		/* properties: type */
 		virtual int id() const;
