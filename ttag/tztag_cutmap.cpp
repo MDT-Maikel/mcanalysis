@@ -31,6 +31,7 @@ using namespace analysis;
 
 // function prototypes
 bool load_settings(const string &settings_file, string &input_sig_lhco, string &output_file_cutmap);
+vector<event*> assign(const vector<event*> & original);
 vector<const particle*> identify_candidate_leptons(const vector<const particle*> & leptons, const double RLL_max);
 
 // basic cut: at least two opposite sign leptons need to be present, with invariant mass near the Z boson
@@ -231,20 +232,19 @@ int main(int argc, const char* argv[])
 	vector<event*> events;
 	read_lhco(events, input_lhco);
 
-	// cut values, efficiency variables, cutted samples
+	// cut values, efficiency variables
 	int ptZ_cut, ht_cut, nj_cut, ptB_cut; 
 	double RLL_cut, etaZ_cut;
 	double tot_eff, RLL_eff, ptZ_eff, etaZ_eff, ht_eff, nj_eff, ptB_eff;
-	vector<event*> RLL_data, ptZ_data, etaZ_data, ht_data, nj_data, ptB_data;
-
+	
 	// cutmap loggin variables
-	int cutmap_done = 0, cutmap_total = 7 * 7 * 8 * 6 * 4 * 6, cutmap_logging = 7 * 7; 
+	int cutmap_done = 0, cutmap_total = 11 * 9 * 8 * 6 * 4 * 6, cutmap_logging = 11 * 9; 
 
-	// Delat_R(LL) cut: 7 steps
-	RLL_data = events;
+	// Delat_R(LL) cut: 11 steps
+	vector<event*> RLL_data = assign(events);
 	RLL_eff = 1;
-	for (RLL_cut = 1.6; RLL_cut <= 0.8; RLL_cut -= 0.2)
-  	{
+	for (RLL_cut = 2.4; RLL_cut >= 0.8; RLL_cut -= 0.2)
+  	{	
 		if (RLL_data.size() > 0)
 		{
 			cuts RLL_cuts;
@@ -257,10 +257,10 @@ int main(int argc, const char* argv[])
 			delete osl;
 		}
 
-		// pT(Z) cut: 7 steps.
-		ptZ_data = RLL_data;
+		// pT(Z) cut: 9 steps.
+		vector<event*> ptZ_data = assign(RLL_data);
 		ptZ_eff = 1;
-		for (ptZ_cut = 200; ptZ_cut <= 350; ptZ_cut += 25)
+		for (ptZ_cut = 150; ptZ_cut <= 350; ptZ_cut += 25)
 		{
 			if (ptZ_data.size() > 0)
 			{	
@@ -275,7 +275,7 @@ int main(int argc, const char* argv[])
 			}				
 
 			// eta(Z) cut: 8 steps.
-			etaZ_data = ptZ_data;
+			vector<event*> etaZ_data = assign(ptZ_data);
 			etaZ_eff = 1;
 			for (etaZ_cut = 2.5; etaZ_cut >= 1.1; etaZ_cut -= 0.2)
 			{
@@ -292,7 +292,7 @@ int main(int argc, const char* argv[])
 				}
 
 				// HT cut: 6 steps.
-				ht_data = etaZ_data;
+				vector<event*> ht_data = assign(etaZ_data);
 				ht_eff = 1;
 				for (ht_cut = 400; ht_cut <= 900; ht_cut += 100)
 				{
@@ -309,13 +309,12 @@ int main(int argc, const char* argv[])
 					}
 	
 					// n_jets cut: 4 steps.
-					nj_data = ht_data;
+					vector<event*> nj_data = assign(ht_data);
 					nj_eff = 1;
 					for (nj_cut = 0; nj_cut <=6; nj_cut += 2)
 					{
 						if (nj_data.size() > 0)
 						{	
-
 							cuts nj_cuts;
 							cut_njet *njet = new cut_njet(nj_cut, 30, 3.0);
 							nj_cuts.add_cut(njet);
@@ -327,13 +326,12 @@ int main(int argc, const char* argv[])
 						}
 
 						// pT(B) cut: 6 steps.
-						ptB_data = nj_data;
+						vector<event*> ptB_data = assign(nj_data);
 						ptB_eff = 1;
 						for (ptB_cut = 40; ptB_cut <=140; ptB_cut += 20)
 						{
 							if (ptB_data.size() > 0)
 							{	
-
 								cuts ptB_cuts;
 								cut_bjet *bjet = new cut_bjet(1, ptB_cut, 2.8);
 								ptB_cuts.add_cut(bjet);
@@ -353,25 +351,29 @@ int main(int argc, const char* argv[])
 							cutmap_done++;
 							if (cutmap_done % (cutmap_total / cutmap_logging) == 0)
 								cout << "Cutmap in progress: done " << cutmap_done << "/" << cutmap_total << " steps" <<endl;
-
 						}
+						// clear temporary event pointers
+						delete_events(ptB_data);
 					}
+					// clear temporary event pointers
+					delete_events(nj_data);
 				}
-			}			
+				// clear temporary event pointers
+				delete_events(ht_data);
+			}
+			// clear temporary event pointers
+			delete_events(etaZ_data);			
 		}
+		// clear temporary event pointers
+		delete_events(ptZ_data);
 	}
+	// clear remaining event pointers
+	delete_events(RLL_data);
+	delete_events(events);
 
-	// Close the write-to text stream.
+	// close the write-to text stream.
 	cutmap_table.close();
 	
-	// clear remaining event pointers
-	delete_events(events);
-	delete_events(RLL_data);
-	delete_events(ptZ_data);
-	delete_events(etaZ_data);
-	delete_events(ht_data);
-	delete_events(nj_data);
-	delete_events(ptB_data);
 	
 	// log results
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
@@ -397,6 +399,15 @@ bool load_settings(const string &settings_file, string &input_sig_lhco, string &
 	cout << "Output Cutmap: " << output_file_cutmap << endl;
 	cout << "################################################################################" << endl;
 	return true;
+}
+
+// correct assignment between different vectors of event pointers
+vector<event*> assign(const vector<event*> & original)
+{
+	vector<event*> duplicate;
+	for(unsigned int i = 0; i < original.size(); i++ )
+		duplicate.push_back(new event(*original[i]));
+	return duplicate;
 }
 
 // identify lepton candidates to reconstruct the Z boson
