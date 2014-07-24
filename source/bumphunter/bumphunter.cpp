@@ -403,7 +403,7 @@ namespace analysis
 	
 		if (curr_channel.bump_window_min == 0 && curr_channel.bump_window_max == 0) 
 		{
-			Error("Run","No bumps found?"); 
+			Error("Run","No bumps found?");
 			return -1;
 		}
 		
@@ -667,11 +667,11 @@ namespace analysis
 				nExp = fHistBack->IntegralAndError(it->first,it->second,errExp);
 			}
 
-			if (fTestStatisticType == BUMPHUNTER && nObs < nExp) 
+			if (fTestStatisticType == BUMPHUNTER && (nObs < nExp || nObs < 1)) 
 				localPValue = 1.; // dips are considered insignificant if only bumphunting
 			else if (fTestStatisticType == DIPHUNTER && nObs > nExp) 
 				localPValue = 1.; // bumps are considered insigificant if diphunting
-			else if (fBinModel == 0) 
+			else if (fBinModel == 0)
 				localPValue = GetPoissonConvGammaPValue(nObs, nExp, errExp);
 			else if (fBinModel == 1) 
 				localPValue = GetPoissonPValue(nObs, nExp);

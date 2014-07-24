@@ -34,7 +34,7 @@ using namespace fastjet;
 using namespace analysis;
 
 // function prototypes
-bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco, vector<double> &bkg_xsec, string &sig_lhco, double &sig_xsec);
+bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco, vector<double> &bkg_xsec, vector<double> &bkg_kfac, double &bkg_scal, string &sig_lhco, double &sig_xsec, double &sig_kfac, double &sig_scal);
 bool load_settings_general(const string &settings_file, string &output_folder, double &luminosity);
 double get_thmass(const event *ev);
 
@@ -53,9 +53,13 @@ int main(int argc, const char* argv[])
 	// read the mcinput settings from command file	
 	vector<string> bkg_lhco;
 	vector<double> bkg_xsec;
+	vector<double> bkg_kfac;
+	double bkg_scal;
 	string sig_lhco;
 	double sig_xsec;
-	if (!load_settings_mcinput(settings_file, bkg_lhco, bkg_xsec, sig_lhco, sig_xsec))
+	double sig_kfac;
+	double sig_scal;
+	if (!load_settings_mcinput(settings_file, bkg_lhco, bkg_xsec, bkg_kfac, bkg_scal, sig_lhco, sig_xsec, sig_kfac, sig_scal))
 		return EXIT_FAILURE;
 	// read the general settings from command file
 	string output_folder = "output/";
@@ -91,7 +95,7 @@ int main(int argc, const char* argv[])
 	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
 	{
 		vector<event*> events = bkg_evts[i];
-		double xsec = bkg_xsec[i];
+		double xsec = bkg_xsec[i]*bkg_kfac[i]*bkg_scal;
 		double weight = xsec * luminosity / events.size();
 		
 		for (unsigned int j = 0; j < events.size(); j++)
@@ -104,7 +108,7 @@ int main(int argc, const char* argv[])
 
 	// fill the histogram hist_sb with signal sample
 	vector<event*> events = sig_evts;
-	double xsec = sig_xsec;
+	double xsec = sig_xsec*sig_kfac*sig_scal;
 	double weight = xsec * luminosity / events.size();
 	
 	for (unsigned int j = 0; j < events.size(); j++)
@@ -135,7 +139,7 @@ int main(int argc, const char* argv[])
 	bumphunter hunt(hist_b, hist_sb);
 	hunt.set_folder(output_folder);
 	hunt.set_name("tztag_hunt_poisson");
-	hunt.SetNPseudoExperiments(10000000);
+	hunt.SetNPseudoExperiments(1.0e+8);
 	hunt.SetBinModel(bumphunter::BUMP_POISSON);
 	hunt.SetSearchRegion(800, 1500);
 	hunt.SetMinWindowSize(1);
@@ -165,8 +169,8 @@ int main(int argc, const char* argv[])
 	duration = (clock() - clock_old) / static_cast<double>(CLOCKS_PER_SEC);
 	cout << "=====================================================================" << endl;
 	cout << "Program completed in " << duration << " seconds." << endl;
-	cout << "Poisson bin model significance : " << sigma_poisson << endl;
-	cout << "PoissonGamma bin model significance : " << sigma_poissongamma << endl;
+	cout << "Poisson bin model significance : " << max(0.0,sigma_poisson) << endl;
+	cout << "PoissonGamma bin model significance : " << max(0.0,sigma_poissongamma) << endl;
 	cout << "=====================================================================" << endl;
 	
 	// finished the program
@@ -180,15 +184,19 @@ double get_thmass(const event *ev)
 }
 
 // load settings functions
-bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco, vector<double> &bkg_xsec, string &sig_lhco, double &sig_xsec)
+bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco, vector<double> &bkg_xsec, vector<double> &bkg_kfac, double &bkg_scal, string &sig_lhco, double &sig_xsec, double &sig_kfac, double &sig_scal)
 {
 	// read input settings
 	bkg_lhco.clear(); 
 	bkg_xsec.clear();
 	bkg_lhco = read_settings_list<string>(settings_file, static_cast<string>("BKG_LHCO"));
 	bkg_xsec = read_settings_list<double>(settings_file, static_cast<string>("BKG_XSEC"));
+	bkg_kfac = read_settings_list<double>(settings_file, static_cast<string>("BKG_KFAC"));
+	bkg_scal = read_settings<double>(settings_file, static_cast<string>("BKG_SCAL"));
 	sig_lhco = read_settings<string>(settings_file, static_cast<string>("SIG_LHCO"));
 	sig_xsec = read_settings<double>(settings_file, static_cast<string>("SIG_XSEC"));
+	sig_kfac = read_settings<double>(settings_file, static_cast<string>("SIG_KFAC"));
+	sig_scal = read_settings<double>(settings_file, static_cast<string>("SIG_SCAL"));
 	
 	// display the loaded settings if no errors occur
 	cout << "################################################################################" << endl;
@@ -209,8 +217,19 @@ bool load_settings_mcinput(const string &settings_file, vector<string> &bkg_lhco
 			cout << ", ";
 	}
 	cout << "} pb" << endl;
+	cout << "Background K-factors: {";
+	for (unsigned int i = 0; i < bkg_kfac.size(); ++i)
+	{	
+		cout << bkg_kfac[i];
+		if (i != bkg_kfac.size() - 1)
+			cout << ", ";
+	}
+	cout << "}" << endl;
+	cout << "Background rescaling factor: " << bkg_scal << endl;
 	cout << "Signal LHCO: " << sig_lhco << endl;
 	cout << "Signal xsec: " << sig_xsec << " pb" << endl;
+	cout << "Signal K-factor: " << sig_kfac << endl;
+	cout << "Signal rescaling factor: " << sig_scal << endl;
 	cout << "################################################################################" << endl;
 	return true;
 }

@@ -267,16 +267,16 @@ int main(int argc, const char* argv[])
 	cuts basic_cuts;
 	cut_2osl *osl = new cut_2osl(25, 2.5);
 	basic_cuts.add_cut(osl, "2 opposite sign leptons within R=1.0 cone");
-	cut_ptZ *ptZ = new cut_ptZ(250);
-	basic_cuts.add_cut(ptZ, "pT(Z)>250 GeV");
-	cut_etaZ *etaZ = new cut_etaZ(1.5);
-	basic_cuts.add_cut(etaZ, "eta(Z)<1.5");
-	cut_ht *ht = new cut_ht(700, ptype_jet, 30, 3.0);
-	basic_cuts.add_cut(ht, "ht>700 GeV");
-	cut_njet *njet = new cut_njet(4, 30, 3.0);
-	basic_cuts.add_cut(njet, "at least 4 jets pt>30 GeV");
-	cut_bjet *bjet = new cut_bjet(1, 80, 2.8);
-	basic_cuts.add_cut(bjet, "at least 1 b-jet pt>80 GeV");
+	cut_ptZ *ptZ = new cut_ptZ(225);
+	basic_cuts.add_cut(ptZ, "pT(Z)>225 GeV");
+	cut_etaZ *etaZ = new cut_etaZ(2.3);
+	basic_cuts.add_cut(etaZ, "eta(Z)<2.3");
+	cut_ht *ht = new cut_ht(400, ptype_jet, 30, 3.0);
+	basic_cuts.add_cut(ht, "ht>400 GeV");
+	cut_njet *njet = new cut_njet(0, 30, 3.0);
+	basic_cuts.add_cut(njet, "at least 0 jets pt>30 GeV");
+	cut_bjet *bjet = new cut_bjet(1, 40, 2.8);
+	basic_cuts.add_cut(bjet, "at least 1 b-jet pt>40 GeV");
 
 	// apply cuts and extract efficiencies
 	double eff_basic = thth_tztz.reduce_sample(basic_cuts); // require: 2 osl which reconstruct a Z, pT(Z), eta(Z), HT, nj, nb, pT(b) cuts
