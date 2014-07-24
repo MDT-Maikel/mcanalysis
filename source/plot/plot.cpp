@@ -62,6 +62,21 @@ namespace analysis
 		plot_folder = f;
 	}
 
+	void plot::set_x_label(std::string x)
+	{
+		hist.set_x_label(x);
+	}
+
+	void plot::set_y_label(std::string y)
+	{
+		hist.set_y_label(y);
+	}
+
+	void plot::set_leg_title(std::string t)
+	{
+		hist.set_leg_title(t);
+	}
+
 	void plot::set_logy(bool on)
 	{
 		hist.set_logy(on);

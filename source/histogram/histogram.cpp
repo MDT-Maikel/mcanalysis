@@ -125,9 +125,9 @@ namespace analysis
 			canvas->SetLogy(1);
 
 		// set colors and line shapes
-		Color_t kTransBlack = 1700, kTransRed = 1701, kTransBlue = 1702, kTransGreen = 1703, kTransYellow = 1704, kTransPink = 1705;
- 		std::vector<Color_t> colors = {kBlack, kRed, kBlue, kGreen, kYellow, kPink};
-		std::vector<Color_t> colors_trans = {kTransBlack, kTransRed, kTransBlue, kTransGreen, kTransYellow, kTransPink};
+		Color_t kTransBlack = 1700, kTransRed = 1701, kTransBlue = 1702, kTransGreen = 1703, kTransMagenta = 1704, kTransCyan = 1705;
+ 		std::vector<Color_t> colors = {kBlack, kRed, kBlue, kGreen, kMagenta, kCyan};
+		std::vector<Color_t> colors_trans = {kTransBlack, kTransRed, kTransBlue, kTransGreen, kTransMagenta, kTransCyan};
 		for (unsigned int i = 0; i < colors.size(); ++i)
 		{
 			TColor *c = gROOT->GetColor(colors_trans[i]);

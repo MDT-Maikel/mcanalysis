@@ -52,6 +52,10 @@ namespace analysis
 		void set_name(std::string n);
 		void set_folder(std::string f);
 
+		void set_x_label(std::string x);
+		void set_y_label(std::string y);
+		void set_leg_title(std::string t);
+
 		void set_logy(bool on);
 		void set_stacked(bool on);
 		void set_normalized(bool on);
