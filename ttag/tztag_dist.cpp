@@ -451,7 +451,7 @@ int main(int argc, const char* argv[])
 
 	// create labels for plot legend
 	vector<string> labels;
-	labels = {"ttz","z+jets","tz+jets","tbz+jets"};
+	labels = {"ttz+jets","z+jets","tz+jets","t^{*}z+jets"};
 
 	// rescaling K-factors
 	vector<double> kfact_bkg;
@@ -466,10 +466,10 @@ int main(int argc, const char* argv[])
 		deltarLL.set_normalized(true);
 		deltarLL.set_bins(100, 0.1, 4.6);
 		deltarLL.set_leg_title("");
-		deltarLL.set_x_label("#DeltaR (l_{1},l_{2})");
+		deltarLL.set_x_label("#DeltaR (L_{1},L_{2})");
 		deltarLL.set_y_label("fraction of events");
 		plot_deltarLL *LL = new plot_deltarLL();
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			// deltarLL.add_sample(bkg_evts[i], LL, "bkg" + lexical_cast<string>(i));
 			deltarLL.add_sample(bkg_evts[i], LL, labels[i]);
@@ -485,7 +485,7 @@ int main(int argc, const char* argv[])
 		drZb.set_x_label("#DeltaR (Z,b)");
 		drZb.set_y_label("fraction of events");
 		plot_deltarZb *deltarZb = new plot_deltarZb();
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			drZb.add_sample(bkg_evts[i], deltarZb, labels[i]);
 		}
@@ -500,7 +500,7 @@ int main(int argc, const char* argv[])
 		ptZ.set_x_label("p_{T}^{Z} [GeV]");
 		ptZ.set_y_label("fraction of events");
 		plot_Zpt *Zpt = new plot_Zpt();
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			ptZ.add_sample(bkg_evts[i], Zpt, labels[i]);
 		}
@@ -515,7 +515,7 @@ int main(int argc, const char* argv[])
 		etaZ.set_x_label("|#eta^{Z}|");
 		etaZ.set_y_label("fraction of events");
 		plot_etaZ *Zeta = new plot_etaZ();
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			etaZ.add_sample(bkg_evts[i], Zeta, labels[i]);
 		}
@@ -530,7 +530,7 @@ int main(int argc, const char* argv[])
 		nj.set_x_label("n_{j}");
 		nj.set_y_label("fraction of events");
 		plot_nj *NJ = new plot_nj();
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			nj.add_sample(bkg_evts[i], NJ, labels[i]);
 		}
@@ -545,7 +545,7 @@ int main(int argc, const char* argv[])
 		ptB.set_x_label("p_{T}^{b} [GeV]");
 		ptB.set_y_label("fraction of events");
 		plot_Bpt *Bpt = new plot_Bpt();
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			ptB.add_sample(bkg_evts[i], Bpt, labels[i]);
 		}
@@ -560,7 +560,7 @@ int main(int argc, const char* argv[])
 		ht.set_x_label("H_{T} [GeV]");
 		ht.set_y_label("fraction of events");
 		plot_HT *HT = new plot_HT();
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			ht.add_sample(bkg_evts[i], HT, labels[i]);
 		}
@@ -571,7 +571,7 @@ int main(int argc, const char* argv[])
 		cuts basic_cuts;
 		cut_ht *htcut = new cut_ht(400, ptype_jet, 30, 3.0);
 		basic_cuts.add_cut(htcut, "ht>400 GeV");
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			basic_cuts.apply(bkg_evts[i]);
 		}
@@ -582,9 +582,9 @@ int main(int argc, const char* argv[])
 		deltarLLht.set_normalized(true);
 		deltarLLht.set_bins(100, 0.1, 4.6);
 		deltarLLht.set_leg_title("");
-		deltarLLht.set_x_label("#DeltaR (l_{1},l_{2})");
+		deltarLLht.set_x_label("#DeltaR (L_{1},L_{2})");
 		deltarLLht.set_y_label("fraction of events");
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			deltarLLht.add_sample(bkg_evts[i], LL, labels[i]);
 		}
@@ -598,7 +598,7 @@ int main(int argc, const char* argv[])
 		drZbht.set_leg_title("");
 		drZbht.set_x_label("#DeltaR (Z,b)");
 		drZbht.set_y_label("fraction of events");
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			drZbht.add_sample(bkg_evts[i], deltarZb, labels[i]);
 		}
@@ -612,7 +612,7 @@ int main(int argc, const char* argv[])
 		ptZht.set_leg_title("");
 		ptZht.set_x_label("p_{T}^{Z} [GeV]");
 		ptZht.set_y_label("fraction of events");
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			ptZht.add_sample(bkg_evts[i], Zpt, labels[i]);
 		}
@@ -626,7 +626,7 @@ int main(int argc, const char* argv[])
 		etaZht.set_leg_title("");
 		etaZht.set_x_label("|#eta^{Z}|");
 		etaZht.set_y_label("fraction of events");
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			etaZht.add_sample(bkg_evts[i], Zeta, labels[i]);
 		}
@@ -640,7 +640,7 @@ int main(int argc, const char* argv[])
 		njht.set_leg_title("");
 		njht.set_x_label("n_{j}");
 		njht.set_y_label("fraction of events");
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			njht.add_sample(bkg_evts[i], NJ, labels[i]);
 		}
@@ -654,7 +654,7 @@ int main(int argc, const char* argv[])
 		ptBht.set_leg_title("");
 		ptBht.set_x_label("p_{T}^{b} [GeV]");
 		ptBht.set_y_label("fraction of events");
-		for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+		for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 		{
 			ptBht.add_sample(bkg_evts[i], Bpt, labels[i]);
 		}
@@ -705,10 +705,10 @@ int main(int argc, const char* argv[])
 	deltarLL.set_normalized(true);
 	deltarLL.set_bins(100, 0.1, 1.4);
 	deltarLL.set_leg_title("");
-	deltarLL.set_x_label("#DeltaR (l_{1},l_{2})");
+	deltarLL.set_x_label("#DeltaR (L_{1},L_{2})");
 	deltarLL.set_y_label("fraction of events");
 	plot_deltarLL *LL = new plot_deltarLL();
-	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 	{
 		deltarLL.add_sample(bkg_evts[i], LL, labels[i]);
 	}
@@ -723,7 +723,7 @@ int main(int argc, const char* argv[])
 	ptRecZ.set_x_label("p_{T}^{Z} [GeV]");
 	ptRecZ.set_y_label("fraction of events");
 	plot_recZpt *recZpt = new plot_recZpt();
-	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 	{
 		ptRecZ.add_sample(bkg_evts[i], recZpt, labels[i]);
 	}
@@ -738,7 +738,7 @@ int main(int argc, const char* argv[])
 	etaRecZ.set_x_label("|#eta^{Z}|");
 	etaRecZ.set_y_label("fraction of events");
 	plot_recZeta *recZeta = new plot_recZeta();
-	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 	{
 		etaRecZ.add_sample(bkg_evts[i], recZeta, labels[i]);
 	}
@@ -753,7 +753,7 @@ int main(int argc, const char* argv[])
 	ptT.set_x_label("p_{T}^{t} [GeV]");
 	ptT.set_y_label("fraction of events");
 	plot_Tpt *Tpt = new plot_Tpt();
-	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 	{
 		ptT.add_sample(bkg_evts[i], Tpt, labels[i]);
 	}
@@ -768,7 +768,7 @@ int main(int argc, const char* argv[])
 	etaT.set_x_label("|#eta^{t}|");
 	etaT.set_y_label("fraction of events");
 	plot_etaT *Teta = new plot_etaT();
-	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 	{
 		etaT.add_sample(bkg_evts[i], Teta, labels[i]);
 	}
@@ -783,7 +783,7 @@ int main(int argc, const char* argv[])
 	drZt.set_x_label("#DeltaR (Z,t)");
 	drZt.set_y_label("fraction of events");
 	plot_deltarZt *deltarZt = new plot_deltarZt();
-	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 	{
 		drZt.add_sample(bkg_evts[i], deltarZt, labels[i]);
 	}
@@ -792,12 +792,12 @@ int main(int argc, const char* argv[])
 	
 	// plot top partner mass
 	plot pmass("plot_thmass", output_folder);
-	pmass.set_bins(20, 500, 1500);
+	pmass.set_bins(16, 700, 1500);
 	pmass.set_leg_title("");
-	pmass.set_x_label("M_{T}");
+	pmass.set_x_label("M_{T} [GeV]");
 	pmass.set_y_label("events/(50 [GeV])");
 	plot_thmass *th_mass = new plot_thmass();
-	for (unsigned int i = 0; i < bkg_evts.size(); ++i)
+	for (unsigned int i = 0; i < bkg_evts.size()-1; ++i)
 	{
 		double weight = bkg_xsec[i] * luminosity / bkg_evts[i].size();
 		pmass.add_sample(bkg_evts[i], th_mass, labels[i], weight);
@@ -807,10 +807,10 @@ int main(int argc, const char* argv[])
 	
 	// plot top partner mass: combined
 	plot pmass_comb("plot_thmass_combined", output_folder);
-	pmass_comb.set_bins(20, 500, 1500);
+	pmass_comb.set_bins(16, 700, 1500);
 	pmass_comb.set_stacked(true);
 	pmass_comb.set_leg_title("");
-	pmass_comb.set_x_label("M_{T}");
+	pmass_comb.set_x_label("M_{T} [GeV]");
 	pmass_comb.set_y_label("events/(50 [GeV])");
 	double weight;
 	// ttz sample
