@@ -275,7 +275,7 @@ int main(int argc, const char* argv[])
 	basic_cuts.add_cut(ht, "ht>400 GeV");
 	cut_njet *njet = new cut_njet(0, 30, 3.0);
 	basic_cuts.add_cut(njet, "at least 0 jets pt>30 GeV");
-	cut_bjet *bjet = new cut_bjet(1, 40, 2.8);
+	cut_bjet *bjet = new cut_bjet(1, 40, 2.5);
 	basic_cuts.add_cut(bjet, "at least 1 b-jet pt>40 GeV");
 
 	// apply cuts and extract efficiencies
@@ -606,7 +606,7 @@ double cut_deltaRtb(jet_analysis &analysis, double delta_r)
 		vector<const particle*> bjets;
 		for (unsigned int j = 0; j < ev->size(); ++j)
 		{
-			if ((*ev)[j]->bjet() != 0.0 && (*ev)[j]->pt() > 30. && abs((*ev)[j]->eta()) < 2.8)
+			if ((*ev)[j]->bjet() != 0.0 && (*ev)[j]->pt() > 30. && abs((*ev)[j]->eta()) < 2.5)
 				bjets.push_back((*ev)[j]);
 		}
 
