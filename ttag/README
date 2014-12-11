@@ -1,0 +1,51 @@
+README
+
+mcanalysis: A bunch of useful C++ scripts for analysing MC data
+
+########
+ttag project
+
+# main scripts
+* tztag_1top.cpp:
+main analysis code, where all selection cuts of arXiv:1409.6962 are set and the MC samples are reduced. Input: .cmnd file where the sample events (.lhe and .lhco) are specified, together with additional options (input cross section, nr. events to be analysed, output files, merging options). Example .cmnd file: tztag_1top.cmnd. Run through a dedicated shell script "analyze_tztag.sh" in the corresponding mc/process folder.
+* tztag_cutmap.cpp:
+generates an efficiency map for a grid of selection cuts chosen to range within certain values. Input: .cmnd file where the .lhco sample file on which the cuts will be applied is located, and the address of the output file. Example .cmnd file: tztag_cutmap.cmnd. Run with dedicated .cmnd files to be found in mcanalysis/build/ttag.
+* tztag_cutmap_findmax.cpp:
+determines the combination of selection cuts which maximises the S/B ratio, given the cutmaps previously generated, the production cross sections of the processes, the integrated luminosity and the minimum required number of remaining events after the selection cuts. Input: .cmnd file where settings, cross sections and cutmap files are specified. Example .cmnd file: tztag_cutmap_findmax.cmnd. Run with dedicated .cmnd file to be found in mcanalysis/build/ttag.
+* tztag_dist.cpp:
+plots (through root) different distributions of kinematic variables reconstructed on (non-)cutted MC events. Input: .cmnd file where the .lhco event files are specified, together with the corresponding visible cross sections, output file name, integrated luminosity and a logical input to decide whether to display the kinematic variables before or after the selection cuts. Example .cmnd file: tztag_dist_pre_cuts.cmnd and tztag_dist_after_cuts.cmnd. Run with dedicated .cmnd files to be found in mcanalysis/build/ttag.
+* tztag_hunt.cpp:
+runs a Bumphunter instance of the histogrammed values of the reconstructed top partner mass, including contributions from all background and signal samples. Input .cmnd file where the following values are specified: .lhco analysed events (where the constituents of the tagged top partner are identified), visible cross sections and K-factors of the different processes, integrated luminosity, and output file name where the result of the Bumphunting procedure is stored. Example .cmnd file: tztag_hunt.cmnd. Run with dedicated .cmnd file to be found in mcanalysis/build/ttag.
+
+# additional scripts
+* calc_val.cpp: 
+calculates values of dependent parameters for the MC parameter card before the signal event generation. Input: <id: MQ, gstar or WTP (width top partner)>; <MQ>; <gstar>. Run within the shell script "gen_events.sh" in the corresponding mc/signal/process folder.
+* average_xsec.sh:
+evaluates the averaged cross section from multiple generated MC samples. Script options can be modified to select a particular signal or background process, and the number of samples on which calculating the average. No input needed.
+
+to compile all the aforementioned .cpp files, type "make" within the mcanalysis/build (or mcanalysis/build/ttag) directory.
+
+
+########
+further scripts within the LHT_tagged_top/mc folder
+
+# main scripts
+* gen_events.sh:
+script to generate (merged) MadGraph+Pythia8 MC events for a specific background or signal process, calling a MadGraph instance. Script options can be modified to select a particular process and merging values. Input: <irun: ranseed of the MC generation>; <nev: number of events to be generated>. The corresponding MadGraph output should be already present in the MG5_Template/ folder: in particular, for background processes all the corresponding _j0, _j1, ... _jn output folders corresponding to the different (exclusive) final state jet multiplicities have to be present. The output consists of: the generated .lhe and "_mg5_output" files for each jet multiplicity sample; the .lhco file after the merging procedure (using the .lhe_to_lhco.sh script reading the merging options, and the delphes card stored in the mc/cards folder) and the "_merge_output" information. These files are stored in the corresponding events/process folder. Run through the grid_events.sh script.
+* grid_events.sh:
+script that generates executable files to "parallelise" the generation of mulitple MC events. Script options can be modified to select the number of "cores" to be used (multirun), the number of runs to be generated (samp_init & samp_fin) and the number of events for each run (nev). No input needed. The output files ("sub_ev_#") can then be run by typing "bash sub_ev_#", each of them calling the corresponding gen_events.sh script with appropriate options.
+* analyze_tztag.sh:
+script to analyse a set of MC events according to the analysis definitions of tztag_1top.cpp, calling the compiled tztag_1top script. Script options can be modified to select a particular process and merging values, which should match the options set in the event generation: in this script, the merging options are needed for the fat-jet clustering. Input: <irun: id of the generated MC event>; <nev: number of events within the sample>. The output consists of an .lhco file storing the events passing the defined selection cuts, and a text file with the corresponding values of production cross section, efficiency and visible cross section, both files stored in the events/process folder. Run through the grid_tztag.sh script.
+* grid_tztag.sh:
+script that generates executable files to "parallelise" the analysis of multiple MC event samples. Script options can be modified to select the number of "cores" to be used (multirun), the number of samples to be analysed (samp_init & samp_fin) and the number of events within each run (nev). No input needed. The output files ("sub_tztag_#") can then be run by typing "bash sub_tztag_#", each of them calling the corresponding analyze_tztag.sh script with appropriate options.
+* merge_results.sh:
+script to evaluate the averaged values of production cross section, cut efficiency and visible cross section as stored in the text files in the events/process folder. Input: <nsamp: number of samples (from 1 to nsamp) which need to be merged>. The name of the corresponding process should be modified within the script for the variable "prod". The script calls the mergemc tool to merge the different .lhco files into a single event file (#_analysed.lhco.gz), and evaluates the averaged cross sections and efficiency values over the included samples, storing the information in a text file (#_xsec.txt). Both files are stored in the corresponding events/process folder.
+
+# how to generate and analyse events for a new additional process
+* generate MG output folders within the mc/background/MG5_Template (or mc/signal/MG5_Template) folder, exclusively for final states with different final state jet multiplicities. Each exclusive process folder has to be stored as "#processname_j0", "#processname_j1", .. "#processname_jn".
+* copy the mc/background/template (or mc/signal/template) folder and rename it with the process name.
+* modify the options within the different scripts whenever a "REPLACE_ME" flag is included.
+* generate the MC events using the grid_events.sh script.
+* check that the corresponding events/process folders are correctly created.
+* analyse the MC events using the grid_tztag.sh script.
+* merge the results within a single event file and evaluate the averaged visible cross section using the merge_results.sh script.

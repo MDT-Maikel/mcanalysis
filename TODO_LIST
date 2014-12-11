@@ -18,10 +18,6 @@ to one of the contributors of this code.
 			
 [Maikel] Fix LHE writing formatting
 
-[Marco] Implement thtag: for the tthh final state
-
-[Marco] Generate the two major backgrounds for both ttzz and tthh samples
-
 [All] Clean up the jet analysis code a bit
 
 [All] Mismatch between Pythia8 and Pythia6 leptons
