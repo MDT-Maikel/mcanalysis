@@ -14,15 +14,14 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 
-##################
-## User Options ##
-##################
+####################
+### User Options ###
+####################
 
 ## Set user specific options, be sure to initialize there values.
 option(INCLUDE_ANALYSIS "Include analysis module" ON)
 option(INCLUDE_TTAG "Include ttag module" OFF)
 option(INCLUDE_GRES "Include gres module" OFF)
-option(INCLUDE_HCEFF "Include hceff module" OFF)
 
 ## Print the status of the user options
 message("=======================================================")
@@ -31,7 +30,6 @@ message("=======================================================")
 message("Including analysis module: " "${INCLUDE_ANALYSIS}")
 message("Including ttag module:     " "${INCLUDE_TTAG}")
 message("Including gres module:     " "${INCLUDE_GRES}")
-message("Including hceff module:    " "${INCLUDE_HCEFF}")
 message("=======================================================")
 
 
@@ -164,9 +162,9 @@ add_subdirectory(tools)
 add_subdirectory(scripts)
 
 
-#############################
+############################
 ### Optional Executables ###
-#############################
+############################
 
 ## Executables: private
 ## this directory is for the users private programs
@@ -192,11 +190,5 @@ endif()
 ## Only include if option INCLUDE_GRES is on
 if(INCLUDE_GRES)
 	add_subdirectory(gres)
-endif()
-
-## Executables: hceff
-## Only include if option INCLUDE_HCEFF is on
-if(INCLUDE_HCEFF)
-	add_subdirectory(hceff)
 endif()
 

@@ -28,7 +28,7 @@ target_link_libraries(
 	${Boost_LIBRARIES}
 )
 
-## Executable: cms_dijet
+## Executable: dijet_cms_exo-12-059
 add_executable(dijet_cms_exo-12-059 dijet_cms_exo-12-059.cpp)
 target_link_libraries(
 	dijet_cms_exo-12-059
@@ -36,4 +36,17 @@ target_link_libraries(
 	${GZSTREAM_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${Boost_LIBRARIES}
+)
+
+## Executable: fchi_atl
+add_executable(fchi_atl fchi_atl.cpp)
+target_link_libraries(
+	fchi_atl
+	${MCANALYSIS_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${Boost_LIBRARIES}
+	${ROOT_LIBRARIES}
+	${PYTHIA8_LIBRARIES}
+	${FASTJET_LIBRARIES}
 )
