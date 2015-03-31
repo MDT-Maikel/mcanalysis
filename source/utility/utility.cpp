@@ -73,6 +73,9 @@ namespace analysis
 			{
 				// remove additional information before event list
 				file_igz >> dump >> dump >> dump >> dump >> dump >> dump;
+				// remove even more for version 3.0, todo generalize this somehow...
+				file_igz >> dump >> dump >> dump >> dump >> dump >> dump;
+				file_igz >> dump >> dump >> dump >> dump >> dump;
 				found_header = true;
 				break;
 			}
@@ -220,6 +223,31 @@ namespace analysis
 			}
 			file_ogz << "</event>" << std::endl;
 		}
+	}
+
+	// read the events dependent on the file type
+	void read_events(std::vector<event*> & events, boost::filesystem::path file)
+	{
+		std::string input_file = file.string();
+
+		// determine whether the input file is *.lhe.gz then load events
+		std::regex lhe_match("(.*)(lhe.gz)");
+		if (std::regex_match(input_file, lhe_match))
+		{
+			read_lhe(events, input_file);
+			return;
+		}
+		
+		// determine whether the input file is *.lhco.gz then load events
+		std::regex lhco_match("(.*)(lhco.gz)");
+		if (std::regex_match(input_file, lhco_match))
+		{
+			read_lhco(events, input_file);
+			return;
+		}
+		
+		// if reached here, the process failed and events remain unchanged
+		return;
 	}
 
 /* NAMESPACE */

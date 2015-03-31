@@ -39,6 +39,9 @@ namespace analysis
 	// write lhe events into a file
 	void write_lhe(const std::vector<event*> & events, boost::filesystem::path file);
 
+	// read the events dependent on the file type
+	void read_events(std::vector<event*> & events, boost::filesystem::path file);
+
 	// read a single setting from a file
 	template <typename Type>
 	Type read_settings(std::string settings_file, std::string identifier);
