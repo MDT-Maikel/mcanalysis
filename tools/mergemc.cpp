@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 	string output_dir = output_file;
 	while (output_dir.back() != '/' && output_dir.back() != '\\' && output_dir.size() > 0)
 		output_dir.erase(output_dir.end() - 1);
-	if (!is_directory(output_dir))
+	if (output_dir.size() > 0 && !is_directory(output_dir))
 		create_directory(output_dir);
 	
 	// get the files to load from the folder
