@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 	for (unsigned int i = 0; i < files.size(); i++)
 	{
 		cout << "  " << files[i].string() << endl;
-		read_lhco(events, files[i]);
+		read_events(events, files[i]);
 	}
 
 	// write the events into the output file and print output dir
