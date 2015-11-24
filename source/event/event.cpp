@@ -89,11 +89,12 @@ namespace analysis
 		unsigned int count = 0;		
 		for (unsigned int index = 0; index < size(); index++)
 		{
-			if (particles[index]->type() & type)
+			particle *p = particles[index];
+			if (p->is_final() && (p->type() & type))
 			{
 				count++;
 				if (count == number)
-					return particles[index];
+					return p;
 			}
 		}
 		return nullptr;
@@ -105,11 +106,12 @@ namespace analysis
 		unsigned int count = 0;		
 		for (unsigned int index = 0; index < size(); index++)
 		{
-			if ((particles[index]->type() & type) && std::abs(particles[index]->eta()) < max_eta)
+			particle *p = particles[index];
+			if (p->is_final() && (p->type() & type) && std::abs(p->eta()) < max_eta)
 			{
 				count++;
 				if (count == number)
-					return particles[index];
+					return p;
 			}
 		}
 		return nullptr;
