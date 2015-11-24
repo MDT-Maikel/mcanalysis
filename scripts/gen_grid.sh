@@ -25,7 +25,7 @@ fi
 
 # construct loops over the independent parameters to form the grid
 # example loop over an integer parameter
-for pi in in `seq 0 10 100`; do
+for pi in `seq 0 10 100`; do
 	
 	# example loop over an floating point parameter
 	for pf in $(echo "for(pf=0.0; pf<=1.0; pf+=0.1) pf"|bc); do
