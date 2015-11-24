@@ -38,6 +38,26 @@ target_link_libraries(
 	${Boost_LIBRARIES}
 )
 
+## Executable: paired_dijet_cms_exo-11-016
+add_executable(paired_dijet_cms_exo-11-016 paired_dijet_cms_exo-11-016.cpp)
+target_link_libraries(
+	paired_dijet_cms_exo-11-016
+	${MCANALYSIS_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${Boost_LIBRARIES}
+)
+
+## Executable: jetmass_atl_susy-2013-07
+add_executable(jetmass_atl_susy-2013-07 jetmass_atl_susy-2013-07.cpp)
+target_link_libraries(
+	jetmass_atl_susy-2013-07
+	${MCANALYSIS_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${Boost_LIBRARIES}
+)
+
 ## Executable: fchi_atl
 add_executable(fchi_atl fchi_atl.cpp)
 target_link_libraries(
