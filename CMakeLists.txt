@@ -19,7 +19,7 @@ endif()
 ####################
 
 ## Set user specific options, be sure to initialize there values.
-option(INCLUDE_ANALYSIS "Include analysis module" ON)
+option(INCLUDE_ANALYSES "Include analysis module" ON)
 option(INCLUDE_TTAG "Include ttag module" OFF)
 option(INCLUDE_GRES "Include gres module" OFF)
 
@@ -27,7 +27,7 @@ option(INCLUDE_GRES "Include gres module" OFF)
 message("=======================================================")
 message("================== User Option Status =================")
 message("=======================================================")
-message("Including analysis module: " "${INCLUDE_ANALYSIS}")
+message("Including analysis module: " "${INCLUDE_ANALYSES}")
 message("Including ttag module:     " "${INCLUDE_TTAG}")
 message("Including gres module:     " "${INCLUDE_GRES}")
 message("=======================================================")
