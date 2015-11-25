@@ -42,6 +42,11 @@ namespace analysis
 		return *this;
 	}
 
+	event* event::clone() const
+	{
+		return new event(*this);
+	}
+
 	/* member operations */
 
 	particle* event::operator[] (int n) 
@@ -297,6 +302,14 @@ namespace analysis
 		}
 		double inv_mass = std::pow(pe, 2.0) - std::pow(px, 2.0) - std::pow (py, 2.0) - std::pow(pz, 2.0);
 		return std::sqrt(std::max(inv_mass, 0.0));		
+	}
+
+	std::vector<event*> copy_events(const std::vector<event*> & events)
+	{
+		std::vector<event*> copy;
+		for (unsigned int i = 0; i < events.size(); i++)
+			copy.push_back(events[i]->clone());
+		return copy;
 	}
 	
 	void delete_events(std::vector<event*> & events)

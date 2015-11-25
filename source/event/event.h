@@ -33,6 +33,7 @@ namespace analysis
 		/* copy & assignment */
 		event(const event& ev);
 		event & operator = (const event& ev);
+		event* clone() const;
 
 		/* member operations */
 		particle* operator[] (int n);
@@ -73,6 +74,7 @@ namespace analysis
 	
 	/* utility functions */
 	double mass(std::vector<const particle*> particles);
+	std::vector<event*> copy_events(const std::vector<event*> & events);
 	void delete_events(std::vector<event*> & events);
 
 /* NAMESPACE */
