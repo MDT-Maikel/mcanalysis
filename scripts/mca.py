@@ -146,8 +146,9 @@ def read_mg5_par(param_card_file, param_id):
 ## run an analysis script ##
 ############################
 def run_analysis(analysis_program, event_file):
-	acceptance = subprocess.check_output([analysis_program + " " + event_file], shell = True)
-	return float(acceptance)
+	return_value = subprocess.check_output([analysis_program + " " + event_file], shell = True)
+	acceptances = [float(x) for x in return_value.split()]
+	return acceptances
 
 
 

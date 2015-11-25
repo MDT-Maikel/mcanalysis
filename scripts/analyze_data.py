@@ -13,15 +13,19 @@ if len(sys.argv) < 2:
 	print "Usage: " + sys.argv[0] + "<event dir> <analysis program>"
 	sys.exit(1)
 event_dir = sys.argv[1]
-analysis_exe = "/home/maikel/programs/mcanalysis/build/analyses/dijet_cms_exo-11-016" #sys.argv[2]
+analysis_exe = sys.argv[2]
 
 outputfile = open("test.txt", "w")
 
-masses_m = numpy.arange(250.0, 1400.0, 100.0)
+masses_m = numpy.arange(200.0, 1400.0, 100.0)
 for mass_m in masses_m:
 	event_file = event_dir + "/mass_" + str(mass_m) + ".lhco.gz"
 	acceptance = mca.run_analysis(analysis_exe, event_file)
 	xsec = mca.read_mg5_xsec(event_dir + "/mass_" + str(mass_m) + ".txt")
-	outputstring = "%.3e %.3e %.3e\n" % (mass_m, xsec, float(acceptance))
+	result_list = [mass_m, xsec] + acceptance
+	outputstring = "";
+	for i in result_list:
+		outputstring = outputstring + ("%.3e " % i)
+	outputstring = outputstring + "\n";
 	outputfile.write(outputstring)
 

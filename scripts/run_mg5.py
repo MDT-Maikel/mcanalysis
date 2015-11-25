@@ -19,7 +19,7 @@ param_card_file = proc_dir + "/Cards/param_card.dat"
 outputfile = open(output_file, "w")
 
 # Grid loops
-masses_m = numpy.arange(250.0, 1400.0, 100.0)
+masses_m = numpy.arange(200.0, 1400.0, 100.0)
 for mass_m in masses_m:
 	mca.change_mg5_par(param_card_file, "MM", mass_m)
 	mca.update_width_mg5(proc_dir)
