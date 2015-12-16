@@ -58,6 +58,16 @@ target_link_libraries(
 	${Boost_LIBRARIES}
 )
 
+## Executable: monojet_atl_exot-2013-13
+add_executable(monojet_atl_exot-2013-13 monojet_atl_exot-2013-13.cpp)
+target_link_libraries(
+	monojet_atl_exot-2013-13
+	${MCANALYSIS_LIBRARIES}
+	${GZSTREAM_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${Boost_LIBRARIES}
+)
+
 ## Executable: fchi_atl
 add_executable(fchi_atl fchi_atl.cpp)
 target_link_libraries(
