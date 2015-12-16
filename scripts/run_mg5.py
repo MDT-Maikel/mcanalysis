@@ -19,13 +19,13 @@ param_card_file = proc_dir + "/Cards/param_card.dat"
 outputfile = open(output_file, "w")
 
 # Grid loops
-masses_m = numpy.arange(200.0, 1400.0, 100.0)
-for mass_m in masses_m:
-	mca.change_mg5_par(param_card_file, "MM", mass_m)
+masses = numpy.arange(200.0, 4000.0, 200.0)
+for mass in masses:
+	mca.change_mg5_par(param_card_file, "MM", mass)
 	mca.update_width_mg5(proc_dir)
-	mca.run_mg5(proc_dir, event_dir, "mass_" + str(mass_m), True)
-	xsec = mca.read_mg5_xsec(event_dir + "/mass_" + str(mass_m) + ".txt")
-	outputstring = "%.3e %.3e\n" % (mass_m, xsec)
+	mca.run_mg5(proc_dir, event_dir, "mass_" + str(mass), True)
+	xsec = mca.read_mg5_xsec(event_dir + "/mass_" + str(mass) + ".txt")
+	outputstring = "%.3e %.3e\n" % (mass, xsec)
 	outputfile.write(outputstring)
 
 
