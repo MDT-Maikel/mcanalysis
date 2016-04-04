@@ -11,6 +11,7 @@ import os
 import shutil
 import random
 import subprocess
+import re
 
 
 ########################################################
@@ -109,8 +110,9 @@ def change_mg5_par(param_card_file, param_id, value):
 	with open(param_card_file, "r") as read_card:
 		param_card = read_card.read()
 	# find the line for this parameter
-	param_line = [line for line in param_card.split("\n") if "# " + param_id + " " in line].pop()
-	param_line_pos = param_line.find("# " + param_id + " ")
+	param_identifier = "# " + param_id + " "
+	param_line = [line for line in param_card.split("\n") if param_identifier in line].pop()
+	param_line_pos = param_line.find(param_identifier)
 	param_line_val = param_line[0:param_line_pos]
 	param_line_val = param_line_val.split().pop()
 	param_line_new = param_line.replace(param_line_val, str(value))
@@ -140,6 +142,33 @@ def read_mg5_par(param_card_file, param_id):
 	param_card = param_card.split().pop()
 	# return the parameter value
 	return float(param_card)
+
+
+#################################################
+## change a madgraph parameter in the run_card ##
+#################################################
+def change_mg5_run_par(run_card_file, param_id, value):
+	value = str(value)
+	# check if file exists
+	if not os.path.isfile(run_card_file):
+		print "Error: run card for writing parameter not found (" + run_card_file + ")."
+		return
+	# read the run card as a string	
+	with open(run_card_file, "r") as read_card:
+		run_card = read_card.read()
+	param_identifier = "[ \t]*([a-zA-Z0-9.]+)[ \t]+=[ \t]+" + param_id + "[ \t]+"
+	# check if identifier could be found
+	if not re.search(param_identifier, run_card):
+		print "Error: param identifier could not be found in run card (" + run_card_file + ")."
+		return
+	# substitute the new value
+	new_run_card = re.sub(param_identifier, lambda m: re.sub(m.group(1), value, m.group(0)), run_card)
+	# write the new param card
+	with open(run_card_file, "w") as write_card:
+		write_card.write(new_run_card)
+		write_card.truncate()
+	# return nothing
+	return
 
 
 ############################
