@@ -110,7 +110,7 @@ namespace analysis
 				// LHE initialisation
 				pythia.settings.mode("Merging:nRequested", njetcounterLO);
 				pythia.settings.word("Beams:LHEF", input_file);
-				if (!pythia.init(input_file))
+				if (!pythia.init(/*input_file*/))
 				{
 					std::cout << "Error while initialising Pythia (pythia.init)" << std::endl;
 					exit (EXIT_FAILURE);
@@ -181,7 +181,7 @@ namespace analysis
 			}
 
 			// LHE initialisation
-			if ( !pythia.init(input_file) )
+			if ( !pythia.init(/*input_file*/) )
 			{
 				std::cout << "Error while initialising Pythia (pythia.init)" << std::endl;
 				exit (EXIT_FAILURE);
@@ -460,7 +460,7 @@ namespace analysis
 				if ( firstEvent )
 				{
 					std::cout << std::endl << "First event details:" << std::endl;
-	  				ev->write(cout);
+	  				ev->write(std::cout);
 	  				std::cout << std::endl;
 	  			}
 

@@ -48,7 +48,7 @@ namespace analysis
 						{
 							double deltaEta = x.eta() - electron.eta();
 							double deltaPhi = abs(x.phi() - electron.phi());
-							deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+							deltaPhi = std::min(deltaPhi, 8 * atan(1) - deltaPhi);
 							double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
 
 							if (deltaR < deltaR_IsoEl)
@@ -107,7 +107,7 @@ namespace analysis
 						{
 							double deltaEta = x.eta() - muon.eta();
 							double deltaPhi = abs(x.phi() - muon.phi());
-							deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+							deltaPhi = std::min(deltaPhi, 8 * atan(1) - deltaPhi);
 							double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
 
 							if (deltaR < deltaR_IsoMuon)
@@ -166,7 +166,7 @@ namespace analysis
 						{
 							double deltaEta = x.eta() - photon.eta();
 							double deltaPhi = abs(x.phi() - photon.phi());
-							deltaPhi = min(deltaPhi, 8 * atan(1) - deltaPhi);
+							deltaPhi = std::min(deltaPhi, 8 * atan(1) - deltaPhi);
 							double deltaR = sqrt( pow(deltaEta,2.0) + pow(deltaPhi,2.0) );
 
 							if (deltaR < deltaR_IsoGamma)

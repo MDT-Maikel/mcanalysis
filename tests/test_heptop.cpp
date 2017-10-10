@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include "Pythia8/Pythia.h"
-#include "Pythia8/FastJet3.h"
+#include "Pythia8Plugins/FastJet3.h"
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/Selector.hh"

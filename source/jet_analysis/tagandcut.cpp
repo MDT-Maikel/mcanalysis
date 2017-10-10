@@ -95,7 +95,7 @@ namespace analysis
 			fastjet::PseudoJet parent1 = tagged.pieces()[0];
 	  		fastjet::PseudoJet parent2 = tagged.pieces()[1];
 	  		double   Rjj = parent1.delta_R(parent2);
-	  		double   Rfilt = min(Rjj/2, 0.3); // somewhat arbitrary choice
+	  		double   Rfilt = std::min(Rjj/2, 0.3); // somewhat arbitrary choice
 	  		unsigned nfilt = 3;               // number of pieces we'll take
 
 	  		fastjet::JetAlgorithm			cambridge = fastjet::cambridge_algorithm;
@@ -153,7 +153,7 @@ namespace analysis
 
 		// perform the cuts defined in cut_list on "events"
 		cut_list.apply(events);
-		cut_list.write(cout);
+		cut_list.write(std::cout);
 		double eff = cut_list.efficiency();
 
 		// retrieve from map_lhco_taggedJets only the elements which passed the cuts

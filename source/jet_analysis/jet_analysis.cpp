@@ -139,13 +139,13 @@ namespace analysis
 	}
 
 	// jet << operator
-	ostream & operator<<(ostream & ostr, const fastjet::PseudoJet & jet) 
+	std::ostream & operator<<(std::ostream & ostr, const fastjet::PseudoJet & jet) 
 	{
-	  ostr << "pt, y, phi =" << setprecision(2)
-	       << " " << setw(9) << jet.perp() 
-	       << " " << setw(9)  <<  jet.rap()  
-	       << " " << setw(9)  <<  jet.phi()
-	       << ", mass = " << setw(9) << jet.m();
+	  ostr << "pt, y, phi =" << std::setprecision(2)
+	       << " " << std::setw(9) << jet.perp() 
+	       << " " << std::setw(9)  <<  jet.rap()  
+	       << " " << std::setw(9)  <<  jet.phi()
+	       << ", mass = " << std::setw(9) << jet.m();
 	  return ostr;
 	}
 

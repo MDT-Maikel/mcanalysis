@@ -24,7 +24,7 @@ find_library(PYTHIA8_LIBRARY NAMES Pythia8 pythia8 PATHS
 )
 
 ## Find the Pythia8 LHAPDF library
-find_library(PYTHIA8_LIBRARY_LHAPDF NAMES lhapdfdummy PATHS
+find_library(PYTHIA8_LIBRARY_LHAPDF NAMES lhapdfdummy pythia8lhapdf6 PATHS
 	$ENV{PYTHIA8_DIR}/lib/archive
 	$ENV{PYTHIA8_DIR}/lib
 	DOC "Specify the Pythia8 library here."

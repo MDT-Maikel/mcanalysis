@@ -18,7 +18,7 @@
 #include "boost/lexical_cast.hpp"
 
 #include "Pythia8/Pythia.h"
-#include "Pythia8/FastJet3.h"
+#include "Pythia8Plugins/FastJet3.h"
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/Selector.hh"
@@ -207,7 +207,7 @@ namespace analysis
 	bool isBHadron(int pdg);
 
 	/* jet << operator */
-	ostream & operator<<(ostream &, const fastjet::PseudoJet &);
+	std::ostream & operator<<(std::ostream &, const fastjet::PseudoJet &);
 
 /* NAMESPACE */
 }
